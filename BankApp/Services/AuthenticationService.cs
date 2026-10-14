@@ -11,6 +11,16 @@ internal class AuthenticationService(UserRepository repository)
     {
         var user = _repository.GetByUsername(username);
 
-        return null;
+        if (user is null)
+        {
+            return null;
+        }
+
+        if (user.Password != password)
+        {
+            return null;
+        }
+
+        return user;
     }
 }
