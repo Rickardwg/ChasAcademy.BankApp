@@ -1,4 +1,7 @@
 ﻿namespace BankApp.Views;
+﻿using BankApp.Models;
+
+namespace BankApp.Views;
 
 internal class AuthenticationView
 {
