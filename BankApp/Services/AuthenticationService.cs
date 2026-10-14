@@ -1,6 +1,9 @@
-﻿namespace BankApp.Services;
+﻿using BankApp.Models;
+using BankApp.Repositories;
 
-internal class AuthenticationService
+namespace BankApp.Services;
+
+internal class AuthenticationService(UserRepository repository)
 {
-    
+    private readonly UserRepository _repository = repository;
 }
