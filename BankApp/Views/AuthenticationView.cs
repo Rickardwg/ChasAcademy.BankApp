@@ -1,4 +1,3 @@
-﻿namespace BankApp.Views;
 ﻿using BankApp.Models;
 
 namespace BankApp.Views;
