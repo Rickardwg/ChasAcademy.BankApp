@@ -2,4 +2,7 @@
 
 internal class AuthenticationView
 {
+    public Customer DisplayRegisterMenu()
+    {
+    }
 }
