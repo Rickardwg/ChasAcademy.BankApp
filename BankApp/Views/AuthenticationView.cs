@@ -46,6 +46,9 @@ internal class AuthenticationView
     {
         Customer newCustomer = new Customer();
 
+        Console.WriteLine("\nRegistration form:");
+        Console.WriteLine("Please fill in all the following fields.\n");
+
         Console.Write("First name: ");
         newCustomer.FirstName = Console.ReadLine();
 
