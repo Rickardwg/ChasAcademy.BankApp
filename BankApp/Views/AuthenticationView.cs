@@ -2,4 +2,41 @@
 
 internal class AuthenticationView
 {
+    
+    public static string DisplayMenu()
+    {
+        Console.WriteLine("Welcome! What do you want to do?");
+        Console.WriteLine("[1] Login\n" +
+                          "[2] Register\n" +
+                          "[0] Exit");
+
+        string userChoice = "";
+        bool keepRunning = true;
+        while (keepRunning)
+        {
+            userChoice = Console.ReadLine() ?? "";
+
+            switch (userChoice)
+            {
+                case ("1"):
+                    Console.WriteLine("Redirecting to login...");
+                    break;
+                case ("2"):
+                    Console.WriteLine("Redirecting to register...");
+                    break;
+                case ("0"):
+                    Console.WriteLine("Exiting the program...");
+                    break;
+                default:
+                    Console.WriteLine("Please enter one of the valid options.");
+                    continue;
+            }
+
+            keepRunning = false;
+
+        }
+
+        return userChoice;
+
+    }
 }
