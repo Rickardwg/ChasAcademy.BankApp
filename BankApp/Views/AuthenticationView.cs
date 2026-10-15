@@ -69,4 +69,20 @@ internal class AuthenticationView
 
         return newCustomer;
     }
+
+    public string ReadUsername()
+    {
+        Console.Write("Username: ");
+        string userName = Console.ReadLine() ?? "";
+
+        return userName;
+    }
+
+    public string ReadUserPassword()
+    {
+        Console.Write("Password: ");
+        string userPassword = Console.ReadLine() ?? "";
+
+        return userPassword;
+    }
 }
