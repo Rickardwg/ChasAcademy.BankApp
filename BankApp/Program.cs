@@ -7,3 +7,5 @@ var userRepository = new UserRepository();
 var authenticationService = new AuthenticationService(userRepository);
 var authenticationView = new AuthenticationView();
 var authenticationController = new AuthenticationController(authenticationService, authenticationView);
+
+var user = authenticationController.Run();
