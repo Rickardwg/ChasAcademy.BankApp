@@ -1,5 +1,11 @@
-﻿namespace BankApp.Controllers;
+﻿using BankApp.Models;
+using BankApp.Services;
+using BankApp.Views;
 
-internal class AuthenticationController
+namespace BankApp.Controllers;
+
+internal class AuthenticationController(AuthenticationService service, AuthenticationView view)
 {
+    private readonly AuthenticationService _service = service;
+    private readonly AuthenticationView _view = view;
 }
