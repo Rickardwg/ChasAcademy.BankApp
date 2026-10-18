@@ -4,7 +4,23 @@ namespace BankApp.Repositories;
 
 internal class UserRepository
 {
-    private readonly List<User> _users = [];
+    private readonly List<User> _users =
+    [
+        new User
+        { 
+            Id = Guid.NewGuid(), 
+            UserName = "test", 
+            Password = "test", 
+            IsAdmin = false
+        },
+        new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "admin",
+            Password = "admin",
+            IsAdmin = true
+        }
+    ];
 
     internal User? GetByUsername(string username)
     {
