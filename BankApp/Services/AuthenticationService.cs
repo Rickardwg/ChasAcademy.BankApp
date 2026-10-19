@@ -23,6 +23,14 @@ internal class AuthenticationService(UserRepository repository)
 
         if (user.Password != password)
         {
+            user.FailedLoginCounter++;
+
+            if (user.FailedLoginCounter >= 3)
+            {
+                user.IsLocked = true;
+                return user;
+            }
+
             return null;
         }
 
