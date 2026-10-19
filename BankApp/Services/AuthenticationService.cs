@@ -16,6 +16,11 @@ internal class AuthenticationService(UserRepository repository)
             return null;
         }
 
+        if (user.IsLocked)
+        {
+            return user;
+        }
+
         if (user.Password != password)
         {
             return null;
