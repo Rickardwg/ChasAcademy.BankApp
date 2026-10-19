@@ -2,4 +2,8 @@
 
 internal class BankView
 {
+    public void DisplayMenu()
+    {
+
+    }
 }
