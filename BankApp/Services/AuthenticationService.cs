@@ -34,6 +34,7 @@ internal class AuthenticationService(UserRepository repository)
             return null;
         }
 
+        user.FailedLoginCounter = 0; // Reset counter on successful login
         return user;
     }
 }
