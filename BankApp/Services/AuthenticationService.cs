@@ -56,8 +56,9 @@ internal class AuthenticationService(UserRepository repository)
                 return null;
             }
 
-            // TODO add user to repo
-            return user; // Show message that registration was successful
+            // TODO show success message
+            _repository.AddUser(username, password);
+            return user;
         }
 
         return null;
