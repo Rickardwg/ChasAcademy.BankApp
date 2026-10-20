@@ -61,6 +61,7 @@ internal class AuthenticationService(UserRepository repository)
             return user;
         }
 
+        // TODO show error message
         return null;
     }
 }
