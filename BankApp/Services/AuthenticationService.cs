@@ -46,22 +46,22 @@ internal class AuthenticationService(UserRepository repository)
         {
             if (username.Length <= 7)
             {
-                // TODO show error message
+                // TODO: signal "username too short" to AuthenticationController
                 return null;
             }
 
             if (password.Length <= 7)
             {
-                // TODO show error message
+                // TODO: signal "password too short" to AuthenticationController
                 return null;
             }
 
-            // TODO show success message
+            // TODO: signal "registration success" to AuthenticationController
             user = _repository.AddUser(username, password);
             return user;
         }
 
-        // TODO show error message
+        // TODO: signal "user already exists" to AuthenticationController
         return null;
     }
 }
