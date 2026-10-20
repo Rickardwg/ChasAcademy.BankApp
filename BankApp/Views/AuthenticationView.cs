@@ -1,4 +1,4 @@
-﻿using BankApp.Models;
+using BankApp.Models;
 
 namespace BankApp.Views;
 
@@ -84,5 +84,9 @@ internal class AuthenticationView
         string userPassword = Console.ReadLine() ?? "";
 
         return userPassword;
+    }
+
+    public void DisplayErrorMessage(ErrorMessages errorMessages)
+    {
     }
 }
