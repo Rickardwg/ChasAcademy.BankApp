@@ -117,7 +117,7 @@ internal class AuthenticationView
             case ErrorMessages.InvalidOption:
 
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("\nPlease enter one of the valid options.");
+                Console.WriteLine("\nPlease enter one of the valid options.\n");
                 Console.ResetColor();
 
                 break;
