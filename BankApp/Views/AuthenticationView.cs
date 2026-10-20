@@ -5,10 +5,12 @@ namespace BankApp.Views;
 
 internal class AuthenticationView
 {
-
-    public string DisplayMenu()
+    public void DisplayWelcomeMessage()
     {
         Console.WriteLine("Welcome! What do you want to do?");
+    }
+    public string DisplayMenu()
+    {
         Console.WriteLine("[1] Login\n" +
                           "[2] Register\n" +
                           "[0] Exit");
