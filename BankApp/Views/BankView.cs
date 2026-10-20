@@ -1,4 +1,6 @@
-﻿namespace BankApp.Views;
+﻿using BankApp.Enums;
+
+namespace BankApp.Views;
 
 internal class BankView
 {
@@ -39,5 +41,38 @@ internal class BankView
 		}
 
 		return userChoice;
+	}
+
+	internal AccountType? ReadAccountTypeChoice()
+	{
+		var types = Enum.GetValues<AccountType>();
+
+        Console.WriteLine("Account Types");
+		
+		for (int i = 0; i < types.Length; i++)
+		{
+            Console.WriteLine($"[{i+1}] {types[i]}");
+		}
+
+		while (true)
+		{
+            Console.WriteLine("Select account type or enter '0' to go back:");
+            var input = Console.ReadLine();
+
+			if (int.TryParse(input, out int choice))
+			{
+				if (choice == 0)
+				{
+					return null; // EXIT
+				}
+
+				if (choice >= 1 && choice <= types.Length)
+				{
+                    return types[choice - 1];
+                }
+			}
+
+            Console.WriteLine("Invalid choice, try again.");
+		}
 	}
 }
