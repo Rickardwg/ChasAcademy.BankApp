@@ -37,4 +37,29 @@ internal class AuthenticationService(UserRepository repository)
         user.FailedLoginCounter = 0; // Reset counter on successful login
         return user;
     }
+
+    internal User? RegisterUser(string username, string password)
+    {
+        var user = _repository.GetByUsername(username);
+
+        if (user is null)
+        {
+            if (username.Length <= 5)
+            {
+                // TODO show error message
+                return null;
+            }
+
+            if (password.Length == 0)
+            {
+                // TODO show error message
+                return null;
+            }
+
+            // TODO add user to repo
+            return user; // Show message that registration was successful
+        }
+
+        return null;
+    }
 }
