@@ -57,7 +57,7 @@ internal class AuthenticationService(UserRepository repository)
             }
 
             // TODO show success message
-            _repository.AddUser(username, password);
+            user = _repository.AddUser(username, password);
             return user;
         }
 
