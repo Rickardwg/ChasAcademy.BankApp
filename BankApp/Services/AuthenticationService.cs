@@ -44,13 +44,13 @@ internal class AuthenticationService(UserRepository repository)
 
         if (user is null)
         {
-            if (username.Length <= 5)
+            if (username.Length <= 7)
             {
                 // TODO show error message
                 return null;
             }
 
-            if (password.Length == 0)
+            if (password.Length <= 7)
             {
                 // TODO show error message
                 return null;
