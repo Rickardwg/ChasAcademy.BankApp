@@ -105,6 +105,12 @@ internal class AuthenticationView
 
                 break;
             case ErrorMessages.UserNotFound:
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("\nThe username or password you entered is incorrect.");
+                Console.ResetColor();
+
+                Console.WriteLine("Please check your details and try again.");
                 break;
         }
     }
