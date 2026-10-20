@@ -61,4 +61,70 @@ internal class BankView
 
 		return userChoice;
 	}
+
+	internal AccountType? ReadAccountTypeChoice()
+	{
+		var types = Enum.GetValues<AccountType>();
+
+        Console.WriteLine("Account Types");
+		
+		for (int i = 0; i < types.Length; i++)
+		{
+            Console.WriteLine($"[{i+1}] {types[i]}");
+		}
+
+		while (true)
+		{
+            Console.WriteLine("Select account type or enter '0' to go back:");
+            var input = Console.ReadLine();
+
+			if (int.TryParse(input, out int choice))
+			{
+				if (choice == 0)
+				{
+					return null; // EXIT
+				}
+
+				if (choice >= 1 && choice <= types.Length)
+				{
+                    return types[choice - 1];
+                }
+			}
+
+            Console.WriteLine("Invalid choice, try again.");
+		}
+	}
+
+    internal Currency? ReadCurrencyChoice()
+    {
+        var currencies = Enum.GetValues<Currency>();
+
+        Console.WriteLine("Available Currencies");
+
+        for (int i = 0; i < currencies.Length; i++)
+        {
+            Console.WriteLine($"[{i + 1}] {currencies[i]}");
+        }
+
+        while (true)
+        {
+            Console.WriteLine("Select currency or enter '0' to go back:");
+            var input = Console.ReadLine();
+
+            if (int.TryParse(input, out int choice))
+            {
+                if (choice == 0)
+                {
+                    return null; // EXIT
+                }
+
+                if (choice >= 1 && choice <= currencies.Length)
+                {
+                    return currencies[choice - 1];
+                }
+            }
+
+            Console.WriteLine("Invalid choice, try again.");
+        }
+    }
 }

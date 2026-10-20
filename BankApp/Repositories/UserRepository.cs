@@ -6,7 +6,7 @@ internal class UserRepository
 {
     private readonly List<User> _users =
     [
-        new User
+        new Customer
         { 
             Id = Guid.NewGuid(), 
             UserName = "test", 
