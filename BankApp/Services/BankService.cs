@@ -14,12 +14,21 @@ internal class BankService(AccountRepository repository)
             return false;
         }
 
-        if (sourceAccount.Balance <= 0)
+        if (sourceAccount.Balance < amount)
         {
             return false;
         }
 
         if (sourceAccount.OwnerId != destinationAccount.OwnerId)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(sourceAccount, destinationAccount))
+        {
+            return false;
+        }
+        if (sourceAccount.Currency != destinationAccount.Currency)
         {
             return false;
         }

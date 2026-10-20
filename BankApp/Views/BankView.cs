@@ -61,4 +61,36 @@ internal class BankView
 
 		return userChoice;
 	}
+
+    public void DisplayTransferMoneyMenu(List<PersonalAccount> accounts)
+    {
+        Console.WriteLine("Transfer between accounts");
+		
+		for (int i = 0; i < accounts.Count; i++)
+		{
+			Console.WriteLine($"{accounts}");
+		}
+		
+        Console.Write("From Account: ");
+		int sourceAccount = int.Parse(Console.ReadLine() ?? "");
+
+        Console.Write("To Account: ");
+		int destinationAccount = int.Parse(Console.ReadLine() ?? "");
+
+        Console.WriteLine("Amount to transfer: ");
+		
+		//if (int.TryParse(Console.ReadLine(), out int amount))
+		//{
+
+		//}
+
+		//TODO
+		// Logik: ????????????????!
+		// Ta in personliga konto för användaren
+		// Visa vilka personliga konto som finns
+		// Låt användaren först välja från vilket konto (ex. Konto #1)
+		// Låt användare  välj till vilket konto (ex. Konto #2)
+		// Låt användaren skriva vilken summa som ska överföras
+
+    }
 }
