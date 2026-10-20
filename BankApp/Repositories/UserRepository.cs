@@ -9,15 +9,15 @@ internal class UserRepository
         new User
         { 
             Id = Guid.NewGuid(), 
-            UserName = "testtest", 
-            Password = "testtest", 
+            UserName = "test", 
+            Password = "test", 
             IsAdmin = false
         },
         new User
         {
             Id = Guid.NewGuid(),
-            UserName = "adminadmin",
-            Password = "adminadmin",
+            UserName = "admin",
+            Password = "admin",
             IsAdmin = true
         }
     ];
