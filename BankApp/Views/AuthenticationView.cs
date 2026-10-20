@@ -43,6 +43,20 @@ internal class AuthenticationView
 
     }
 
+
+    public string DisplayBackToMainMenu(User? user)
+    {
+        if (user is not null && user.IsLocked)
+        {
+            Console.WriteLine("Option: \n[0] Main menu");
+        }
+        else
+        {
+            Console.WriteLine("Options: \n[1] Try again \n[0] Main menu");
+        }
+        return Console.ReadLine() ?? "";
+    }
+
     public Customer DisplayRegisterMenu()
     {
         Customer newCustomer = new Customer();
