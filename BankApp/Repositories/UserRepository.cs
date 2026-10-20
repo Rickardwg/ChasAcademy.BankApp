@@ -26,4 +26,9 @@ internal class UserRepository
     {
         return _users.FirstOrDefault(u => u.UserName == username);
     }
+
+    internal void AddUser(User user)
+    {
+        _users.Add(user);
+    }
 }
