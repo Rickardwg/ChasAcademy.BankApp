@@ -1,5 +1,8 @@
-﻿namespace BankApp.Services;
+﻿using BankApp.Repositories;
 
-internal class BankService
+namespace BankApp.Services;
+
+internal class BankService(AccountRepository repository)
 {
+    private readonly AccountRepository _repository = repository;
 }
