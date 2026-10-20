@@ -1,13 +1,32 @@
 ﻿using BankApp.Enums;
+using BankApp.Models;
 
 namespace BankApp.Views;
 
 internal class BankView
 {
+    public void DisplayAccounts(List<BankAccount> accounts)
+    {
+        foreach (var account in accounts)
+        {
+            Console.WriteLine($"Currency: {account.Currency}");
+
+            if (account is PersonalAccount personalAccount)
+            {
+                Console.WriteLine($"Balance: {personalAccount.Balance}");
+                Console.WriteLine($"Account Number: {personalAccount.AccountNumber}");
+            }
+            else if (account is LoanAccount loanAccount)
+            {
+                Console.WriteLine($"Amount Owed: {loanAccount.Owed}");
+            }
+
+            // Visual separator between accounts in console window.
+            Console.WriteLine("------------------");
+        }
+    }
 	public string DisplayMenu()
 	{
-		// TODO Add real username
-		Console.WriteLine("Hello, [username]!");
 		Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
 
 		string userChoice = "";
