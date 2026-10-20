@@ -46,7 +46,6 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                 return null;
 
             default:
-                // TODO Display Error for menu choice or refactor solution
                 return null;
         }
     }
