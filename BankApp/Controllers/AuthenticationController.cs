@@ -39,9 +39,26 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                 }
                 return user;
 
-            case "2": // TODO Register
-                return null;
+            case "2": // Register
+                {
+                    var username = _view.ReadUsername();
+                    var password = _view.ReadUserPassword();
 
+                    user = _service.RegisterUser(username, password);
+
+                    if (user is null)
+                    {
+                        // TODO: Display Error for each of these outcomes:
+                        // Too short username
+                        // Too short password
+                        // User already exist
+
+                        return null;
+                    }
+
+                    // TODO: Display registration succeeded confirmation
+                    return user;
+                }
             case "0":
                 return null;
 
