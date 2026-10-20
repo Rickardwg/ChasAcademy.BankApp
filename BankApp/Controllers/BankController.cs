@@ -1,4 +1,5 @@
-﻿using BankApp.Models;
+﻿using BankApp.Enums;
+using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
 
@@ -9,18 +10,46 @@ internal class BankController(BankService service, BankView view)
     private readonly BankService _service = service;
     private readonly BankView _view = view;
 
-    internal void Run(User user)
+    internal void Run(Customer user)
     {
-        // TODO Display WelcomeMessage
-        // TODO Display BankMenu
-        // TODO Read MenuChoice
+        _service.SetActiveUser(user);
 
-        // TODO Handle MenuChoice
-        // TODO View Account/Transaction History
-        // TODO Transfer Money Menu
-        // TODO Loan Menu
-        // TODO Add New Account Menu
-        // TODO Exit
-        // TODO Handle invalid MenuChoice
+        var menuChoice = _view.DisplayMenu();
+
+        switch (menuChoice)
+        {
+            case ("1"): // TODO Accounts
+                break;
+
+            case ("2"): // TODO Transfer
+                break;
+
+            case ("3"): // TODO Loan
+                break;
+
+            case ("4"): // Create Account
+                var accountTypeChoice = _view.ReadAccountTypeChoice();
+
+                if (accountTypeChoice is not AccountType accountType)
+                {
+                    break;
+                }
+
+                var currencyChoice = _view.ReadCurrencyChoice();
+
+                if (currencyChoice is not Currency currency)
+                {
+                    break;
+                }
+
+                _service.CreateNewAccount(accountType, currency);
+                break;
+
+            case ("0"): // Exit
+                return;
+
+            default: // Inaccessible
+                return;
+        }
     }
 }
