@@ -28,7 +28,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
                     if (user is null)
                     {
-                        // TODO Display Error Message
+                        _view.DisplayErrorMessage(ErrorMessages.UserNotFound);
                     }
                     else if (user.IsLocked)
                     {
