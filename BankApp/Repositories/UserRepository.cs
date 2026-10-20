@@ -27,8 +27,14 @@ internal class UserRepository
         return _users.FirstOrDefault(u => u.UserName == username);
     }
 
-    internal void AddUser(User user)
+    internal void AddUser(string username, string password)
     {
-        _users.Add(user);
+        new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = username,
+            Password = password,
+            IsAdmin = false
+        };
     }
 }
