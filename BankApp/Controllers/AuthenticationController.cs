@@ -29,6 +29,12 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     {
                         // TODO Display Error Message
                     }
+                    else if (user.IsLocked)
+                    {
+                        // TODO Display Error Message
+                        return null;
+                    }
+
                 }
                 return user;
 

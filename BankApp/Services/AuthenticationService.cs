@@ -16,11 +16,25 @@ internal class AuthenticationService(UserRepository repository)
             return null;
         }
 
+        if (user.IsLocked)
+        {
+            return user;
+        }
+
         if (user.Password != password)
         {
+            user.FailedLoginCounter++;
+
+            if (user.FailedLoginCounter >= 3)
+            {
+                user.IsLocked = true;
+                return user;
+            }
+
             return null;
         }
 
+        user.FailedLoginCounter = 0; // Reset counter on successful login
         return user;
     }
 }
