@@ -1,4 +1,5 @@
-﻿using BankApp.Models;
+﻿using BankApp.Enums;
+using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
 
@@ -31,7 +32,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
                     else if (user.IsLocked)
                     {
-                        // TODO Display Error Message
+                        _view.DisplayErrorMessage(ErrorMessages.LockedAccount);
                         return null;
                     }
 
@@ -44,7 +45,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             case "0":
                 return null;
 
-            default: 
+            default:
                 // TODO Display Error for menu choice or refactor solution
                 return null;
         }
