@@ -1,3 +1,4 @@
+﻿using BankApp.Enums;
 using BankApp.Models;
 
 namespace BankApp.Views;
@@ -88,5 +89,12 @@ internal class AuthenticationView
 
     public void DisplayErrorMessage(ErrorMessages errorMessages)
     {
+        switch (errorMessages)
+        {
+            case ErrorMessages.LockedAccount:
+                break;
+            case ErrorMessages.UserNotFound:
+                break;
+        }
     }
 }
