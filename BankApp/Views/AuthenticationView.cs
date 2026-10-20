@@ -31,7 +31,7 @@ internal class AuthenticationView
                     Console.WriteLine("Exiting the program...");
                     break;
                 default:
-                    Console.WriteLine("Please enter one of the valid options.");
+                    DisplayErrorMessage(ErrorMessages.InvalidOption);
                     continue;
             }
 
@@ -104,6 +104,7 @@ internal class AuthenticationView
                 Console.ResetColor();
 
                 break;
+
             case ErrorMessages.UserNotFound:
 
                 Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -111,6 +112,14 @@ internal class AuthenticationView
                 Console.ResetColor();
 
                 Console.WriteLine("Please check your details and try again.");
+                break;
+
+            case ErrorMessages.InvalidOption:
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("\nPlease enter one of the valid options.");
+                Console.ResetColor();
+
                 break;
         }
     }
