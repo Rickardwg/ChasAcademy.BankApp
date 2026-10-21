@@ -12,6 +12,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
     internal User? Run() // return null to exit
     {
+        _view.DisplayWelcomeMessage();
         var menuChoice = _view.DisplayMenu();
 
         switch (menuChoice)
