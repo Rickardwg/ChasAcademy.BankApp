@@ -55,8 +55,8 @@ internal class BankController(BankService service, BankView view)
 
     private void HandleTransfer(List<PersonalAccount> accounts)
     {
-        int sourceIndex = _view.SelectAccount(accounts);
-        int destinationIndex = _view.SelectAccount(accounts);
+        int sourceIndex = _view.SelectAccount(accounts, "Select source account");
+        int destinationIndex = _view.SelectAccount(accounts, "Select destination account");
 
         if (sourceIndex < 0 ||
             destinationIndex < 0 ||

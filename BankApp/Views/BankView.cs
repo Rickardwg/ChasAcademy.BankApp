@@ -128,9 +128,9 @@ internal class BankView
         }
     }
 
-    public int SelectAccount(List<PersonalAccount> accounts)
+    public int SelectAccount(List<PersonalAccount> accounts, string prompt)
     {
-        Console.WriteLine("\n\tSelect Account");
+        Console.WriteLine($"\n\t{prompt}");
 
         for (int i = 0; i < accounts.Count; i++)
         {
