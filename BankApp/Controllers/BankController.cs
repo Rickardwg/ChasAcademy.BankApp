@@ -23,4 +23,27 @@ internal class BankController(BankService service, BankView view)
         // TODO Exit
         // TODO Handle invalid MenuChoice
     }
+
+    private void HandleTransfer(List<PersonalAccount> accounts)
+    {
+        int sourceIndex = _view.SelectAccount(accounts);
+        int destinationIndex = _view.SelectAccount(accounts);
+
+        if (sourceIndex < 0 ||
+            destinationIndex < 0 ||
+            sourceIndex >= accounts.Count ||
+            destinationIndex >= accounts.Count)
+        {
+            return;
+        }
+
+        PersonalAccount sourceAccount = accounts[sourceIndex];
+        PersonalAccount destinationAccount = accounts[destinationIndex];
+
+        decimal amount = _view.GetTransferAmount();
+
+        bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
+
+        _view.DisplayTransferResult(transferSuccess);
+    }
 }
