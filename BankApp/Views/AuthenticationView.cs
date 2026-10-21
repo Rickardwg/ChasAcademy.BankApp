@@ -5,42 +5,28 @@ namespace BankApp.Views;
 
 internal class AuthenticationView
 {
-
-    public string DisplayMenu()
+    public void DisplayWelcomeMessage()
     {
         Console.WriteLine("Welcome! What do you want to do?");
-        Console.WriteLine("[1] Login\n" +
-                          "[2] Register\n" +
-                          "[0] Exit");
+    }
+    public string DisplayMenu()
+    {
+        Console.WriteLine("\n[1] Login \n[2] Register \n[0] Exit");
 
-        string userChoice = "";
-        bool keepRunning = true;
-        while (keepRunning)
+        return Console.ReadLine() ?? "";
+    }
+
+    public string DisplayBackToMainMenu(User? user)
+    {
+        if (user is not null && user.IsLocked)
         {
-            userChoice = Console.ReadLine() ?? "";
-
-            switch (userChoice)
-            {
-                case ("1"):
-                    Console.WriteLine("Redirecting to login...");
-                    break;
-                case ("2"):
-                    Console.WriteLine("Redirecting to register...");
-                    break;
-                case ("0"):
-                    Console.WriteLine("Exiting the program...");
-                    break;
-                default:
-                    DisplayErrorMessage(ErrorMessages.InvalidOption);
-                    continue;
-            }
-
-            keepRunning = false;
-
+            Console.WriteLine("\nOption: \n[0] Main menu");
         }
-
-        return userChoice;
-
+        else
+        {
+            Console.WriteLine("\nOptions: \n[1] Try again \n[0] Main menu");
+        }
+        return Console.ReadLine() ?? "";
     }
 
     public Customer DisplayRegisterMenu()
@@ -117,7 +103,7 @@ internal class AuthenticationView
             case ErrorMessages.InvalidOption:
 
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("\nPlease enter one of the valid options.\n");
+                Console.WriteLine("\nPlease enter one of the valid options.");
                 Console.ResetColor();
 
                 break;
