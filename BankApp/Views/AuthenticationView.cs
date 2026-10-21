@@ -29,7 +29,7 @@ internal class AuthenticationView
         return Console.ReadLine() ?? "";
     }
 
-    public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string Username, string Password) DisplayRegisterMenu()
+    public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) DisplayRegisterMenu()
     {
         Console.WriteLine("\nRegistration form:");
         Console.WriteLine("Please fill in all the following fields.\n");
@@ -47,12 +47,12 @@ internal class AuthenticationView
         string phoneNumber = Console.ReadLine() ?? "";
 
         Console.Write("Username: ");
-        string username = Console.ReadLine() ?? "";
+        string userName = Console.ReadLine() ?? "";
 
         Console.Write("Password: ");
         string password = Console.ReadLine() ?? "";
 
-        return (firstName, lastName, emailAddress, phoneNumber, username, password);
+        return (firstName, lastName, emailAddress, phoneNumber, userName, password);
     }
 
     public string ReadUsername()
