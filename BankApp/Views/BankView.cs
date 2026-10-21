@@ -25,75 +25,75 @@ internal class BankView
             Console.WriteLine("------------------");
         }
     }
-	public string DisplayMenu()
-	{
-		Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
+    public string DisplayMenu()
+    {
+        Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
 
-		string userChoice = "";
-		bool isRunning = true;
-		while (isRunning)
-		{
-			userChoice = Console.ReadLine() ?? "";
+        string userChoice = "";
+        bool isRunning = true;
+        while (isRunning)
+        {
+            userChoice = Console.ReadLine() ?? "";
 
-			switch (userChoice)
-			{
-				case ("1"):
-					Console.WriteLine("Redirecting to accounts...");
-					break;
-				case ("2"):
-					Console.WriteLine("Redirecting to transfer money...");
-					break;
-				case ("3"):
-					Console.WriteLine("Redirecting to Loans...");
-					break;
-				case ("4"):
-					Console.WriteLine("Redirecting to create account...");
-					break;
-				case ("0"):
-					break;
-				default:
-					Console.WriteLine("\nPlease enter one of the valid options.\n");
-					continue;
-			}
+            switch (userChoice)
+            {
+                case ("1"):
+                    Console.WriteLine("Redirecting to accounts...");
+                    break;
+                case ("2"):
+                    Console.WriteLine("Redirecting to transfer money...");
+                    break;
+                case ("3"):
+                    Console.WriteLine("Redirecting to Loans...");
+                    break;
+                case ("4"):
+                    Console.WriteLine("Redirecting to create account...");
+                    break;
+                case ("0"):
+                    break;
+                default:
+                    Console.WriteLine("\nPlease enter one of the valid options.\n");
+                    continue;
+            }
 
-			isRunning = false;
-		}
+            isRunning = false;
+        }
 
-		return userChoice;
-	}
+        return userChoice;
+    }
 
 	internal AccountType? ReadAccountTypeChoice()
-	{
-		var types = Enum.GetValues<AccountType>();
+    {
+        var types = Enum.GetValues<AccountType>();
 
         Console.WriteLine("Account Types");
-		
-		for (int i = 0; i < types.Length; i++)
-		{
-            Console.WriteLine($"[{i+1}] {types[i]}");
-		}
 
-		while (true)
-		{
+        for (int i = 0; i < types.Length; i++)
+        {
+            Console.WriteLine($"[{i + 1}] {types[i]}");
+        }
+
+        while (true)
+        {
             Console.WriteLine("Select account type or enter '0' to go back:");
             var input = Console.ReadLine();
 
-			if (int.TryParse(input, out int choice))
-			{
-				if (choice == 0)
-				{
-					return null; // EXIT
-				}
+            if (int.TryParse(input, out int choice))
+            {
+                if (choice == 0)
+                {
+                    return null; // EXIT
+                }
 
-				if (choice >= 1 && choice <= types.Length)
-				{
+                if (choice >= 1 && choice <= types.Length)
+                {
                     return types[choice - 1];
                 }
-			}
+            }
 
             Console.WriteLine("Invalid choice, try again.");
-		}
-	}
+        }
+    }
 
     internal Currency? ReadCurrencyChoice()
     {
@@ -127,4 +127,44 @@ internal class BankView
             Console.WriteLine("Invalid choice, try again.");
         }
     }
+
+    public int SelectAccount(List<PersonalAccount> accounts, string prompt)
+    {
+        Console.WriteLine($"\n\t{prompt}");
+
+        for (int i = 0; i < accounts.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {accounts[i].AccountNumber} - " +
+                              $"{accounts[i].Balance} {accounts[i].Currency}");
+        }
+
+        Console.Write("\nSelect account number: ");
+
+        int.TryParse(Console.ReadLine(), out int selection);
+
+        return selection - 1;
+    }
+    public decimal GetTransferAmount()
+    {
+        Console.Write("Enter amount to transfer: ");
+
+        decimal.TryParse(Console.ReadLine(), out decimal amount);
+
+        return amount;
+    }
+    public void DisplayTransferResult(bool success)
+    {
+        if (success)
+        {
+            Console.WriteLine("Transfer successful!");
+        }
+        else
+        {
+            Console.WriteLine("Transfer failed!");
+        }
+    }
 }
+
+ 
+
+

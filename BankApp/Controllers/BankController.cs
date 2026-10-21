@@ -52,4 +52,27 @@ internal class BankController(BankService service, BankView view)
                 return;
         }
     }
+
+    private void HandleTransfer(List<PersonalAccount> accounts)
+    {
+        int sourceIndex = _view.SelectAccount(accounts, "Select source account");
+        int destinationIndex = _view.SelectAccount(accounts, "Select destination account");
+
+        if (sourceIndex < 0 ||
+            destinationIndex < 0 ||
+            sourceIndex >= accounts.Count ||
+            destinationIndex >= accounts.Count)
+        {
+            return;
+        }
+
+        PersonalAccount sourceAccount = accounts[sourceIndex];
+        PersonalAccount destinationAccount = accounts[destinationIndex];
+
+        decimal amount = _view.GetTransferAmount();
+
+        bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
+
+        _view.DisplayTransferResult(transferSuccess);
+    }
 }
