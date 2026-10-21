@@ -42,6 +42,13 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             }
         }
     }
+
+    /// <summary>
+    /// Prompts the user for their username and password and attempts to authenticate them.
+    /// Displays an error message if the credentials are invalid or the account is locked.
+    /// Allows the user to retry login or return to the main menu.
+    /// </summary>
+    /// <returns>The authenticated user, or null if the user returns to the main menu.</returns>
     private User? Login()
     {
         while (true)
@@ -86,6 +93,12 @@ internal class AuthenticationController(AuthenticationService service, Authentic
         }
     }
 
+    /// <summary>
+    /// Displays the login menu for a locked user and prompts them to return to the main menu.
+    /// Repeats the menu if the user enters an invalid option.
+    /// </summary>
+    /// <param name="user">The locked user attempting to log in.</param>
+    /// <returns>Null to return to the main menu.</returns>
     private User? HandleLoginMenu(User user)
     {
         while (true)
