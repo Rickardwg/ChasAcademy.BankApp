@@ -95,7 +95,7 @@ internal class AuthenticationService(UserRepository repository)
             };
 
             // TODO: signal "registration success" to AuthenticationController
-            return _repository.AddCustomer(customer); ;
+            return _repository.AddCustomer(customer);
         }
 
         // TODO: signal "customer already exists" to AuthenticationController
