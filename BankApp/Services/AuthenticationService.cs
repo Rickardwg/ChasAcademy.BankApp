@@ -70,5 +70,20 @@ internal class AuthenticationService(UserRepository repository)
     {
         return Regex.IsMatch(emailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
     }
+
+    // Validates a Swedish phone number
+    private bool IsValidPhoneNumber(string phoneNumber)
+    {
+        phoneNumber = phoneNumber.Replace("-", "");
+        phoneNumber = phoneNumber.Replace(" ", "");
+
+        if (phoneNumber.StartsWith("+46"))
+        {
+            phoneNumber = phoneNumber.Replace("+46", "0");
+        }
+
+        bool isValid = Regex.IsMatch(phoneNumber, @"^07\d{8}$");
+
+        return isValid;
     }
 }
