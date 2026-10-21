@@ -1,4 +1,5 @@
-﻿using BankApp.Models;
+using BankApp.Enums;
+using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
 
@@ -11,42 +12,124 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
     internal User? Run() // return null to exit
     {
-        var menuChoice = _view.DisplayMenu();
+        _view.DisplayWelcomeMessage();
 
-        switch (menuChoice)
+        while (true)
         {
-            case "1": // Log in
-                User? user = null;
+            var menuChoice = _view.DisplayMenu();
 
-                while (user is null)
-                {
+            switch (menuChoice)
+            {
+                case "1": // Log in
+                    User? user = Login();
+
+                    if (user is not null)
+                    {
+                        return user;
+                    }
+
+                    break;
+
+                case "2": // TODO Register
                     var username = _view.ReadUsername();
                     var password = _view.ReadUserPassword();
 
-                    user = _service.AuthenticateUser(username, password);
+                    user = _service.RegisterUser(username, password);
 
                     if (user is null)
                     {
-                        // TODO Display Error Message
-                    }
-                    else if (user.IsLocked)
-                    {
-                        // TODO Display Error Message
+                        // TODO: Display Error for each of these outcomes:
+                        // Too short username
+                        // Too short password
+                        // User already exist
+
                         return null;
                     }
 
-                }
+                    // TODO: Display registration succeeded confirmation
+                    return user;
+
+                case "0":
+                    return null;
+
+                default:
+                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    continue;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Prompts the user for their username and password and attempts to authenticate them.
+    /// Displays an error message if the credentials are invalid or the account is locked.
+    /// Allows the user to retry login or return to the main menu.
+    /// </summary>
+    /// <returns>The authenticated user, or null if the user returns to the main menu.</returns>
+    private User? Login()
+    {
+        while (true)
+        {
+            var username = _view.ReadUsername();
+            var password = _view.ReadUserPassword();
+
+            User? user = _service.AuthenticateUser(username, password);
+
+            if (user is null)
+            {
+                _view.DisplayErrorMessage(ErrorMessages.UserNotFound);
+            }
+            else if (user.IsLocked)
+            {
+                _view.DisplayErrorMessage(ErrorMessages.LockedAccount);
+                return HandleLoginMenu(user);
+            }
+            else
+            {
                 return user;
+            }
 
-            case "2": // TODO Register
-                return null;
+            var choice = _view.DisplayBackToMainMenu(null);
 
-            case "0":
-                return null;
+            switch (choice)
+            {
+                case "1":
+                    continue;
+                case "0":
+                    return null;
+                default:
+                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
 
-            default: 
-                // TODO Display Error for menu choice or refactor solution
-                return null;
+                    while (choice != "0" && choice != "1")
+                    {
+                        choice = _view.DisplayBackToMainMenu(null);
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Displays the login menu for a locked user and prompts them to return to the main menu.
+    /// Repeats the menu if the user enters an invalid option.
+    /// </summary>
+    /// <param name="user">The locked user attempting to log in.</param>
+    /// <returns>Null to return to the main menu.</returns>
+    private User? HandleLoginMenu(User user)
+    {
+        while (true)
+        {
+            var choice = _view.DisplayBackToMainMenu(user);
+
+            switch (choice)
+            {
+                case "0":
+                    // Shows the main menu again
+                    return null;
+                default:
+                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    break;
+            }
         }
     }
 }
