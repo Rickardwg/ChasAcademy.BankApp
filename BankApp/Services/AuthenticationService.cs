@@ -64,4 +64,11 @@ internal class AuthenticationService(UserRepository repository)
         // TODO: signal "user already exists" to AuthenticationController
         return null;
     }
+
+    // Validates email address
+    private bool IsValidEmailAddress(string emailAddress)
+    {
+        return Regex.IsMatch(emailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    }
+    }
 }
