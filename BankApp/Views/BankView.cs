@@ -61,36 +61,39 @@ internal class BankView
 
 		return userChoice;
 	}
+	public int SelectAccount(List<PersonalAccount> accounts)
+	{
+        Console.WriteLine("\n\tSelect Account");
 
-    public void DisplayTransferMoneyMenu(List<PersonalAccount> accounts)
-    {
-        Console.WriteLine("Transfer between accounts");
-		
 		for (int i = 0; i < accounts.Count; i++)
 		{
-			Console.WriteLine($"{accounts}");
+            Console.WriteLine($"{i + 1}. {accounts[i].AccountNumber} - " +
+							  $"{accounts[i].Balance} {accounts[i].Currency}");
 		}
-		
-        Console.Write("From Account: ");
-		int sourceAccount = int.Parse(Console.ReadLine() ?? "");
 
-        Console.Write("To Account: ");
-		int destinationAccount = int.Parse(Console.ReadLine() ?? "");
+		Console.Write("\nSelect account number: ");
 
-        Console.WriteLine("Amount to transfer: ");
-		
-		//if (int.TryParse(Console.ReadLine(), out int amount))
-		//{
+		int.TryParse(Console.ReadLine(), out int selection);
 
-		//}
+		return selection - 1;
+	}
+	public decimal GetTransferAmount()
+	{
+		Console.Write("Enter amount to transfer: ");
 
-		//TODO
-		// Logik: ????????????????!
-		// Ta in personliga konto för användaren
-		// Visa vilka personliga konto som finns
-		// Låt användaren först välja från vilket konto (ex. Konto #1)
-		// Låt användare  välj till vilket konto (ex. Konto #2)
-		// Låt användaren skriva vilken summa som ska överföras
+		decimal.TryParse(Console.ReadLine(), out decimal amount);
 
-    }
+		return amount;
+	}
+	public void DisplayTransferResult(bool success)
+	{
+		if (success)
+		{
+            Console.WriteLine("Transfer successful!");
+		}
+		else
+		{
+			Console.WriteLine("Transfer failed!");
+		}
+	}
 }
