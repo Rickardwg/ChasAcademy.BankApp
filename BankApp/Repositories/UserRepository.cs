@@ -27,18 +27,10 @@ internal class UserRepository
         return _users.FirstOrDefault(u => u.UserName == username);
     }
 
-    internal User AddUser(string username, string password)
+    internal Customer AddCustomer(Customer customer)
     {
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            UserName = username,
-            Password = password,
-            IsAdmin = false
-        };
+        _users.Add(customer);
 
-        _users.Add(user);
-
-        return user;
+        return customer;
     }
 }
