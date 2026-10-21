@@ -30,7 +30,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
                     break;
 
-                case "2": // TODO Register
+                case "2": // Register
                     var customerData = _view.DisplayRegisterMenu();
 
                     var customer = _service.RegisterCustomer(customerData);
@@ -38,10 +38,10 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     if (customer is null)
                     {
                         // TODO: Display Error for each of these outcomes:
-                        // Unvalid first name
-                        // Unvalid last name
-                        // Unvalid email address
-                        // Unvalid phone number
+                        // Invalid first name
+                        // Invalid last name
+                        // Invalid email address
+                        // Non-Swedish phone number
                         // Too short username
                         // Too short password
                         // User already exist
