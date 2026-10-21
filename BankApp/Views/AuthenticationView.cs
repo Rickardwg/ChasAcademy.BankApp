@@ -43,7 +43,7 @@ internal class AuthenticationView
         Console.Write("Email address: ");
         string emailAddress = Console.ReadLine() ?? "";
 
-        Console.Write("Phone number: ");
+        Console.Write("Swedish phone number: ");
         string phoneNumber = Console.ReadLine() ?? "";
 
         Console.Write("Username: ");
