@@ -11,21 +11,20 @@ internal class AuthenticationView
     }
     public string DisplayMenu()
     {
-        Console.WriteLine("[1] Login \n[2] Register \n[0] Exit");
+        Console.WriteLine("\n[1] Login \n[2] Register \n[0] Exit");
 
         return Console.ReadLine() ?? "";
     }
-
 
     public string DisplayBackToMainMenu(User? user)
     {
         if (user is not null && user.IsLocked)
         {
-            Console.WriteLine("Option: \n[0] Main menu");
+            Console.WriteLine("\nOption: \n[0] Main menu");
         }
         else
         {
-            Console.WriteLine("Options: \n[1] Try again \n[0] Main menu");
+            Console.WriteLine("\nOptions: \n[1] Try again \n[0] Main menu");
         }
         return Console.ReadLine() ?? "";
     }
@@ -104,7 +103,7 @@ internal class AuthenticationView
             case ErrorMessages.InvalidOption:
 
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("\nPlease enter one of the valid options.\n");
+                Console.WriteLine("\nPlease enter one of the valid options.");
                 Console.ResetColor();
 
                 break;
