@@ -31,14 +31,17 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     break;
 
                 case "2": // TODO Register
-                    var username = _view.ReadUsername();
-                    var password = _view.ReadUserPassword();
+                    var userData = _view.DisplayRegisterMenu();
 
-                    user = _service.RegisterUser(username, password);
+                    user = _service.RegisterUser(userData);
 
                     if (user is null)
                     {
                         // TODO: Display Error for each of these outcomes:
+                        // Unvalid first name
+                        // Unvalid last name
+                        // Unvalid email address
+                        // Unvalid phone number
                         // Too short username
                         // Too short password
                         // User already exist
