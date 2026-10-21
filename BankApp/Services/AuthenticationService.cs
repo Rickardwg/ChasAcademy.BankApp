@@ -1,5 +1,6 @@
 ﻿using BankApp.Models;
 using BankApp.Repositories;
+using System.Text.RegularExpressions;
 
 namespace BankApp.Services;
 
@@ -38,30 +39,66 @@ internal class AuthenticationService(UserRepository repository)
         return user;
     }
 
-    internal Customer? RegisterCustomer(string username, string password)
+    internal Customer? RegisterCustomer((string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) customerData)
     {
-        var user = _repository.GetByUsername(username);
+        var existingCustomer = _repository.GetByUsername(customerData.UserName);
 
-        if (user is null)
+        if (existingCustomer is null)
         {
-            if (username.Length < 5)
+            if (customerData.FirstName.Length < 2)
+            {
+                // TODO: signal "first name too short" to AuthenticationController
+                return null;
+            }
+
+            if (customerData.LastName.Length < 4)
+            {
+                // TODO: signal "last name too short" to AuthenticationController
+                return null;
+            }
+
+            if (!IsValidEmailAddress(customerData.EmailAddress))
+            {
+                // TODO: signal "unvalid email address" to AuthenticationController
+                return null;
+            }
+
+            if (!IsValidPhoneNumber(customerData.PhoneNumber))
+            {
+                // TODO: signal "non-swedish phone number" to AuthenticationController
+                return null;
+            }
+
+            if (customerData.UserName.Length < 5)
             {
                 // TODO: signal "username too short" to AuthenticationController
                 return null;
             }
 
-            if (password.Length < 7)
+            if (customerData.Password.Length < 7)
             {
                 // TODO: signal "password too short" to AuthenticationController
                 return null;
             }
+            
+            Customer customer = new Customer
+            {
+                // Not assigned here, so they keep their defaults:
+                // IsLocked = false, IsAdmin = false, FailedLoginCounter = 0
+                Id = Guid.NewGuid(),
+                FirstName = customerData.FirstName,
+                LastName = customerData.LastName,
+                EmailAddress = customerData.EmailAddress,
+                PhoneNumber = customerData.PhoneNumber,
+                UserName = customerData.UserName,
+                Password = customerData.Password
+            };
 
             // TODO: signal "registration success" to AuthenticationController
-            user = _repository.AddUser(username, password);
-            return user;
+            return _repository.AddCustomer(customer); ;
         }
 
-        // TODO: signal "user already exists" to AuthenticationController
+        // TODO: signal "customer already exists" to AuthenticationController
         return null;
     }
 
