@@ -6,7 +6,7 @@ internal class UserRepository
 {
     private readonly List<User> _users =
     [
-        new User
+        new Customer
         { 
             Id = Guid.NewGuid(), 
             UserName = "test", 
@@ -25,5 +25,20 @@ internal class UserRepository
     internal User? GetByUsername(string username)
     {
         return _users.FirstOrDefault(u => u.UserName == username);
+    }
+
+    internal User AddUser(string username, string password)
+    {
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = username,
+            Password = password,
+            IsAdmin = false
+        };
+
+        _users.Add(user);
+
+        return user;
     }
 }
