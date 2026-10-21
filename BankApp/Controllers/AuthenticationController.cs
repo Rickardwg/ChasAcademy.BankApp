@@ -13,41 +13,95 @@ internal class AuthenticationController(AuthenticationService service, Authentic
     internal User? Run() // return null to exit
     {
         _view.DisplayWelcomeMessage();
-        var menuChoice = _view.DisplayMenu();
 
-        switch (menuChoice)
+        while (true)
         {
-            case "1": // Log in
-                User? user = null;
+            var menuChoice = _view.DisplayMenu();
 
-                while (user is null)
-                {
-                    var username = _view.ReadUsername();
-                    var password = _view.ReadUserPassword();
+            switch (menuChoice)
+            {
+                case "1": // Log in
+                    User? user = Login();
 
-                    user = _service.AuthenticateUser(username, password);
-
-                    if (user is null)
+                    if (user is not null)
                     {
-                        _view.DisplayErrorMessage(ErrorMessages.UserNotFound);
-                    }
-                    else if (user.IsLocked)
-                    {
-                        _view.DisplayErrorMessage(ErrorMessages.LockedAccount);
-                        return null;
+                        return user;
                     }
 
-                }
+                    break;
+
+                case "2": // TODO Register
+                    return null;
+
+                case "0":
+                    return null;
+
+                default:
+                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    continue;
+            }
+        }
+    }
+    private User? Login()
+    {
+        while (true)
+        {
+            var username = _view.ReadUsername();
+            var password = _view.ReadUserPassword();
+
+            User? user = _service.AuthenticateUser(username, password);
+
+            if (user is null)
+            {
+                _view.DisplayErrorMessage(ErrorMessages.UserNotFound);
+            }
+            else if (user.IsLocked)
+            {
+                _view.DisplayErrorMessage(ErrorMessages.LockedAccount);
+                return HandleLoginMenu(user);
+            }
+            else
+            {
                 return user;
+            }
 
-            case "2": // TODO Register
-                return null;
+            var choice = _view.DisplayBackToMainMenu(null);
 
-            case "0":
-                return null;
+            switch (choice)
+            {
+                case "1":
+                    continue;
+                case "0":
+                    return null;
+                default:
+                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
 
-            default:
-                return null;
+                    while (choice != "0" && choice != "1")
+                    {
+                        choice = _view.DisplayBackToMainMenu(null);
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    private User? HandleLoginMenu(User user)
+    {
+        while (true)
+        {
+            var choice = _view.DisplayBackToMainMenu(user);
+
+            switch (choice)
+            {
+                case "0":
+                    // Shows the main menu again
+                    return null;
+                default:
+                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    break;
+            }
+
         }
     }
 }
