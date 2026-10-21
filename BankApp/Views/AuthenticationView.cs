@@ -11,38 +11,9 @@ internal class AuthenticationView
     }
     public string DisplayMenu()
     {
-        Console.WriteLine("[1] Login\n" +
-                          "[2] Register\n" +
-                          "[0] Exit");
+        Console.WriteLine("[1] Login \n[2] Register \n[0] Exit");
 
-        string userChoice = "";
-        bool keepRunning = true;
-        while (keepRunning)
-        {
-            userChoice = Console.ReadLine() ?? "";
-
-            switch (userChoice)
-            {
-                case ("1"):
-                    Console.WriteLine("Redirecting to login...");
-                    break;
-                case ("2"):
-                    Console.WriteLine("Redirecting to register...");
-                    break;
-                case ("0"):
-                    Console.WriteLine("Exiting the program...");
-                    break;
-                default:
-                    DisplayErrorMessage(ErrorMessages.InvalidOption);
-                    continue;
-            }
-
-            keepRunning = false;
-
-        }
-
-        return userChoice;
-
+        return Console.ReadLine() ?? "";
     }
 
 
