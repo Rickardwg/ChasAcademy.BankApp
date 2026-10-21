@@ -33,7 +33,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                 case "2": // TODO Register
                     var userData = _view.DisplayRegisterMenu();
 
-                    user = _service.RegisterUser(userData);
+                    user = _service.RegisterCustomer(userData);
 
                     if (user is null)
                     {

@@ -38,7 +38,7 @@ internal class AuthenticationService(UserRepository repository)
         return user;
     }
 
-    internal User? RegisterUser(string username, string password)
+    internal Customer? RegisterCustomer(string username, string password)
     {
         var user = _repository.GetByUsername(username);
 
