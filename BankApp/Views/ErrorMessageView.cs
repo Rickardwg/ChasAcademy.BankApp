@@ -38,6 +38,17 @@ public class ErrorMessageView
                 Console.ResetColor();
 
                 break;
+            case ErrorMessages.NoBankAccountFound:
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("\nYou don't have any registered bank accounts yet.");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("Please create an account to get started.");
+                Console.ResetColor();
+
+                break;
         }
     }
 }
