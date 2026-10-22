@@ -64,7 +64,8 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     return;
 
                 default: // Inaccessible
-                    return;
+                    // TODO Signal Invalid answer
+                    break;
             }
         }
     }
