@@ -174,7 +174,7 @@ internal class BankView
 
         Console.WriteLine("Transactions:");
 
-        foreach (var transaction in transactions)
+        foreach (var transaction in transactions.Reverse<Transaction>())
         {
             Console.WriteLine($"{transaction.Date:d}");
 
