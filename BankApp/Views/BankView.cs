@@ -163,6 +163,18 @@ internal class BankView
             Console.WriteLine("Transfer failed!");
         }
     }
+    public void DisplayInterestPreview
+        (decimal depositAmount, decimal interestRate, int years, decimal expectedInterest)
+    {
+        Console.WriteLine("\n\tSavings Account Interest Preview");
+
+        Console.WriteLine($"Deposit amount: {depositAmount}");
+        Console.WriteLine($"Yearly interest rate: {interestRate * 100}%");
+        Console.WriteLine($"Number of years: {years}");
+        Console.WriteLine($"Expected interest: {expectedInterest}");
+        Console.WriteLine($"Estimated total: {depositAmount + expectedInterest}");
+
+    }
 }
 
  
