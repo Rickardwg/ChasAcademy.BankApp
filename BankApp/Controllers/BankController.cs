@@ -1,12 +1,14 @@
 ﻿using BankApp.Enums;
 using BankApp.Models;
+using BankApp.Repositories;
 using BankApp.Services;
 using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class BankController(BankService service, BankView view)
+internal class BankController(BankService service, BankView view, AccountRepository repository)
 {
+    private readonly AccountRepository _repository = repository;
     private readonly BankService _service = service;
     private readonly BankView _view = view;
 
