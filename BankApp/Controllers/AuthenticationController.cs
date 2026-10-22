@@ -30,15 +30,18 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
                     break;
 
-                case "2": // TODO Register
-                    var username = _view.ReadUsername();
-                    var password = _view.ReadUserPassword();
+                case "2": // Register
+                    var customerData = _view.DisplayRegisterMenu();
 
-                    user = _service.RegisterUser(username, password);
+                    var customer = _service.RegisterCustomer(customerData);
 
-                    if (user is null)
+                    if (customer is null)
                     {
                         // TODO: Display Error for each of these outcomes:
+                        // Invalid first name
+                        // Invalid last name
+                        // Invalid email address
+                        // Non-Swedish phone number
                         // Too short username
                         // Too short password
                         // User already exist
@@ -47,7 +50,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
 
                     // TODO: Display registration succeeded confirmation
-                    return user;
+                    return customer;
 
                 case "0":
                     return null;

@@ -29,32 +29,30 @@ internal class AuthenticationView
         return Console.ReadLine() ?? "";
     }
 
-    public Customer DisplayRegisterMenu()
+    public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) DisplayRegisterMenu()
     {
-        Customer newCustomer = new Customer();
-
         Console.WriteLine("\nRegistration form:");
         Console.WriteLine("Please fill in all the following fields.\n");
 
         Console.Write("First name: ");
-        newCustomer.FirstName = Console.ReadLine();
+        string firstName = Console.ReadLine() ?? "";
 
         Console.Write("Last name: ");
-        newCustomer.LastName = Console.ReadLine();
+        string lastName = Console.ReadLine() ?? "";
 
-        Console.Write("Email: ");
-        newCustomer.Email = Console.ReadLine();
+        Console.Write("Email address: ");
+        string emailAddress = Console.ReadLine() ?? "";
+
+        Console.Write("Swedish phone number: ");
+        string phoneNumber = Console.ReadLine() ?? "";
 
         Console.Write("Username: ");
-        newCustomer.UserName = Console.ReadLine();
+        string userName = Console.ReadLine() ?? "";
 
         Console.Write("Password: ");
-        newCustomer.Password = Console.ReadLine();
+        string password = Console.ReadLine() ?? "";
 
-        Console.Write("Phone number: ");
-        newCustomer.PhoneNumber = Console.ReadLine();
-
-        return newCustomer;
+        return (firstName, lastName, emailAddress, phoneNumber, userName, password);
     }
 
     public string ReadUsername()
