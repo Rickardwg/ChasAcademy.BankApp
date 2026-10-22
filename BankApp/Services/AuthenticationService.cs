@@ -94,8 +94,9 @@ internal class AuthenticationService(UserRepository repository)
                 Password = customerData.Password
             };
 
+            _repository.AddUser(customer);
             // TODO: signal "registration success" to AuthenticationController
-            return _repository.AddCustomer(customer);
+            return customer;
         }
 
         // TODO: signal "customer already exists" to AuthenticationController
