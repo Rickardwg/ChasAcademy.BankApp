@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Enums;
 
-internal enum AccountType
+public enum AccountType
 {
     Personal,
     Savings,
