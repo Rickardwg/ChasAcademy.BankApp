@@ -168,11 +168,11 @@ internal class BankView
     {
         Console.WriteLine("\n\tSavings Account Interest Preview");
 
-        Console.WriteLine($"Deposit amount: {depositAmount}");
-        Console.WriteLine($"Yearly interest rate: {interestRate * 100}%");
-        Console.WriteLine($"Number of years: {years}");
-        Console.WriteLine($"Expected interest: {expectedInterest}");
-        Console.WriteLine($"Estimated total: {depositAmount + expectedInterest}");
+        Console.WriteLine($"Deposit Amount: {depositAmount:F2}");
+        Console.WriteLine($"Yearly Interest Rate: {interestRate:P2}");
+        Console.WriteLine($"Number of Years: {years}");
+        Console.WriteLine($"Expected Interest: {expectedInterest:F2}");
+        Console.WriteLine($"Estimated Total: {depositAmount + expectedInterest:F2}");
 
     }
 }
