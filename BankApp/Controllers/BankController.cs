@@ -6,11 +6,12 @@ using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class BankController(BankService service, BankView view, AccountRepository repository)
+internal class BankController(BankService service, BankView view, AccountRepository repository, ErrorMessageView errorMessageView)
 {
     private readonly AccountRepository _repository = repository;
     private readonly BankService _service = service;
     private readonly BankView _view = view;
+    private readonly ErrorMessageView _errorMessageView = errorMessageView;
 
     internal void Run(Customer user)
     {
@@ -24,15 +25,15 @@ internal class BankController(BankService service, BankView view, AccountReposit
             switch (menuChoice)
             {
                 case ("1"): // Accounts
-                    List<BankAccount>? accounts = _repository.GetBankAccounts();
+                    List<BankAccount>? accountsToDisplay = _repository.GetBankAccounts();
 
-                    if (accounts is not null)
+                    if (accountsToDisplay is not null)
                     {
-                        _view.DisplayAccounts(accounts);
+                        _view.DisplayAccounts(accountsToDisplay);
                     }
                     else
                     {
-                        // TODO: Signal "No account found"
+                        _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
                     }
                     break;
 
@@ -64,7 +65,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     return;
 
                 default: // Inaccessible
-                    // TODO Signal Invalid answer
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
                     break;
             }
         }
