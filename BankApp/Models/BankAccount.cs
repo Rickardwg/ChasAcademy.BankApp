@@ -9,4 +9,5 @@ public class BankAccount
     // TODO Add stack type
     // public Stack<> TransactionHistory { get; set; }
     public Currency Currency { get; set; }
+    public AccountType accountType { get; set; }
 }
