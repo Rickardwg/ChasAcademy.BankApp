@@ -2,7 +2,7 @@
 
 namespace BankApp.Models;
 
-internal class Transaction
+public class Transaction
 {
     //public Guid Id { get; set; } = Guid.NewGuid();
     public TransactionType type { get; set; }

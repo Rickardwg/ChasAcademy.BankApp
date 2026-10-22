@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Enums;
 
-internal enum TransactionType
+public enum TransactionType
 {
     Deposit,
     Withdrawal,
