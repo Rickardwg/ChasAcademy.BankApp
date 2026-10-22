@@ -5,6 +5,7 @@ namespace BankApp.Models;
 public class Transaction
 {
     //public Guid Id { get; set; } = Guid.NewGuid();
+    DateTime Date { get; set; } = DateTime.Now;
     public TransactionType Type { get; set; }
     public decimal Amount { get; set; }
     public Currency Currency { get; set; }
