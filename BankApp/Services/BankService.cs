@@ -19,9 +19,9 @@ internal class BankService(AccountRepository repository)
     {
         BankAccount account = type switch
         {
-            AccountType.Personal => new PersonalAccount { AccountNumber = _repository.GetNextAccountNumber().ToString() },
-            AccountType.Savings => new SavingsAccount { AccountNumber = _repository.GetNextAccountNumber().ToString() },
-            AccountType.Loan => new LoanAccount(),
+            AccountType.Personal => new PersonalAccount { AccountNumber = _repository.GetNextAccountNumber().ToString(), accountType = AccountType.Personal },
+            AccountType.Savings => new SavingsAccount { AccountNumber = _repository.GetNextAccountNumber().ToString(), accountType = AccountType.Savings },
+            AccountType.Loan => new LoanAccount { accountType = AccountType.Loan },
             _ => throw new InvalidOperationException()
         };
 
