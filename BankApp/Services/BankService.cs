@@ -1,5 +1,5 @@
 using BankApp.Models;
-﻿using BankApp.Enums;
+using BankApp.Enums;
 using BankApp.Repositories;
 
 namespace BankApp.Services;
@@ -8,7 +8,7 @@ internal class BankService(AccountRepository repository)
 {
     private readonly AccountRepository _repository = repository;
 
-    internal Customer ActiveUser {  get; private set; }
+    internal Customer ActiveUser { get; private set; }
 
     internal void SetActiveUser(Customer user)
     {
