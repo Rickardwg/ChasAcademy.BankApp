@@ -16,52 +16,56 @@ internal class BankController(BankService service, BankView view, AccountReposit
     {
         _service.SetActiveUser(user);
 
-        var menuChoice = _view.DisplayMenu();
 
-        switch (menuChoice)
+        while (true)
         {
-            case ("1"): // Accounts
-                List<BankAccount>? accounts = _repository.GetBankAccounts();
+            var menuChoice = _view.DisplayMenu();
 
-                if (accounts is not null)
-                {
-                    _view.DisplayAccounts(accounts);
-                }
-                else
-                {
-                    // TODO: Signal "No account found"
-                }
-                break;
+            switch (menuChoice)
+            {
+                case ("1"): // Accounts
+                    List<BankAccount>? accounts = _repository.GetBankAccounts();
 
-            case ("2"): // TODO Transfer
-                break;
-
-            case ("3"): // TODO Loan
-                break;
-
-            case ("4"): // Create Account
-                var accountTypeChoice = _view.ReadAccountTypeChoice();
-
-                if (accountTypeChoice is not AccountType accountType)
-                {
+                    if (accounts is not null)
+                    {
+                        _view.DisplayAccounts(accounts);
+                    }
+                    else
+                    {
+                        // TODO: Signal "No account found"
+                    }
                     break;
-                }
 
-                var currencyChoice = _view.ReadCurrencyChoice();
-
-                if (currencyChoice is not Currency currency)
-                {
+                case ("2"): // TODO Transfer
                     break;
-                }
 
-                _service.CreateNewAccount(accountType, currency);
-                break;
+                case ("3"): // TODO Loan
+                    break;
 
-            case ("0"): // Exit
-                return;
+                case ("4"): // Create Account
+                    var accountTypeChoice = _view.ReadAccountTypeChoice();
 
-            default: // Inaccessible
-                return;
+                    if (accountTypeChoice is not AccountType accountType)
+                    {
+                        break;
+                    }
+
+                    var currencyChoice = _view.ReadCurrencyChoice();
+
+                    if (currencyChoice is not Currency currency)
+                    {
+                        break;
+                    }
+
+                    _service.CreateNewAccount(accountType, currency);
+                    break;
+
+                case ("0"): // Exit
+                    return;
+
+                default: // Inaccessible
+                    return;
+            }
         }
     }
 
