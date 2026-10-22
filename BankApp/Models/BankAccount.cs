@@ -6,7 +6,6 @@ public class BankAccount
 {
     public Guid OwnerId { get; set; }
 
-    // TODO Add stack type
-    // public Stack<> TransactionHistory { get; set; }
+    public List<Transaction> TransactionHistory { get; set; } = [];
     public Currency Currency { get; set; }
 }
