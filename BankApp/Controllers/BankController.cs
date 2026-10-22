@@ -20,7 +20,17 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         switch (menuChoice)
         {
-            case ("1"): // TODO Accounts
+            case ("1"): // Accounts
+                List<BankAccount>? accounts = _repository.GetBankAccounts();
+
+                if (accounts is not null)
+                {
+                    _view.DisplayAccounts(accounts);
+                }
+                else
+                {
+                    // TODO: Signal "No account found"
+                }
                 break;
 
             case ("2"): // TODO Transfer
