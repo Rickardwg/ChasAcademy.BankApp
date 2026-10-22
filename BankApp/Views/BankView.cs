@@ -16,6 +16,7 @@ internal class BankView
     {
         foreach (var account in accounts)
         {
+            Console.WriteLine($"{account.accountType} account");
             Console.WriteLine($"Currency: {account.Currency}");
 
             if (account is PersonalAccount personalAccount)
