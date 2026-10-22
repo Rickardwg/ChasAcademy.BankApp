@@ -17,4 +17,8 @@ public enum ErrorMessages
     /// </summary>
     InvalidOption,
 
+    /// <summary>
+    /// Indicates that no bank accounts were found for the user.
+    /// </summary>
+    NoBankAccountFound
 }
