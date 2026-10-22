@@ -5,10 +5,11 @@ using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class AuthenticationController(AuthenticationService service, AuthenticationView view)
+internal class AuthenticationController(AuthenticationService service, AuthenticationView view, ErrorMessageView errorMessageView)
 {
     private readonly AuthenticationService _service = service;
     private readonly AuthenticationView _view = view;
+    private readonly ErrorMessageView _errorMessageView = errorMessageView;
 
     internal User? Run() // return null to exit
     {
@@ -53,7 +54,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     return null;
 
                 default:
-                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
                     continue;
             }
         }
@@ -76,11 +77,11 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
             if (user is null)
             {
-                _view.DisplayErrorMessage(ErrorMessages.UserNotFound);
+                _errorMessageView.DisplayErrorMessage(ErrorMessages.UserNotFound);
             }
             else if (user.IsLocked)
             {
-                _view.DisplayErrorMessage(ErrorMessages.LockedAccount);
+                _errorMessageView.DisplayErrorMessage(ErrorMessages.LockedAccount);
                 return HandleLoginMenu(user);
             }
             else
@@ -97,7 +98,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                 case "0":
                     return null;
                 default:
-                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
 
                     while (choice != "0" && choice != "1")
                     {
@@ -127,7 +128,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     // Shows the main menu again
                     return null;
                 default:
-                    _view.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
                     break;
             }
         }
