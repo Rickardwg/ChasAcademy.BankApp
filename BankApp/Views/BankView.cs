@@ -175,6 +175,21 @@ internal class BankView
         Console.WriteLine($"Estimated Total: {depositAmount + expectedInterest:F2}");
 
     }
+
+    public decimal GetDepositAmount()
+    {
+        Console.Write("Enter amount to deposit: ");
+        decimal.TryParse(Console.ReadLine(), out decimal amount);
+
+        return amount;
+    }
+    public int GetInterestYears()
+    {
+        Console.Write("Enter number of years: ");
+        int.TryParse(Console.ReadLine(), out int years);
+
+        return years;
+    }
 }
 
  
