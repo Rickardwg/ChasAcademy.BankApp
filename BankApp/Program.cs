@@ -14,7 +14,7 @@ var user = authenticationController.Run();
 var accountRepository = new AccountRepository();
 var bankService = new BankService(accountRepository);
 var bankView = new BankView();
-var bankController = new BankController(bankService, bankView);
+var bankController = new BankController(bankService, bankView, accountRepository);
 
 if (user is Customer customer)
 {
