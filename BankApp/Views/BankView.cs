@@ -1,5 +1,6 @@
 ﻿using BankApp.Enums;
 using BankApp.Models;
+using System.Net.Http.Headers;
 
 namespace BankApp.Views;
 
@@ -50,6 +51,34 @@ internal class BankView
                     Console.WriteLine("Redirecting to create account...");
                     break;
                 case ("0"):
+                    break;
+                default:
+                    Console.WriteLine("\nPlease enter one of the valid options.\n");
+                    continue;
+            }
+
+            isRunning = false;
+        }
+
+        return userChoice;
+    }
+
+    internal string DisplayTransferMoneyMenu()
+    {
+        Console.WriteLine("Select transaction type:\n[1] Transfer to your own account\n[2] Transfer to another customer's account\n[0] Go back");
+
+        string userChoice = Console.ReadLine() ?? "";
+
+        bool isRunning = true;
+        while(isRunning)
+        {
+            switch (userChoice)
+            {
+                case "1":
+                    break;
+                case "2":
+                    break;
+                case "0":
                     break;
                 default:
                     Console.WriteLine("\nPlease enter one of the valid options.\n");
