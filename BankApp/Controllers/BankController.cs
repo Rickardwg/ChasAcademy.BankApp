@@ -83,7 +83,7 @@ internal class BankController(BankService service, BankView view)
 
         if (depositAmount <= 0 || years <= 0)
         {
-            Console.WriteLine("Invalid amount or number of years.");
+            _view.DisplayInvalidInterestInput();
             return;
         }
 

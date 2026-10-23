@@ -190,6 +190,10 @@ internal class BankView
 
         return years;
     }
+    public void DisplayInvalidInterestInput()
+    {
+        Console.WriteLine("Invalid amount or number of years.");
+    }
 }
 
  
