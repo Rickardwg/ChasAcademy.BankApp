@@ -69,12 +69,12 @@ internal class BankView
 
     public int SelectAccount(List<PersonalAccount> accounts, string prompt)
     {
-        Console.WriteLine($"\n\t{prompt}");
+        Console.WriteLine($"\n{prompt}\n");
 
         for (int i = 0; i < accounts.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {accounts[i].AccountNumber} - " +
-                              $"{accounts[i].Balance} {accounts[i].Currency}");
+            Console.WriteLine($"[{i + 1}] {accounts[i].accountType} account");
+            Console.WriteLine($"Account number: {accounts[i].AccountNumber} | Balance: {accounts[i].Balance} {accounts[i].Currency}");
         }
 
         Console.Write("\nSelect account number: ");
