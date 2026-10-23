@@ -128,11 +128,17 @@ internal class BankView
     {
         if (success)
         {
-            Console.WriteLine("Transfer successful!");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\nThe transfer has been completed successfully.");
+            Console.ResetColor();
         }
         else
         {
-            Console.WriteLine("Transfer failed!");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("\nThe transfer could not be completed.");
+            Console.ResetColor();
+
+            Console.WriteLine("Please check the account balance and transfer amount.");
         }
     }
 }
