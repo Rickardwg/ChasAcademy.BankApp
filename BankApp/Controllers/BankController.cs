@@ -37,7 +37,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     }
                     break;
 
-                case ("2"): // TODO Transfer
+                case ("2"): // Transfer
                     List<BankAccount>? accountsForTransfer = _repository.GetBankAccounts();
 
                     if (accountsForTransfer is not null)
