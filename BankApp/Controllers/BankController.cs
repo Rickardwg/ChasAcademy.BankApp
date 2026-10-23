@@ -38,6 +38,18 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("2"): // TODO Transfer
+                    List<BankAccount>? accountsForTransfer = _repository.GetBankAccounts();
+
+                    if (accountsForTransfer is not null)
+                    {
+                        List<PersonalAccount> personalAccounts = accountsForTransfer.OfType<PersonalAccount>().ToList();
+                        HandleTransfer(personalAccounts);
+                    }
+                    else
+                    {
+                        _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                    }
+
                     break;
 
                 case ("3"): // TODO Loan
