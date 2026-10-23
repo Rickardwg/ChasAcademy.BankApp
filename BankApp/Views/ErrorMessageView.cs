@@ -55,6 +55,12 @@ public class ErrorMessageView
                 Console.WriteLine("\nNo transfer possible. \nYou need at least two accounts to make a transfer.");
                 Console.ResetColor();
                 break;
+            case ErrorMessages.SameSourceAndDestinationAccount:
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("\nSource and destination accounts must be different.");
+                Console.ResetColor();
+                break;
         }
     }
 }

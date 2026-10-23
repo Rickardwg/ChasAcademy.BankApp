@@ -26,4 +26,9 @@ public enum ErrorMessages
     /// Not enough accounts available to make a transfer.
     /// </summary>
     NotEnoughAccounts,
+
+    /// <summary>
+    /// Indicates that the source and destination accounts are the same.
+    /// </summary>
+    SameSourceAndDestinationAccount
 }
