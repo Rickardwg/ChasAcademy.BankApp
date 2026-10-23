@@ -62,7 +62,7 @@ internal class BankView
         return userChoice;
     }
 
-	internal AccountType? ReadAccountTypeChoice()
+    internal AccountType? ReadAccountTypeChoice()
     {
         var types = Enum.GetValues<AccountType>();
 
@@ -163,8 +163,35 @@ internal class BankView
             Console.WriteLine("Transfer failed!");
         }
     }
+
+    public void DisplayTransactionHistory(List<Transaction> transactions)
+    {
+        if (transactions.Count == 0)
+        {
+            Console.WriteLine("No transactions registered.");
+            return;
+        }
+
+        Console.WriteLine("Transactions:");
+
+        foreach (var transaction in transactions.Reverse<Transaction>())
+        {
+            Console.WriteLine($"{transaction.Date:d}");
+
+            if (transaction.Desciption is not null)
+            {
+                Console.WriteLine(transaction.Desciption);
+            }
+
+            Console.WriteLine(transaction.Amount);
+
+            Console.WriteLine(transaction.Type);
+
+            Console.WriteLine();
+        }
+    }
     public void DisplayInterestPreview
-        (decimal depositAmount, decimal interestRate, int years, decimal expectedInterest)
+       (decimal depositAmount, decimal interestRate, int years, decimal expectedInterest)
     {
         Console.WriteLine("\n\tSavings Account Interest Preview");
 
@@ -173,7 +200,6 @@ internal class BankView
         Console.WriteLine($"Number of Years: {years}");
         Console.WriteLine($"Expected Interest: {expectedInterest:F2}");
         Console.WriteLine($"Estimated Total: {depositAmount + expectedInterest:F2}");
-
     }
 
     public decimal GetDepositAmount()
@@ -195,7 +221,6 @@ internal class BankView
         Console.WriteLine("Invalid amount or number of years.");
     }
 }
-
  
 
 

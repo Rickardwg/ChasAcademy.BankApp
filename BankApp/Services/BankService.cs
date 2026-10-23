@@ -58,7 +58,27 @@ internal class BankService(AccountRepository repository)
         }
 
         sourceAccount.Balance -= amount;
+        sourceAccount.TransactionHistory.Add(new Transaction
+        { 
+            Type = TransactionType.Transfer,
+            Amount = -amount,
+            Currency = sourceAccount.Currency,
+            RelatedAccountId = destinationAccount.AccountNumber,
+            Desciption = $"Transfer to {destinationAccount.AccountNumber}"
+        });
+
         destinationAccount.Balance += amount;
+        // amount and currency needs to be handled differently when converting currencies is implemented.
+        // use these fields for the received amount and currency.
+        // use the "converted" properties for the source values.
+        destinationAccount.TransactionHistory.Add(new Transaction
+        {
+            Type = TransactionType.Transfer,
+            Amount = amount,
+            Currency = sourceAccount.Currency,
+            RelatedAccountId = sourceAccount.AccountNumber,
+            Desciption = $"Transfer from {sourceAccount.AccountNumber}"
+        });
 
         return true;
     }
