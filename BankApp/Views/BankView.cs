@@ -34,48 +34,15 @@ internal class BankView
         }
     }
 
-    internal AccountType? ReadAccountTypeChoice()
+    public T? ReadEnumChoice<T>(string title) where T : struct, Enum
     {
-        var types = Enum.GetValues<AccountType>();
+        var values = Enum.GetValues<T>();
 
-        Console.WriteLine("Account Types");
+        Console.WriteLine($"\n{title}:");
 
-        for (int i = 0; i < types.Length; i++)
+        for (int i = 0; i < values.Length; i++)
         {
-            Console.WriteLine($"[{i + 1}] {types[i]}");
-        }
-
-        while (true)
-        {
-            Console.WriteLine("Select account type or enter '0' to go back:");
-            var input = Console.ReadLine();
-
-            if (int.TryParse(input, out int choice))
-            {
-                if (choice == 0)
-                {
-                    return null; // EXIT
-                }
-
-                if (choice >= 1 && choice <= types.Length)
-                {
-                    return types[choice - 1];
-                }
-            }
-
-            Console.WriteLine("Invalid choice, try again.");
-        }
-    }
-
-    internal Currency? ReadCurrencyChoice()
-    {
-        var currencies = Enum.GetValues<Currency>();
-
-        Console.WriteLine("Available Currencies");
-
-        for (int i = 0; i < currencies.Length; i++)
-        {
-            Console.WriteLine($"[{i + 1}] {currencies[i]}");
+            Console.WriteLine($"[{i + 1}] {values[i]}");
         }
 
         while (true)
@@ -90,9 +57,9 @@ internal class BankView
                     return null; // EXIT
                 }
 
-                if (choice >= 1 && choice <= currencies.Length)
+                if (choice >= 1 && choice <= values.Length)
                 {
-                    return currencies[choice - 1];
+                    return values[choice - 1];
                 }
             }
 
