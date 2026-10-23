@@ -80,6 +80,13 @@ internal class BankController(BankService service, BankView view)
     {
         decimal depositAmount = _view.GetDepositAmount();
         int years = _view.GetInterestYears();
+
+        if (depositAmount <= 0 || years <= 0)
+        {
+            Console.WriteLine("Invalid amount or number of years.");
+            return;
+        }
+
         decimal expectedInterest = _service.CalculateExpectedInterest(savingsAccount, depositAmount, years);
 
         _view.DisplayInterestPreview
