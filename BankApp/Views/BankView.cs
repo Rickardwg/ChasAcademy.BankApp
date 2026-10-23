@@ -192,6 +192,33 @@ internal class BankView
             Console.WriteLine("Transfer failed!");
         }
     }
+
+    public void DisplayTransactionHistory(List<Transaction> transactions)
+    {
+        if (transactions.Count == 0)
+        {
+            Console.WriteLine("No transactions registered.");
+            return;
+        }
+
+        Console.WriteLine("Transactions:");
+
+        foreach (var transaction in transactions.Reverse<Transaction>())
+        {
+            Console.WriteLine($"{transaction.Date:d}");
+
+            if (transaction.Desciption is not null)
+            {
+                Console.WriteLine(transaction.Desciption);
+            }
+
+            Console.WriteLine(transaction.Amount);
+
+            Console.WriteLine(transaction.Type);
+
+            Console.WriteLine();
+        }
+    }
 }
 
  
