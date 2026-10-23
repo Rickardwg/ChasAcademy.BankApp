@@ -1,5 +1,6 @@
 ﻿using BankApp.Enums;
 using BankApp.Models;
+using System.Net.Http.Headers;
 
 namespace BankApp.Views;
 
@@ -57,6 +58,26 @@ internal class BankView
             }
 
             isRunning = false;
+        }
+
+        return userChoice;
+    }
+
+    internal string DisplayTransferMoneyMenu()
+    {
+        Console.WriteLine("Select transfer type:\n[1] Transfer between your own accounts\n[2] Transfer to another customer's account\n[0] Go back");
+
+        string userChoice;
+        while (true)
+        {
+            userChoice = Console.ReadLine() ?? "";
+
+            if (userChoice == "1" || userChoice == "2" || userChoice == "0")
+            {
+                break;
+            }
+
+            Console.WriteLine("Please enter one of the valid options.");
         }
 
         return userChoice;
