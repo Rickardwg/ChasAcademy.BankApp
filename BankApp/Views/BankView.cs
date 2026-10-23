@@ -65,33 +65,25 @@ internal class BankView
 
     internal string DisplayTransferMoneyMenu()
     {
-        Console.WriteLine("Select transaction type:\n[1] Transfer to your own account\n[2] Transfer to another customer's account\n[0] Go back");
+        Console.WriteLine("Select transfer type:\n[1] Transfer between your own accounts\n[2] Transfer to another customer's account\n[0] Go back");
 
-        string userChoice = Console.ReadLine() ?? "";
-
-        bool isRunning = true;
-        while(isRunning)
+        string userChoice;
+        while (true)
         {
-            switch (userChoice)
+            userChoice = Console.ReadLine() ?? "";
+
+            if (userChoice == "1" || userChoice == "2" || userChoice == "0")
             {
-                case "1":
-                    break;
-                case "2":
-                    break;
-                case "0":
-                    break;
-                default:
-                    Console.WriteLine("\nPlease enter one of the valid options.\n");
-                    continue;
+                break;
             }
 
-            isRunning = false;
+            Console.WriteLine("Please enter one of the valid options.");
         }
 
         return userChoice;
     }
 
-	internal AccountType? ReadAccountTypeChoice()
+    internal AccountType? ReadAccountTypeChoice()
     {
         var types = Enum.GetValues<AccountType>();
 
