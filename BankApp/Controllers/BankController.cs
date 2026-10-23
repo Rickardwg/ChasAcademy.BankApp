@@ -44,14 +44,14 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("4"): // Create Account
-                    var accountTypeChoice = _view.ReadAccountTypeChoice();
+                    var accountTypeChoice = _view.ReadEnumChoice<AccountType>("Account types");
 
                     if (accountTypeChoice is not AccountType accountType)
                     {
                         break;
                     }
 
-                    var currencyChoice = _view.ReadCurrencyChoice();
+                    var currencyChoice = _view.ReadEnumChoice<Currency>("Available currencies");
 
                     if (currencyChoice is not Currency currency)
                     {
