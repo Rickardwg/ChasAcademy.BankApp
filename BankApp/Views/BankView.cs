@@ -69,7 +69,7 @@ internal class BankView
 
     public int SelectAccount(List<PersonalAccount> accounts, string prompt)
     {
-        Console.WriteLine($"\n{prompt}\n");
+        Console.WriteLine($"\n{prompt}");
 
         for (int i = 0; i < accounts.Count; i++)
         {
