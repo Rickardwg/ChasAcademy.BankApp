@@ -20,5 +20,10 @@ public enum ErrorMessages
     /// <summary>
     /// Indicates that no bank accounts were found for the user.
     /// </summary>
-    NoBankAccountFound
+    NoBankAccountFound,
+
+    /// <summary>
+    /// Not enough accounts available to make a transfer.
+    /// </summary>
+    NotEnoughAccounts,
 }

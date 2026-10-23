@@ -49,6 +49,12 @@ public class ErrorMessageView
                 Console.ResetColor();
 
                 break;
+            case ErrorMessages.NotEnoughAccounts:
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("\nNo transfer possible. \nYou need at least two accounts to make a transfer.");
+                Console.ResetColor();
+                break;
         }
     }
 }
