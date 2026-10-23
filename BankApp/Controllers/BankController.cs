@@ -94,11 +94,15 @@ internal class BankController(BankService service, BankView view, AccountReposit
         int sourceIndex = _view.SelectAccount(accounts, "Select source account:");
         int destinationIndex = _view.SelectAccount(accounts, "Select destination account:");
 
-        if (sourceIndex < 0 ||
-            destinationIndex < 0 ||
-            sourceIndex >= accounts.Count ||
-            destinationIndex >= accounts.Count)
+        if (sourceIndex < 0 || destinationIndex < 0 ||
+            sourceIndex >= accounts.Count || destinationIndex >= accounts.Count)
         {
+            return;
+        }
+
+        if (sourceIndex == destinationIndex)
+        {
+            _errorMessageView.DisplayErrorMessage(ErrorMessages.SameSourceAndDestinationAccount);
             return;
         }
 
