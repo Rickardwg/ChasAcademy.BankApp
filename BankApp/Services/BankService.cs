@@ -82,5 +82,23 @@ internal class BankService(AccountRepository repository)
 
         return true;
     }
+
+    public decimal CalculateExpectedInterest(SavingsAccount savingsAccount, decimal depositAmount, int years)                 
+    {
+        if (depositAmount <= 0 || years <= 0)
+        {
+            return 0m;
+        }
+
+        decimal interestRate = savingsAccount.InterestRate;
+        decimal balance = depositAmount;
+
+        for (int year = 1; year <= years; year++)
+        {
+            balance += balance * interestRate;
+        }
+
+        return balance - depositAmount;
+    }
 }
 
