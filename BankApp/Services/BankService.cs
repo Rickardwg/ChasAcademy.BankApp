@@ -4,9 +4,10 @@ using BankApp.Repositories;
 
 namespace BankApp.Services;
 
-internal class BankService(AccountRepository repository)
+internal class BankService(AccountRepository repository, ExchangeRateService exchangeRateService)
 {
     private readonly AccountRepository _repository = repository;
+    private readonly ExchangeRateService _exchangeRateService = exchangeRateService;
 
     internal Customer ActiveUser { get; private set; }
 

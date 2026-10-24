@@ -13,7 +13,9 @@ var authenticationController = new AuthenticationController(authenticationServic
 var user = authenticationController.Run();
 
 var accountRepository = new AccountRepository();
-var bankService = new BankService(accountRepository);
+var exchangeRateService = new ExchangeRateService();
+
+var bankService = new BankService(accountRepository, exchangeRateService);
 var bankView = new BankView();
 var bankController = new BankController(bankService, bankView, accountRepository, errorMessageView);
 
