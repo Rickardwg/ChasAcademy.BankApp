@@ -32,6 +32,23 @@ internal class ExchangeRateService
 
     public bool TryUpdateRate(Currency currency, decimal sekPerUnit)
     {
-        throw new NotImplementedException();
+        // SEK is the base currency, so its rate must remain 1.
+        if (currency == Currency.SEK) 
+        {
+            return false;
+        }
+
+        if (sekPerUnit <= 0)
+        {
+            return false;
+        }
+
+        if (!_ratesInSek.ContainsKey(currency))
+        {
+            return false;
+        }
+
+        _ratesInSek[currency] = sekPerUnit;
+        return true;
     }
 }
