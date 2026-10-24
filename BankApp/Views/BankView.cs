@@ -6,10 +6,18 @@ namespace BankApp.Views;
 
 internal class BankView
 {
+    public string DisplayMenu()
+    {
+        Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
+
+        return Console.ReadLine() ?? "";
+    }
+
     public void DisplayAccounts(List<BankAccount> accounts)
     {
         foreach (var account in accounts)
         {
+            Console.WriteLine($"{account.accountType} account");
             Console.WriteLine($"Currency: {account.Currency}");
 
             if (account is PersonalAccount personalAccount)
@@ -26,41 +34,38 @@ internal class BankView
             Console.WriteLine("------------------");
         }
     }
-    public string DisplayMenu()
+
+    public T? ReadEnumChoice<T>(string title) where T : struct, Enum
     {
-        Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
+        var values = Enum.GetValues<T>();
 
-        string userChoice = "";
-        bool isRunning = true;
-        while (isRunning)
+        Console.WriteLine($"\n{title}:");
+
+        for (int i = 0; i < values.Length; i++)
         {
-            userChoice = Console.ReadLine() ?? "";
-
-            switch (userChoice)
-            {
-                case ("1"):
-                    Console.WriteLine("Redirecting to accounts...");
-                    break;
-                case ("2"):
-                    Console.WriteLine("Redirecting to transfer money...");
-                    break;
-                case ("3"):
-                    Console.WriteLine("Redirecting to Loans...");
-                    break;
-                case ("4"):
-                    Console.WriteLine("Redirecting to create account...");
-                    break;
-                case ("0"):
-                    break;
-                default:
-                    Console.WriteLine("\nPlease enter one of the valid options.\n");
-                    continue;
-            }
-
-            isRunning = false;
+            Console.WriteLine($"[{i + 1}] {values[i]}");
         }
 
-        return userChoice;
+        while (true)
+        {
+            Console.WriteLine("Select currency or enter '0' to go back:");
+            var input = Console.ReadLine();
+
+            if (int.TryParse(input, out int choice))
+            {
+                if (choice == 0)
+                {
+                    return null; // EXIT
+                }
+
+                if (choice >= 1 && choice <= values.Length)
+                {
+                    return values[choice - 1];
+                }
+            }
+
+            Console.WriteLine("Invalid choice, try again.");
+        }
     }
 
     internal string DisplayTransferMoneyMenu()
@@ -83,80 +88,14 @@ internal class BankView
         return userChoice;
     }
 
-    internal AccountType? ReadAccountTypeChoice()
-    {
-        var types = Enum.GetValues<AccountType>();
-
-        Console.WriteLine("Account Types");
-
-        for (int i = 0; i < types.Length; i++)
-        {
-            Console.WriteLine($"[{i + 1}] {types[i]}");
-        }
-
-        while (true)
-        {
-            Console.WriteLine("Select account type or enter '0' to go back:");
-            var input = Console.ReadLine();
-
-            if (int.TryParse(input, out int choice))
-            {
-                if (choice == 0)
-                {
-                    return null; // EXIT
-                }
-
-                if (choice >= 1 && choice <= types.Length)
-                {
-                    return types[choice - 1];
-                }
-            }
-
-            Console.WriteLine("Invalid choice, try again.");
-        }
-    }
-
-    internal Currency? ReadCurrencyChoice()
-    {
-        var currencies = Enum.GetValues<Currency>();
-
-        Console.WriteLine("Available Currencies");
-
-        for (int i = 0; i < currencies.Length; i++)
-        {
-            Console.WriteLine($"[{i + 1}] {currencies[i]}");
-        }
-
-        while (true)
-        {
-            Console.WriteLine("Select currency or enter '0' to go back:");
-            var input = Console.ReadLine();
-
-            if (int.TryParse(input, out int choice))
-            {
-                if (choice == 0)
-                {
-                    return null; // EXIT
-                }
-
-                if (choice >= 1 && choice <= currencies.Length)
-                {
-                    return currencies[choice - 1];
-                }
-            }
-
-            Console.WriteLine("Invalid choice, try again.");
-        }
-    }
-
     public int SelectAccount(List<PersonalAccount> accounts, string prompt)
     {
-        Console.WriteLine($"\n\t{prompt}");
+        Console.WriteLine($"\n{prompt}");
 
         for (int i = 0; i < accounts.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {accounts[i].AccountNumber} - " +
-                              $"{accounts[i].Balance} {accounts[i].Currency}");
+            Console.WriteLine($"[{i + 1}] {accounts[i].accountType} account");
+            Console.WriteLine($"Account number: {accounts[i].AccountNumber} | Balance: {accounts[i].Balance} {accounts[i].Currency}");
         }
 
         Console.Write("\nSelect account number: ");
@@ -177,11 +116,17 @@ internal class BankView
     {
         if (success)
         {
-            Console.WriteLine("Transfer successful!");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\nThe transfer has been completed successfully.");
+            Console.ResetColor();
         }
         else
         {
-            Console.WriteLine("Transfer failed!");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("\nThe transfer could not be completed.");
+            Console.ResetColor();
+
+            Console.WriteLine("Please check the account balance and transfer amount.");
         }
     }
 
@@ -242,6 +187,6 @@ internal class BankView
         Console.WriteLine("Invalid amount or number of years.");
     }
 }
- 
+
 
 

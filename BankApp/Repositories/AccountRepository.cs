@@ -22,4 +22,16 @@ internal class AccountRepository
 
         return number;
     }
+
+    internal List<BankAccount>? GetBankAccounts()
+    {
+        if (_accounts.Count > 0)
+        {
+            return _accounts;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

@@ -8,4 +8,5 @@ public class BankAccount
 
     public List<Transaction> TransactionHistory { get; set; } = [];
     public Currency Currency { get; set; }
+    public AccountType accountType { get; set; }
 }
