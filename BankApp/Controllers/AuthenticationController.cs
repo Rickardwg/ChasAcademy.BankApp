@@ -115,6 +115,11 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                         choice = _view.DisplayBackToMainMenu(allowRetry: true);
                     }
 
+                    if (choice == "0")
+                    {
+                        return null;
+                    }
+
                     break;
             }
         }
