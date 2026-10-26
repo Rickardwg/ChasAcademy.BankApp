@@ -23,7 +23,17 @@ internal class AccountRepository
         return number;
     }
 
-    internal List<BankAccount>? GetBankAccounts()
+    internal List<BankAccount>? GetBankAccountsOwnedByCustomer(Customer customer)
+    {
+        if (_accounts.Count <= 0)
+        {
+            return null;
+        }
+
+        List<BankAccount> bankAccounts = _accounts.Where(account => customer.Id == account.OwnerId).ToList();
+
+        return bankAccounts;
+    }
     {
         if (_accounts.Count > 0)
         {
