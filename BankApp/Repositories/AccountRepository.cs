@@ -34,6 +34,8 @@ internal class AccountRepository
 
         return bankAccounts;
     }
+
+    internal List<BankAccount>? GetAllBankAccounts()
     {
         if (_accounts.Count > 0)
         {

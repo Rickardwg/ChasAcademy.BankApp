@@ -25,7 +25,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
             switch (menuChoice)
             {
                 case ("1"): // Accounts
-                    List<BankAccount>? accountsToDisplay = _repository.GetBankAccounts();
+                    List<BankAccount>? accountsToDisplay = _repository.GetAllBankAccounts();
 
                     if (accountsToDisplay is not null)
                     {
@@ -38,7 +38,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("2"): // Transfer
-                    List<BankAccount>? accountsForTransfer = _repository.GetBankAccounts();
+                    List<BankAccount>? accountsForTransfer = _repository.GetAllBankAccounts();
 
                     if (accountsForTransfer is not null)
                     {
