@@ -83,7 +83,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         }
     }
 
-    private void HandleTransfer(List<PersonalAccount> accounts)
+    private void HandleSelfTransfer(List<PersonalAccount> accounts)
     {
         if (accounts.Count < 2)
         {
