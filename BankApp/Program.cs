@@ -19,7 +19,14 @@ var bankService = new BankService(accountRepository, exchangeRateService);
 var bankView = new BankView();
 var bankController = new BankController(bankService, bankView, accountRepository, errorMessageView);
 
-if (user is Customer customer)
+var adminView = new AdminView();
+var adminController = new AdminController(adminView, errorMessageView);
+
+if (user is User adminUser && user.IsAdmin)
+{
+    adminController.Run(user);
+}
+else if (user is Customer customer)
 {
     bankController.Run(customer);
 }
