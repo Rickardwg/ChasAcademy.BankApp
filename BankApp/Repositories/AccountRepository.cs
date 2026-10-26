@@ -1,4 +1,5 @@
 ﻿using BankApp.Models;
+using System.Runtime.CompilerServices;
 
 namespace BankApp.Repositories;
 
@@ -27,12 +28,25 @@ internal class AccountRepository
     {
         if (_accounts.Count <= 0)
         {
-            return null;
+            return null; // TODO: error message about no accounts in the bank
         }
 
-        List<BankAccount> bankAccounts = _accounts.Where(account => customer.Id == account.OwnerId).ToList();
+        List<BankAccount> customerOwnedAccounts = [];
 
-        return bankAccounts;
+        foreach (var account in _accounts)
+        {
+            if (account.OwnerId == customer.Id)
+            {
+                customerOwnedAccounts.Add(account);
+            }
+        }
+
+        if (customerOwnedAccounts.Count <= 0)
+        {
+            return null; // TODO: error message about that the customer has no accounts
+        }
+
+        return customerOwnedAccounts;
     }
 
     internal List<BankAccount>? GetAllBankAccounts()
