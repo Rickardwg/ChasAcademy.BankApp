@@ -129,7 +129,6 @@ internal class AuthenticationController(AuthenticationService service, Authentic
     /// Displays the login menu for a locked user and prompts them to return to the main menu.
     /// Repeats the menu if the user enters an invalid option.
     /// </summary>
-    /// <param name="user">The locked user attempting to log in.</param>
     /// <returns>Null to return to the main menu.</returns>
     private User? HandleLoginMenu()
     {
