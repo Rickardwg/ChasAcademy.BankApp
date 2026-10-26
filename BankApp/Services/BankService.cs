@@ -4,9 +4,10 @@ using BankApp.Repositories;
 
 namespace BankApp.Services;
 
-internal class BankService(AccountRepository repository)
+internal class BankService(AccountRepository repository, ExchangeRateService exchangeRateService)
 {
     private readonly AccountRepository _repository = repository;
+    private readonly ExchangeRateService _exchangeRateService = exchangeRateService;
 
     internal Customer ActiveUser { get; private set; }
 
@@ -52,30 +53,38 @@ internal class BankService(AccountRepository repository)
         {
             return false;
         }
-        if (sourceAccount.Currency != destinationAccount.Currency)
+
+        if (!_exchangeRateService.TryGetRate(sourceAccount.Currency, destinationAccount.Currency, out decimal exchangeRate))
         {
             return false;
         }
 
+        decimal destinationAmount = amount * exchangeRate;
+        bool hasConverted = sourceAccount.Currency != destinationAccount.Currency;
+
         sourceAccount.Balance -= amount;
+        destinationAccount.Balance += destinationAmount;
+
         sourceAccount.TransactionHistory.Add(new Transaction
         { 
             Type = TransactionType.Transfer,
             Amount = -amount,
             Currency = sourceAccount.Currency,
+            ConvertedAmount = hasConverted ? destinationAmount : null,
+            ConvertedCurrency = hasConverted ? destinationAccount.Currency : null,
+            ExchangeRate = hasConverted ? exchangeRate : null,
             RelatedAccountId = destinationAccount.AccountNumber,
             Desciption = $"Transfer to {destinationAccount.AccountNumber}"
         });
-
-        destinationAccount.Balance += amount;
-        // amount and currency needs to be handled differently when converting currencies is implemented.
-        // use these fields for the received amount and currency.
-        // use the "converted" properties for the source values.
+        
         destinationAccount.TransactionHistory.Add(new Transaction
         {
             Type = TransactionType.Transfer,
-            Amount = amount,
-            Currency = sourceAccount.Currency,
+            Amount = destinationAmount,
+            Currency = destinationAccount.Currency,
+            ConvertedAmount = hasConverted ? amount : null,
+            ConvertedCurrency = hasConverted ? sourceAccount.Currency : null,
+            ExchangeRate = hasConverted ? 1 / exchangeRate : null,
             RelatedAccountId = sourceAccount.AccountNumber,
             Desciption = $"Transfer from {sourceAccount.AccountNumber}"
         });
