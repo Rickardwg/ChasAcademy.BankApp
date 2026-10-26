@@ -91,8 +91,8 @@ internal class BankController(BankService service, BankView view, AccountReposit
             return;
         }
 
-        int sourceIndex = _view.SelectAccount(accounts, "Select source account:");
-        int destinationIndex = _view.SelectAccount(accounts, "Select destination account:");
+        int sourceIndex = _view.SelectOwnAccount(accounts, "Select source account:");
+        int destinationIndex = _view.SelectOwnAccount(accounts, "Select destination account:");
 
         if (sourceIndex < 0 || destinationIndex < 0 ||
             sourceIndex >= accounts.Count || destinationIndex >= accounts.Count)

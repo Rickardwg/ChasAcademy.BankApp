@@ -88,7 +88,7 @@ internal class BankView
         return userChoice;
     }
 
-    public int SelectAccount(List<PersonalAccount> accounts, string prompt)
+    public int SelectOwnAccount(List<PersonalAccount> accounts, string prompt)
     {
         Console.WriteLine($"\n{prompt}");
 
