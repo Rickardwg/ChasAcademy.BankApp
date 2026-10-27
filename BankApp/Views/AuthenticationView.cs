@@ -95,18 +95,16 @@ internal class AuthenticationView
 
     public string RetryRegistrationPrompt()
     {
-        while (true)
-        {
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]Correct this field?[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("y", "n")
+            .UseConverter(choice => choice switch
+            {
                 "y" => "Yes",
                 "n" => "Cancel registration and return to menu",
                 _ => throw new InvalidOperationException("Unexpected menu choice.")
             }));
-            {
-                return input;
-            }
-
-            Console.WriteLine("Invalid choice, try again.");
-        }
     }
 
     public void DisplayRegistrationError(RegistrationError error)
@@ -123,6 +121,6 @@ internal class AuthenticationView
             _ => throw new InvalidOperationException("Unexpected display registration error failure.")
         };
 
-        Console.WriteLine(message);
+        AnsiConsole.MarkupLine($"[red1]{message}[/]");
     }
 }
