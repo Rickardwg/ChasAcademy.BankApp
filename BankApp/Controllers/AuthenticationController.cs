@@ -134,8 +134,12 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
             _view.DisplayRegistrationError(error);
 
-            // display prompt
-            // return null if cancel
+            string choice = _view.RetryRegistrationPrompt();
+
+            if (choice == "n")
+            {
+                return null;
+            }
 
             switch (error)
             {
