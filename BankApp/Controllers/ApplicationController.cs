@@ -2,10 +2,11 @@
 
 namespace BankApp.Controllers;
 
-internal class ApplicationController(AuthenticationController authentication, BankController bank)
+internal class ApplicationController(AuthenticationController authentication, BankController bank, AdminController admin)
 {
     private readonly AuthenticationController _authentication = authentication;
     private readonly BankController _bank = bank;
+    private readonly AdminController _admin = admin;
 
     public void Run()
     {
@@ -25,7 +26,7 @@ internal class ApplicationController(AuthenticationController authentication, Ba
 
             if (user.IsAdmin)
             {
-
+                _admin.Run(user);
             }
         }
     }

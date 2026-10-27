@@ -19,10 +19,12 @@ internal static class ServiceCollectionExtensions
 
         services.AddTransient<AuthenticationController>();
         services.AddTransient<BankController>();
+        services.AddTransient<AdminController>();
         services.AddTransient<ApplicationController>();
 
         services.AddTransient<AuthenticationView>();
         services.AddTransient<BankView>();
+        services.AddTransient<AdminView>();
         services.AddTransient<ErrorMessageView>();
 
         return services;
