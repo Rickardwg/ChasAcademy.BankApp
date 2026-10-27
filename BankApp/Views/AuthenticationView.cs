@@ -98,12 +98,12 @@ internal class AuthenticationView
         var message = error switch
         {
             RegistrationError.UsernameAlreadyExists => "Username is already in use.",
-            RegistrationError.InvalidFirstName => "First name is too short.",
-            RegistrationError.InvalidLastName => "Last name is too short.",
+            RegistrationError.InvalidFirstName => "First name must contain at least 2 characters.",
+            RegistrationError.InvalidLastName => "Last name must contain at least 4 characters.",
             RegistrationError.InvalidEmailAddress => "Invalid email address format.",
             RegistrationError.InvalidPhoneNumber => "Only Swedish phone numbers are supported.",
-            RegistrationError.InvalidUsername => "Username is too short.",
-            RegistrationError.InvalidPassword => "Password is too short.",
+            RegistrationError.InvalidUsername => "Username must contain at least 5 characters.",
+            RegistrationError.InvalidPassword => "Password must contain at least 7 characters.",
             _ => throw new InvalidOperationException("Unexpected display registration error failure.")
         };
 
