@@ -1,4 +1,5 @@
 ﻿using BankApp.Enums;
+using BankApp.Enums.Errors;
 using BankApp.Models;
 
 namespace BankApp.Views;
@@ -69,5 +70,22 @@ internal class AuthenticationView
         string userPassword = Console.ReadLine() ?? "";
 
         return userPassword;
+    }
+
+    public void DisplayRegistrationError(RegistrationError error)
+    {
+        var message = error switch
+        {
+            RegistrationError.UsernameAlreadyExists => "Username is already in use.",
+            RegistrationError.InvalidFirstName => "First name is too short.",
+            RegistrationError.InvalidLastName => "Last name is too short.",
+            RegistrationError.InvalidEmailAddress => "Invalid email address format.",
+            RegistrationError.InvalidPhoneNumber => "Only Swedish phone numbers are supported.",
+            RegistrationError.InvalidUsername => "Username is too short.",
+            RegistrationError.InvalidPassword => "Password is too short.",
+            _ => throw new InvalidOperationException("Unexpected display registration error failure.")
+        };
+
+        Console.WriteLine(message);
     }
 }
