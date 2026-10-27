@@ -10,14 +10,14 @@ internal class UserRepository
         { 
             Id = Guid.NewGuid(), 
             UserName = "test", 
-            Password = "test", 
+            PasswordHash = "test", 
             IsAdmin = false
         },
         new User
         {
             Id = Guid.NewGuid(),
             UserName = "admin",
-            Password = "admin",
+            PasswordHash = "admin",
             IsAdmin = true
         }
     ];

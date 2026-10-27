@@ -26,7 +26,7 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
             return Result<User, LoginError>.Failure(LoginError.AccountLocked);
         }
 
-        if (user.Password != password)
+        if (user.PasswordHash != password)
         {
             user.FailedLoginCounter++;
 
@@ -90,7 +90,7 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
             EmailAddress = customerData.EmailAddress,
             PhoneNumber = customerData.PhoneNumber,
             UserName = customerData.UserName,
-            Password = customerData.Password
+            PasswordHash = customerData.Password
         };
 
         _repository.AddUser(customer);
