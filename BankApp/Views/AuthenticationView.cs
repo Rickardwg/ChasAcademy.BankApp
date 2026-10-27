@@ -1,4 +1,5 @@
 ﻿using BankApp.Enums;
+using BankApp.Enums.Errors;
 using BankApp.Models;
 
 namespace BankApp.Views;
@@ -34,23 +35,12 @@ internal class AuthenticationView
         Console.WriteLine("\nRegistration form:");
         Console.WriteLine("Please fill in all the following fields.\n");
 
-        Console.Write("First name: ");
-        string firstName = Console.ReadLine() ?? "";
-
-        Console.Write("Last name: ");
-        string lastName = Console.ReadLine() ?? "";
-
-        Console.Write("Email address: ");
-        string emailAddress = Console.ReadLine() ?? "";
-
-        Console.Write("Swedish phone number: ");
-        string phoneNumber = Console.ReadLine() ?? "";
-
-        Console.Write("Username: ");
-        string userName = Console.ReadLine() ?? "";
-
-        Console.Write("Password: ");
-        string password = Console.ReadLine() ?? "";
+        string firstName = ReadFirstName();
+        string lastName = ReadLastName();
+        string emailAddress = ReadEmailAddress();
+        string phoneNumber = ReadPhoneNumber();
+        string userName = ReadUsername();
+        string password = ReadPassword();
 
         return (firstName, lastName, emailAddress, phoneNumber, userName, password);
     }
@@ -63,11 +53,76 @@ internal class AuthenticationView
         return userName;
     }
 
-    public string ReadUserPassword()
+    public string ReadPassword()
     {
         Console.Write("Password: ");
         string userPassword = Console.ReadLine() ?? "";
 
         return userPassword;
+    }
+
+    public string ReadFirstName()
+    {
+        Console.Write("First Name: ");
+        string firstName = Console.ReadLine() ?? "";
+
+        return firstName;
+    }
+
+    public string ReadLastName()
+    {
+        Console.Write("Last Name: ");
+        string lastName = Console.ReadLine() ?? "";
+
+        return lastName;
+    }
+
+    public string ReadEmailAddress()
+    {
+        Console.Write("Email Address: ");
+        string emailAddress = Console.ReadLine() ?? "";
+
+        return emailAddress;
+    }
+
+    public string ReadPhoneNumber()
+    {
+        Console.Write("Swedish Phone Number: ");
+        string phoneNumber = Console.ReadLine() ?? "";
+
+        return phoneNumber;
+    }
+
+    public string RetryRegistrationPrompt()
+    {
+        while (true)
+        {
+            Console.Write("Correct this field? [y] Yes / [n] Cancel registration and return to menu: ");
+            var input = (Console.ReadLine() ?? "").Trim().ToLowerInvariant();
+
+            if (input == "y" || input == "n")
+            {
+                return input;
+            }
+
+            Console.WriteLine("Invalid choice, try again.");
+        }
+    }
+
+    public void DisplayRegistrationError(RegistrationError error)
+    {
+        var message = error switch
+        {
+            RegistrationError.UsernameAlreadyExists => "Username is already in use.",
+            RegistrationError.InvalidFirstName => "First name must contain at least 2 characters.",
+            RegistrationError.InvalidLastName => "Last name must contain at least 4 characters.",
+            RegistrationError.InvalidEmailAddress => "Invalid email address format.",
+            RegistrationError.InvalidPhoneNumber => "Only Swedish phone numbers are supported.",
+            RegistrationError.InvalidUsername => "Username must contain at least 5 characters.",
+            RegistrationError.InvalidPassword => "Password must contain at least 7 characters.",
+            _ => throw new InvalidOperationException("Unexpected display registration error failure.")
+        };
+
+        Console.WriteLine(message);
     }
 }
