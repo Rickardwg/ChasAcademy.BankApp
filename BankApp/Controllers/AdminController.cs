@@ -51,6 +51,9 @@ public class AdminController(AdminView adminView, ErrorMessageView errorMessageV
                                             break;
                                         case "2":
                                             // Customer
+                                            var customerData = _authView.DisplayRegisterMenu();
+                                            _authService.RegisterCustomer(customerData);
+
                                             showUserTypeMenu = false;
                                             showUserManagementMenu = false;
                                             break;
