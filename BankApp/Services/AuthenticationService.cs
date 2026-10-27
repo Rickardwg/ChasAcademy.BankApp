@@ -2,13 +2,15 @@
 using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Repositories;
+using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 
 namespace BankApp.Services;
 
-internal class AuthenticationService(UserRepository repository)
+internal class AuthenticationService(UserRepository repository, IPasswordHasher<User> passwordHasher)
 {
     private readonly UserRepository _repository = repository;
+    private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
 
     internal Result<User, LoginError> AuthenticateUser(string username, string password)
     {

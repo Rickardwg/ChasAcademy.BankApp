@@ -1,7 +1,9 @@
 ﻿using BankApp.Controllers;
+using BankApp.Models;
 using BankApp.Repositories;
 using BankApp.Services;
 using BankApp.Views;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BankApp.DependencyInjection;
@@ -16,6 +18,7 @@ internal static class ServiceCollectionExtensions
 
         services.AddTransient<AuthenticationService>();
         services.AddTransient<BankService>();
+        services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
         services.AddTransient<AuthenticationController>();
         services.AddTransient<BankController>();
