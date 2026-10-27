@@ -13,9 +13,17 @@ internal class AuthenticationView
     }
     public string DisplayMenu()
     {
-        Console.WriteLine("\n[1] Login \n[2] Register \n[0] Exit");
-
-        return Console.ReadLine() ?? "";
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold yellow]What would you like to do?[/]")
+            .HighlightStyle("bold yellow")
+            .AddChoices("1", "2", "0")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Login",
+                "2" => "Register",
+                "0" => "Exit",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
     }
 
     public string DisplayBackToMainMenu(bool allowRetry)
