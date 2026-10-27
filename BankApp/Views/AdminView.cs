@@ -6,7 +6,8 @@ public class AdminView
 {
     public void DisplayWelcomeMessage(User user)
     {
-        Console.WriteLine($"\nWelcome {user.UserName}!");
+        Console.WriteLine("\nAdmin portal.");
+        Console.WriteLine($"Welcome {user.UserName}!");
     }
 
     public string DisplayMenu()
