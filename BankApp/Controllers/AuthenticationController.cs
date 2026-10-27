@@ -56,25 +56,6 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                         case RegistrationError.InvalidLastName:
                             _view.DisplayRegistrationError(RegistrationError.InvalidLastName);
                             break;
-
-                        case RegistrationError.InvalidEmailAddress:
-                            _view.DisplayRegistrationError(RegistrationError.InvalidEmailAddress);
-                            break;
-
-                        case RegistrationError.InvalidPhoneNumber:
-                            _view.DisplayRegistrationError(RegistrationError.InvalidPhoneNumber);
-                            break;
-
-                        case RegistrationError.InvalidUsername:
-                            _view.DisplayRegistrationError(RegistrationError.InvalidUsername);
-                            break;
-
-                        case RegistrationError.InvalidPassword:
-                            _view.DisplayRegistrationError(RegistrationError.InvalidPassword);
-                            break;
-
-                        default:
-                            throw new InvalidOperationException("Unexpected registration failure.");
                     }
                     break;
 
