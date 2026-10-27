@@ -38,22 +38,45 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
                     var registrationResult = _service.RegisterCustomer(customerData);
 
-                    if (registrationResult is null)
+                    if (registrationResult.IsSuccess)
                     {
-                        // TODO: Display Error for each of these outcomes:
-                        // Invalid first name
-                        // Invalid last name
-                        // Invalid email address
-                        // Non-Swedish phone number
-                        // Too short username
-                        // Too short password
-                        // User already exist
-
-                        return null;
+                        return registrationResult.Value;
                     }
 
-                    // TODO: Display registration succeeded confirmation
-                    return registrationResult.Value;
+                    switch (registrationResult.Error)
+                    {
+                        case RegistrationError.UsernameAlreadyExists:
+                            _view.DisplayRegistrationError(RegistrationError.UsernameAlreadyExists);
+                            break;
+
+                        case RegistrationError.InvalidFirstName:
+                            _view.DisplayRegistrationError(RegistrationError.InvalidFirstName);
+                            break;
+
+                        case RegistrationError.InvalidLastName:
+                            _view.DisplayRegistrationError(RegistrationError.InvalidLastName);
+                            break;
+
+                        case RegistrationError.InvalidEmailAddress:
+                            _view.DisplayRegistrationError(RegistrationError.InvalidEmailAddress);
+                            break;
+
+                        case RegistrationError.InvalidPhoneNumber:
+                            _view.DisplayRegistrationError(RegistrationError.InvalidPhoneNumber);
+                            break;
+
+                        case RegistrationError.InvalidUsername:
+                            _view.DisplayRegistrationError(RegistrationError.InvalidUsername);
+                            break;
+
+                        case RegistrationError.InvalidPassword:
+                            _view.DisplayRegistrationError(RegistrationError.InvalidPassword);
+                            break;
+
+                        default:
+                            throw new InvalidOperationException("Unexpected registration failure.");
+                    }
+                    break;
 
                 case "0":
                     return null;
