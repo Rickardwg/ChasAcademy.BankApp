@@ -35,23 +35,12 @@ internal class AuthenticationView
         Console.WriteLine("\nRegistration form:");
         Console.WriteLine("Please fill in all the following fields.\n");
 
-        Console.Write("First name: ");
-        string firstName = Console.ReadLine() ?? "";
-
-        Console.Write("Last name: ");
-        string lastName = Console.ReadLine() ?? "";
-
-        Console.Write("Email address: ");
-        string emailAddress = Console.ReadLine() ?? "";
-
-        Console.Write("Swedish phone number: ");
-        string phoneNumber = Console.ReadLine() ?? "";
-
-        Console.Write("Username: ");
-        string userName = Console.ReadLine() ?? "";
-
-        Console.Write("Password: ");
-        string password = Console.ReadLine() ?? "";
+        string firstName = ReadFirstName();
+        string lastName = ReadLastName();
+        string emailAddress = ReadEmailAddress();
+        string phoneNumber = ReadPhoneNumber();
+        string userName = ReadUsername();
+        string password = ReadPassword();
 
         return (firstName, lastName, emailAddress, phoneNumber, userName, password);
     }
@@ -64,12 +53,44 @@ internal class AuthenticationView
         return userName;
     }
 
-    public string ReadUserPassword()
+    public string ReadPassword()
     {
         Console.Write("Password: ");
         string userPassword = Console.ReadLine() ?? "";
 
         return userPassword;
+    }
+
+    public string ReadFirstName()
+    {
+        Console.Write("First Name: ");
+        string firstName = Console.ReadLine() ?? "";
+
+        return firstName;
+    }
+
+    public string ReadLastName()
+    {
+        Console.Write("Last Name: ");
+        string lastName = Console.ReadLine() ?? "";
+
+        return lastName;
+    }
+
+    public string ReadEmailAddress()
+    {
+        Console.Write("Email Address: ");
+        string emailAddress = Console.ReadLine() ?? "";
+
+        return emailAddress;
+    }
+
+    public string ReadPhoneNumber()
+    {
+        Console.Write("Swedish Phone Number: ");
+        string phoneNumber = Console.ReadLine() ?? "";
+
+        return phoneNumber;
     }
 
     public void DisplayRegistrationError(RegistrationError error)
