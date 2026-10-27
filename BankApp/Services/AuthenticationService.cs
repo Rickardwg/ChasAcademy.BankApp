@@ -52,44 +52,36 @@ internal class AuthenticationService(UserRepository repository)
 
         if (customerData.FirstName.Length < 2)
         {
-            // TODO: signal "first name too short" to AuthenticationController
             return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidFirstName);
         }
 
         if (customerData.LastName.Length < 4)
         {
-            // TODO: signal "last name too short" to AuthenticationController
             return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidLastName);
         }
 
         if (!IsValidEmailAddress(customerData.EmailAddress))
         {
-            // TODO: signal "unvalid email address" to AuthenticationController
             return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidEmailAddress);
         }
 
         if (!IsValidPhoneNumber(customerData.PhoneNumber))
         {
-            // TODO: signal "non-swedish phone number" to AuthenticationController
             return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidPhoneNumber);
         }
 
         if (customerData.UserName.Length < 5)
         {
-            // TODO: signal "username too short" to AuthenticationController
             return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidUsername);
         }
 
         if (customerData.Password.Length < 7)
         {
-            // TODO: signal "password too short" to AuthenticationController
             return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidPassword);
         }
             
         Customer customer = new Customer
         {
-            // Not assigned here, so they keep their defaults:
-            // IsLocked = false, IsAdmin = false, FailedLoginCounter = 0
             Id = Guid.NewGuid(),
             FirstName = customerData.FirstName,
             LastName = customerData.LastName,
@@ -100,11 +92,7 @@ internal class AuthenticationService(UserRepository repository)
         };
 
         _repository.AddUser(customer);
-        // TODO: signal "registration success" to AuthenticationController
         return Result<Customer, RegistrationError>.Success(customer);
-
-        // TODO: signal "customer already exists" to AuthenticationController
-        
     }
 
     // Validates email address
