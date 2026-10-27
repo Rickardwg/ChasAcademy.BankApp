@@ -188,18 +188,18 @@ internal class BankView
         Console.WriteLine("Invalid amount or number of years.");
     }
 
-    public void DisplayLoanInterestPreview
-        (decimal amount, decimal interestRate, decimal totalInterest, decimal totalAmount)
+    public void DisplayLoanPreview
+        (decimal loanAmount, decimal interestRate, int years,  decimal totalInterest)
     {
         Console.WriteLine("\n\tLoan Preview");
         Console.WriteLine("");
 
-        Console.WriteLine($"Loan Amount:{amount}");
-        Console.WriteLine($"Annual interest: {interestRate}");
-        Console.WriteLine("");
+        Console.WriteLine($"Loan Amount:{loanAmount:F2}");
+        Console.WriteLine($"Annual interest: {interestRate:P2}");
+        Console.WriteLine($"Loan Duration: {years} years");
 
         Console.WriteLine($"Total Interest:{totalInterest:F2}");
-        Console.WriteLine($"Total Amount To Repay: {totalAmount + interestRate:F2}");
+        Console.WriteLine($"Total Amount Owed: {loanAmount + interestRate:F2}");
     }
 
     public decimal GetLoanAmount()
@@ -216,7 +216,7 @@ internal class BankView
         {
             Console.Write("Would you like to confirm this loan? (Y/N): ");
 
-            string input = Console.ReadLine().Trim().ToUpper() ?? "";
+            string input = Console.ReadLine()?.Trim().ToUpper() ?? "";
 
             if (input == "Y")
             {
@@ -227,7 +227,7 @@ internal class BankView
                 return false;
             }
 
-            Console.WriteLine("Invalid input! please answere with Y or N.");
+            Console.WriteLine("Invalid input! Please answere with Y or N.");
         }
     }
     public void DisplayLoanResult(bool success)
