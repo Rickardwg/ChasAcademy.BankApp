@@ -11,15 +11,22 @@ public class AdminView
 
     public string DisplayMenu()
     {
-        Console.WriteLine("\nMenu:");
-        Console.WriteLine("[1] Employees \n[2] Customers \n[0] Logout");
+        Console.WriteLine("\nMain menu:");
+        Console.WriteLine("[1] Manage users \n[2] Manage interest \n[3] Manage currency \n[0] Logout");
         return Console.ReadLine() ?? "";
     }
 
-    public string DisplayManagementMenu(string entityName)
+    public string DisplayUserManagementMenu()
     {
-        Console.WriteLine("\nMenu");
-        Console.WriteLine($"[1] Add new {entityName} \n[2] Remove {entityName} \n[3] Show {entityName}s \n[0] Main menu");
+        Console.WriteLine("Manage users:");
+        Console.WriteLine("[1] Add \n[2] Change \n[3] Remove \n[0] Main menu");
+        return Console.ReadLine() ?? "";
+    }
+
+    public string DisplayUserTypeMenu()
+    {
+        Console.WriteLine("\nChoose user:");
+        Console.WriteLine("[1] Admin \n[2] Customer \n[9] Go back\n[0] Main menu");
         return Console.ReadLine() ?? "";
     }
 }
