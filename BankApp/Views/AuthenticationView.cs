@@ -16,9 +16,9 @@ internal class AuthenticationView
         return Console.ReadLine() ?? "";
     }
 
-    public string DisplayBackToMainMenu(User? user)
+    public string DisplayBackToMainMenu(bool allowRetry)
     {
-        if (user is not null && user.IsLocked)
+        if (!allowRetry)
         {
             Console.WriteLine("\nOption: \n[0] Main menu");
         }
