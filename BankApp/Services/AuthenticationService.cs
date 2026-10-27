@@ -9,35 +9,43 @@ namespace BankApp.Services;
 internal class AuthenticationService(UserRepository repository)
 {
     private readonly UserRepository _repository = repository;
+    private const int MaxFailedLoginAttemps = 3;
+    private int _failedLoginAttempts = 0;
 
     internal Result<User, LoginError> AuthenticateUser(string username, string password)
     {
+        if (_failedLoginAttempts == MaxFailedLoginAttemps)
+        {
+            return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
+        }
+
         var user = _repository.GetByUsername(username);
 
         if (user is null)
         {
-            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
-        }
+            _failedLoginAttempts++;
 
-        if (user.IsLocked)
-        {
-            return Result<User, LoginError>.Failure(LoginError.AccountLocked);
-        }
-
-        if (user.Password != password)
-        {
-            user.FailedLoginCounter++;
-
-            if (user.FailedLoginCounter >= 3)
+            if (_failedLoginAttempts == MaxFailedLoginAttemps)
             {
-                user.IsLocked = true;
-                return Result<User, LoginError>.Failure(LoginError.AccountLocked);
+                return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
             }
 
             return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
         }
 
-        user.FailedLoginCounter = 0; // Reset counter on successful login
+        if (user.Password != password)
+        {
+            _failedLoginAttempts++;
+
+            if (_failedLoginAttempts == MaxFailedLoginAttemps)
+            {
+                return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
+            }
+
+            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
+        }
+
+        _failedLoginAttempts = 0; // Reset counter on successful login
         return Result<User, LoginError>.Success(user);
     }
 
