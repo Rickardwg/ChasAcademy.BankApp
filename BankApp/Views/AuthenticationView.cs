@@ -8,7 +8,8 @@ internal class AuthenticationView
 {
     public void DisplayWelcomeMessage()
     {
-        Console.WriteLine("Welcome! What do you want to do?");
+        var figlet = new FigletText("Bank of Aldor") { Justification = Justify.Center }.Color(Color.Yellow);
+        AnsiConsole.Write(figlet);
     }
     public string DisplayMenu()
     {
