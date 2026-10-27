@@ -36,9 +36,9 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                 case "2": // Register
                     var customerData = _view.DisplayRegisterMenu();
 
-                    var customer = _service.RegisterCustomer(customerData);
+                    var registrationResult = _service.RegisterCustomer(customerData);
 
-                    if (customer is null)
+                    if (registrationResult is null)
                     {
                         // TODO: Display Error for each of these outcomes:
                         // Invalid first name
@@ -53,7 +53,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
 
                     // TODO: Display registration succeeded confirmation
-                    return customer;
+                    return registrationResult.Value;
 
                 case "0":
                     return null;
