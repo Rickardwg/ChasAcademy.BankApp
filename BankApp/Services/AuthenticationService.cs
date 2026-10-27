@@ -1,4 +1,6 @@
-﻿using BankApp.Models;
+﻿using BankApp.Common.Results;
+using BankApp.Enums.Errors;
+using BankApp.Models;
 using BankApp.Repositories;
 using System.Text.RegularExpressions;
 
@@ -8,18 +10,18 @@ internal class AuthenticationService(UserRepository repository)
 {
     private readonly UserRepository _repository = repository;
 
-    internal User? AuthenticateUser(string username, string password)
+    internal Result<User, LoginError> AuthenticateUser(string username, string password)
     {
         var user = _repository.GetByUsername(username);
 
         if (user is null)
         {
-            return null;
+            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
         }
 
         if (user.IsLocked)
         {
-            return user;
+            return Result<User, LoginError>.Failure(LoginError.AccountLocked);
         }
 
         if (user.Password != password)
@@ -29,14 +31,14 @@ internal class AuthenticationService(UserRepository repository)
             if (user.FailedLoginCounter >= 3)
             {
                 user.IsLocked = true;
-                return user;
+                return Result<User, LoginError>.Failure(LoginError.AccountLocked);
             }
 
-            return null;
+            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
         }
 
         user.FailedLoginCounter = 0; // Reset counter on successful login
-        return user;
+        return Result<User, LoginError>.Success(user);
     }
 
     internal Customer? RegisterCustomer((string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) customerData)

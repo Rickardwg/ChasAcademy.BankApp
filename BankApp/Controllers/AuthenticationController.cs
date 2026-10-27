@@ -1,4 +1,6 @@
+using BankApp.Common.Results;
 using BankApp.Enums;
+using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
@@ -76,23 +78,28 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             var username = _view.ReadUsername();
             var password = _view.ReadUserPassword();
 
-            User? user = _service.AuthenticateUser(username, password);
+            Result<User, LoginError> loginResult = _service.AuthenticateUser(username, password);
 
-            if (user is null)
+            if (loginResult.IsSuccess)
             {
-                _errorMessageView.DisplayErrorMessage(ErrorMessages.UserNotFound);
-            }
-            else if (user.IsLocked)
-            {
-                _errorMessageView.DisplayErrorMessage(ErrorMessages.LockedAccount);
-                return HandleLoginMenu(user);
-            }
-            else
-            {
-                return user;
+                return loginResult.Value;
             }
 
-            var choice = _view.DisplayBackToMainMenu(null);
+            switch (loginResult.Error)
+            {
+                case LoginError.InvalidCredentials:
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.UserNotFound);
+                    break;
+
+                case LoginError.AccountLocked:
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.LockedAccount);
+                    return HandleLoginMenu();
+
+                default:
+                    throw new InvalidOperationException("Unexpected login failure.");
+            }
+
+            var choice = _view.DisplayBackToMainMenu(allowRetry: true);
 
             switch (choice)
             {
@@ -105,7 +112,12 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
                     while (choice != "0" && choice != "1")
                     {
-                        choice = _view.DisplayBackToMainMenu(null);
+                        choice = _view.DisplayBackToMainMenu(allowRetry: true);
+                    }
+
+                    if (choice == "0")
+                    {
+                        return null;
                     }
 
                     break;
@@ -117,13 +129,12 @@ internal class AuthenticationController(AuthenticationService service, Authentic
     /// Displays the login menu for a locked user and prompts them to return to the main menu.
     /// Repeats the menu if the user enters an invalid option.
     /// </summary>
-    /// <param name="user">The locked user attempting to log in.</param>
     /// <returns>Null to return to the main menu.</returns>
-    private User? HandleLoginMenu(User user)
+    private User? HandleLoginMenu()
     {
         while (true)
         {
-            var choice = _view.DisplayBackToMainMenu(user);
+            var choice = _view.DisplayBackToMainMenu(allowRetry: false);
 
             switch (choice)
             {
