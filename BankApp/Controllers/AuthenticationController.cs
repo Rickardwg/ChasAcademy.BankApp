@@ -4,6 +4,7 @@ using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
+using System.Security.AccessControl;
 
 namespace BankApp.Controllers;
 
@@ -24,6 +25,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             switch (menuChoice)
             {
                 case "1": // Log in
+                {
                     User? user = Login();
 
                     if (user is not null)
@@ -32,32 +34,19 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
 
                     break;
+                }
 
                 case "2": // Register
-                    var customerData = _view.DisplayRegisterMenu();
+                {
+                    User? user = Register();
 
-                    var registrationResult = _service.RegisterCustomer(customerData);
-
-                    if (registrationResult.IsSuccess)
+                    if (user is not null)
                     {
-                        return registrationResult.Value;
+                        return user;
                     }
 
-                    switch (registrationResult.Error)
-                    {
-                        case RegistrationError.UsernameAlreadyExists:
-                            _view.DisplayRegistrationError(RegistrationError.UsernameAlreadyExists);
-                            break;
-
-                        case RegistrationError.InvalidFirstName:
-                            _view.DisplayRegistrationError(RegistrationError.InvalidFirstName);
-                            break;
-
-                        case RegistrationError.InvalidLastName:
-                            _view.DisplayRegistrationError(RegistrationError.InvalidLastName);
-                            break;
-                    }
                     break;
+                }
 
                 case "0":
                     return null;
@@ -80,7 +69,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
         while (true)
         {
             var username = _view.ReadUsername();
-            var password = _view.ReadUserPassword();
+            var password = _view.ReadPassword();
 
             Result<User, LoginError> loginResult = _service.AuthenticateUser(username, password);
 
@@ -125,6 +114,58 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
 
                     break;
+            }
+        }
+    }
+
+    private User? Register()
+    {
+        var customerData = _view.DisplayRegisterMenu();
+
+        while (true)
+        {
+            var registrationResult = _service.RegisterCustomer(customerData);
+
+            if (registrationResult.IsSuccess)
+            {
+                return registrationResult.Value;
+            }
+
+            RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
+            _view.DisplayRegistrationError(error);
+
+            // display prompt
+            // return null if cancel
+
+            switch (error)
+            {
+                case RegistrationError.UsernameAlreadyExists:
+                case RegistrationError.InvalidUsername:
+                    customerData.UserName = _view.ReadUsername();
+                    break;
+
+                case RegistrationError.InvalidFirstName:
+                    customerData.FirstName = _view.ReadFirstName();
+                    break;
+
+                case RegistrationError.InvalidLastName:
+                    customerData.LastName = _view.ReadLastName();
+                    break;
+
+                case RegistrationError.InvalidEmailAddress:
+                    customerData.EmailAddress = _view.ReadEmailAddress();
+                    break;
+
+                case RegistrationError.InvalidPhoneNumber:
+                    customerData.PhoneNumber = _view.ReadPhoneNumber();
+                    break;
+
+                case RegistrationError.InvalidPassword:
+                    customerData.Password = _view.ReadPassword();
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unexpected registration failure.");
             }
         }
     }

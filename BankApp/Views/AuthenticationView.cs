@@ -93,6 +93,22 @@ internal class AuthenticationView
         return phoneNumber;
     }
 
+    public string RetryRegistrationPrompt()
+    {
+        while (true)
+        {
+            Console.Write("Correct this field? [y] Yes / [n] Cancel registration and return to menu: ");
+            var input = (Console.ReadLine() ?? "").Trim().ToLowerInvariant();
+
+            if (input == "y" || input == "n")
+            {
+                return input;
+            }
+
+            Console.WriteLine("Invalid choice, try again.");
+        }
+    }
+
     public void DisplayRegistrationError(RegistrationError error)
     {
         var message = error switch
