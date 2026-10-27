@@ -26,7 +26,9 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
             return Result<User, LoginError>.Failure(LoginError.AccountLocked);
         }
 
-        if (user.PasswordHash != password)
+        PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        if (verificationResult == PasswordVerificationResult.Failed)
         {
             user.FailedLoginCounter++;
 
@@ -37,6 +39,11 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
             }
 
             return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
+        }
+
+        if (verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.PasswordHash = _passwordHasher.HashPassword(user, password);
         }
 
         user.FailedLoginCounter = 0; // Reset counter on successful login
