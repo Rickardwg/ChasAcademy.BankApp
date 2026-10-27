@@ -5,12 +5,6 @@ namespace BankApp.Views;
 
 internal class AuthenticationView
 {
-    public void DisplayWelcomeMessage()
-    {
-        var figlet = new FigletText("Bank of Aldor") { Justification = Justify.Center }.Color(Color.Gold1);
-        AnsiConsole.Write(figlet);
-    }
-
     public string DisplayMenu()
     {
         return AnsiConsole.Prompt(new SelectionPrompt<string>()
