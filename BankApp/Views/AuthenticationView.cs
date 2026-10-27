@@ -28,7 +28,10 @@ internal class AuthenticationView
 
     public string DisplayBackToMainMenu(bool allowRetry)
     {
-        if (!allowRetry)
+        var prompt = new SelectionPrompt<string>()
+            .Title("[bold yellow]What would you like to do?[/]")
+            .HighlightStyle("bold yellow")
+            .UseConverter(choice => choice switch
         {
             Console.WriteLine("\nOption: \n[0] Main menu");
         }
