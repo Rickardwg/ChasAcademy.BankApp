@@ -39,7 +39,9 @@ internal class AuthenticationView
         {
             Console.WriteLine("\nOptions: \n[1] Try again \n[0] Main menu");
         }
-        return Console.ReadLine() ?? "";
+
+        prompt.AddChoice("0");
+        return AnsiConsole.Prompt(prompt);
     }
 
     public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) DisplayRegisterMenu()
