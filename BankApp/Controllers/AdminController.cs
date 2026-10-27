@@ -1,5 +1,3 @@
-using System.Net.Security;
-using System.Runtime.CompilerServices;
 using BankApp.Enums;
 using BankApp.Models;
 using BankApp.Services;
@@ -26,69 +24,7 @@ internal class AdminController(AdminView adminView, AuthenticationView authentic
             switch (mainMenuChoice)
             {
                 case "1": // Manage users
-
-                    // Action menu
-                    bool showUserManagementMenu = true;
-
-                    while (showUserManagementMenu)
-                    {
-                        var userToManageChoice = _view.DisplayUserManagementMenu();
-
-                        switch (userToManageChoice)
-                        {
-                            case "1": // Add
-
-                                // Choose user menu
-                                bool showUserTypeMenu = true;
-
-                                while (showUserTypeMenu)
-                                {
-
-                                    var userTypeChoice = _view.DisplayUserTypeMenu();
-
-                                    switch (userTypeChoice)
-                                    {
-                                        case "1":
-                                            // Admin
-                                            showUserTypeMenu = false;
-                                            showUserManagementMenu = false;
-                                            break;
-                                        case "2":
-                                            // Customer
-                                            var customerData = _authView.DisplayRegisterMenu();
-                                            _authService.RegisterCustomer(customerData);
-
-                                            showUserTypeMenu = false;
-                                            showUserManagementMenu = false;
-                                            break;
-                                        case "9": // Go back
-                                            showUserTypeMenu = false;
-                                            break;
-                                        case "0": // Return to Main Menu
-                                            showUserTypeMenu = false;
-                                            showUserManagementMenu = false;
-                                            break;
-                                        default:
-                                            _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
-                                            break;
-                                    }
-                                }
-                                break;
-                            case "2":
-                                // Change
-                                break;
-                            case "3":
-                                // Remove
-                                break;
-                            case "0":
-                                // Return to Main Menu
-                                showUserManagementMenu = false;
-                                break;
-                            default:
-                                _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
-                                break;
-                        }
-                    }
+                    ShowUserManagementMenu();
 
                     break;
                 case "2": // Manage interest
@@ -99,6 +35,74 @@ internal class AdminController(AdminView adminView, AuthenticationView authentic
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    private void ShowUserManagementMenu()
+    {
+        bool showMenu = true;
+
+        while (showMenu)
+        {
+            var userToManageChoice = _view.DisplayUserManagementMenu();
+
+            switch (userToManageChoice)
+            {
+                case "1": // Add
+                    bool returnToMainMenu = ShowUserTypeMenu();
+
+                    if (returnToMainMenu)
+                    {
+                        showMenu = false;
+                    }
+
+                    break;
+                case "2":
+                    // Change
+                    break;
+                case "3":
+                    // Remove
+                    break;
+                case "0":
+                    // Return to Main Menu
+                    showMenu = false;
+                    break;
+                default:
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    break;
+            }
+        }
+    }
+
+    private bool ShowUserTypeMenu()
+    {
+        while (true)
+        {
+
+            var userTypeChoice = _view.DisplayUserTypeMenu();
+
+            switch (userTypeChoice)
+            {
+                case "1":
+                    // Admin
+
+                    return true; // Return to main menu
+                case "2":
+                    // Customer
+                    var customerData = _authView.DisplayRegisterMenu();
+                    _authService.RegisterCustomer(customerData);
+
+                    return true; // Return to main menu
+                case "9": // Go back
+
+                    return false; // Shows the previous menu
+                case "0":
+
+                    return true; // Return to main menu
+                default:
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    return false; // Shows the previous menu
             }
         }
     }
