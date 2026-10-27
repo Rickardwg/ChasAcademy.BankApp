@@ -97,8 +97,9 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
             EmailAddress = customerData.EmailAddress,
             PhoneNumber = customerData.PhoneNumber,
             UserName = customerData.UserName,
-            PasswordHash = customerData.Password
         };
+
+        customer.PasswordHash = _passwordHasher.HashPassword(customer, customerData.Password); // user-object is needed for hashing, customer has to be created first.
 
         _repository.AddUser(customer);
         return Result<Customer, RegistrationError>.Success(customer);
