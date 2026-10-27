@@ -32,7 +32,7 @@ internal class AdminController(AdminView adminView, AuthenticationView authentic
                 case "3": // Manage currency
                     break;
                 case "0": // TODO Logout
-                    break;
+                    return;
                 default:
                     break;
             }
