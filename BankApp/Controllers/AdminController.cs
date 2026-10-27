@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using BankApp.Enums;
 using BankApp.Models;
 using BankApp.Views;
@@ -15,31 +16,66 @@ public class AdminController(AdminView adminView, ErrorMessageView errorMessageV
 
         while (true)
         {
+            // Main menu
             var mainMenuChoice = _view.DisplayMenu();
 
             switch (mainMenuChoice)
             {
-                case "1":
-                    bool showEmployeeMenu = true;
+                case "1": // Manage users
 
-                    while (showEmployeeMenu)
+                    // Action menu
+                    bool showUserManagementMenu = true;
+
+                    while (showUserManagementMenu)
                     {
-                        var employeeMenuChoice = _view.DisplayManagementMenu("employee");
+                        var userToManageChoice = _view.DisplayUserManagementMenu();
 
-                        switch (employeeMenuChoice)
+                        switch (userToManageChoice)
                         {
-                            case "1":
-                                // TODO add new employee
+                            case "1": // Add
+
+                                // Choose user menu
+                                bool showUserTypeMenu = true;
+
+                                while (showUserTypeMenu)
+                                {
+
+                                    var userTypeChoice = _view.DisplayUserTypeMenu();
+
+                                    switch (userTypeChoice)
+                                    {
+                                        case "1":
+                                            // Admin
+                                            showUserTypeMenu = false;
+                                            showUserManagementMenu = false;
+                                            break;
+                                        case "2":
+                                            // Customer
+                                            showUserTypeMenu = false;
+                                            showUserManagementMenu = false;
+                                            break;
+                                        case "9": // Go back
+                                            showUserTypeMenu = false;
+                                            break;
+                                        case "0": // Return to Main Menu
+                                            showUserTypeMenu = false;
+                                            showUserManagementMenu = false;
+                                            break;
+                                        default:
+                                            _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                                            break;
+                                    }
+                                }
                                 break;
                             case "2":
-                                // TODO remove employee
+                                // Change
                                 break;
                             case "3":
-                                // TODO show employees
+                                // Remove
                                 break;
                             case "0":
                                 // Return to Main Menu
-                                showEmployeeMenu = false;
+                                showUserManagementMenu = false;
                                 break;
                             default:
                                 _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
@@ -48,35 +84,11 @@ public class AdminController(AdminView adminView, ErrorMessageView errorMessageV
                     }
 
                     break;
-                case "2":
-                    bool showCustomerMenu = true;
-
-                    while (showCustomerMenu)
-                    {
-                        var customerMenuChoice = _view.DisplayManagementMenu("customer");
-
-                        switch (customerMenuChoice)
-                        {
-                            case "1":
-                                // TODO add new customer
-                                break;
-                            case "2":
-                                // TODO remove customer
-                                break;
-                            case "3":
-                                // TODO show customers
-                                break;
-                            case "0":
-                                // Return to Main Menu
-                                showCustomerMenu = false;
-                                break;
-                            default:
-                                _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
-                                break;
-                        }
-                    }
+                case "2": // Manage interest
                     break;
-                case "0":
+                case "3": // Manage currency
+                    break;
+                case "0": // Logout
                     break;
                 default:
                     break;
