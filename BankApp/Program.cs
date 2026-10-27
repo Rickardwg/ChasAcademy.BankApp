@@ -20,7 +20,7 @@ var bankView = new BankView();
 var bankController = new BankController(bankService, bankView, accountRepository, errorMessageView);
 
 var adminView = new AdminView();
-var adminController = new AdminController(adminView, errorMessageView);
+var adminController = new AdminController(adminView, authenticationView, authenticationService, errorMessageView);
 
 if (user is User adminUser && user.IsAdmin)
 {

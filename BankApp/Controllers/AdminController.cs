@@ -1,13 +1,17 @@
+using System.Net.Security;
 using System.Runtime.CompilerServices;
 using BankApp.Enums;
 using BankApp.Models;
+using BankApp.Services;
 using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-public class AdminController(AdminView adminView, ErrorMessageView errorMessageView)
+internal class AdminController(AdminView adminView, AuthenticationView authenticationView, AuthenticationService authenticationService, ErrorMessageView errorMessageView)
 {
     private readonly AdminView _view = adminView;
+    private readonly AuthenticationView _authView = authenticationView;
+    private readonly AuthenticationService _authService = authenticationService;
     private readonly ErrorMessageView _errorMessageView = errorMessageView;
 
     internal void Run(User user)
