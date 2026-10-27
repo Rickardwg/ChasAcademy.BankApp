@@ -97,10 +97,10 @@ internal class AuthenticationView
     {
         while (true)
         {
-            Console.Write("Correct this field? [y] Yes / [n] Cancel registration and return to menu: ");
-            var input = (Console.ReadLine() ?? "").Trim().ToLowerInvariant();
-
-            if (input == "y" || input == "n")
+                "y" => "Yes",
+                "n" => "Cancel registration and return to menu",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
             {
                 return input;
             }
