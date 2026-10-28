@@ -30,6 +30,8 @@ internal class BankView
                 Console.WriteLine($"Amount Owed: {loanAccount.Owed}");
             }
 
+            Console.WriteLine($"Account Number: {account.AccountNumber}");
+
             // Visual separator between accounts in console window.
             Console.WriteLine("------------------");
         }
