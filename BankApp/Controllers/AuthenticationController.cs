@@ -84,7 +84,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     _errorMessageView.DisplayErrorMessage(ErrorMessages.UserNotFound);
                     break;
 
-                case LoginError.AccountLocked:
+                case LoginError.LoginLimitReached:
                     _errorMessageView.DisplayErrorMessage(ErrorMessages.LockedAccount);
                     return HandleLoginMenu();
 
