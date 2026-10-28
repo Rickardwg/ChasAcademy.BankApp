@@ -90,7 +90,35 @@ internal class BankView
         return userChoice;
     }
 
-    public int SelectOwnAccount(List<PersonalAccount> accounts, string prompt)
+    public int SelectOwnAccount(List<BankAccount> accounts, string prompt)
+    {
+        Console.WriteLine($"\n{prompt}");
+
+        for (int i = 0; i < accounts.Count; i++)
+        {
+            Console.WriteLine($"\n[{i + 1}] {accounts[i].accountType} account");
+            Console.Write($"Account number: {accounts[i].AccountNumber} | ");
+
+            string details = accounts[i] switch
+            {
+                PersonalAccount p => $"Balance: {p.Balance} ", // also covers SavingsAccount
+                LoanAccount l => $"Owed: {l.Owed} ",
+                _ => ""
+            };
+
+            Console.Write(details);
+
+            Console.Write($"{accounts[i].Currency}\n");
+        }
+
+        Console.Write("\nSelect account number: ");
+
+        int.TryParse(Console.ReadLine(), out int selection);
+
+        return selection - 1;
+    }
+
+    public int SelectOtherCustomerAccount(List<PersonalAccount> accounts, string prompt)
     {
         Console.WriteLine($"\n{prompt}");
 
