@@ -132,4 +132,16 @@ internal class BankController(BankService service, BankView view, AccountReposit
         _view.DisplayInterestPreview
             (depositAmount, savingsAccount.InterestRate, years, expectedInterest);
     }
+
+    public void HandleBorrowMoney(LoanAccount loanAccount)
+    {
+        decimal borrowAmount = _view.GetLoanAmount();
+        int years = _view.GetInterestYears();  // Todo: refactor method name since we're able to reuse method 
+
+        if (borrowAmount <= 0 || years <= 0)
+        {
+            _view.DisplayInvalidLoanInput();
+            return;
+        }
+    }
 }
