@@ -11,31 +11,39 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
 {
     private readonly UserRepository _repository = repository;
     private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
+    private const int MaxFailedLoginAttemps = 3;
+    private int _failedLoginAttempts = 0;
 
     internal Result<User, LoginError> AuthenticateUser(string username, string password)
     {
+        if (_failedLoginAttempts == MaxFailedLoginAttemps)
+        {
+            return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
+        }
+
         var user = _repository.GetByUsername(username);
 
         if (user is null)
         {
-            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
-        }
+            _failedLoginAttempts++;
 
-        if (user.IsLocked)
-        {
-            return Result<User, LoginError>.Failure(LoginError.AccountLocked);
+            if (_failedLoginAttempts == MaxFailedLoginAttemps)
+            {
+                return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
+            }
+
+            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
         }
 
         PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
 
         if (verificationResult == PasswordVerificationResult.Failed)
         {
-            user.FailedLoginCounter++;
+            _failedLoginAttempts++;
 
-            if (user.FailedLoginCounter >= 3)
+            if (_failedLoginAttempts == MaxFailedLoginAttemps)
             {
-                user.IsLocked = true;
-                return Result<User, LoginError>.Failure(LoginError.AccountLocked);
+                return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
             }
 
             return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
@@ -46,7 +54,7 @@ internal class AuthenticationService(UserRepository repository, IPasswordHasher<
             user.PasswordHash = _passwordHasher.HashPassword(user, password);
         }
 
-        user.FailedLoginCounter = 0; // Reset counter on successful login
+        _failedLoginAttempts = 0; // Reset counter on successful login
         return Result<User, LoginError>.Success(user);
     }
 

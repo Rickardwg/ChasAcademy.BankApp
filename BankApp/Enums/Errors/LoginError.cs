@@ -3,5 +3,5 @@
 internal enum LoginError
 {
     InvalidCredentials,
-    AccountLocked
+    LoginLimitReached
 }
