@@ -10,14 +10,14 @@ internal class UserRepository
         { 
             Id = Guid.NewGuid(), 
             UserName = "test", 
-            Password = "test", 
+            PasswordHash = "AQAAAAIAAYagAAAAEE4bvuDIujhSBmdHGt9Wp0LaIRXailt7Y/S/JsblpNPFIeSCdMtEm+L/enahIUy8LQ==", // "test"
             IsAdmin = false
         },
         new User
         {
             Id = Guid.NewGuid(),
             UserName = "admin",
-            Password = "admin",
+            PasswordHash = "AQAAAAIAAYagAAAAEGvWqRz58L2F5Vo0LiptrwDgGGLu8W119w79D6t8MCA5Z4mZgAwGD0BGJDHknWDXIg==", // "admin"
             IsAdmin = true
         }
     ];
