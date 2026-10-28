@@ -23,7 +23,6 @@ internal class BankView
             if (account is PersonalAccount personalAccount)
             {
                 Console.WriteLine($"Balance: {personalAccount.Balance}");
-                Console.WriteLine($"Account Number: {personalAccount.AccountNumber}");
             }
             else if (account is LoanAccount loanAccount)
             {
