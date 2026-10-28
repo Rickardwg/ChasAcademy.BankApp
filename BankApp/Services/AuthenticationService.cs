@@ -2,13 +2,15 @@
 using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Repositories;
+using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 
 namespace BankApp.Services;
 
-internal class AuthenticationService(UserRepository repository)
+internal class AuthenticationService(UserRepository repository, IPasswordHasher<User> passwordHasher)
 {
     private readonly UserRepository _repository = repository;
+    private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
     private const int MaxFailedLoginAttemps = 3;
     private int _failedLoginAttempts = 0;
 
@@ -33,7 +35,9 @@ internal class AuthenticationService(UserRepository repository)
             return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
         }
 
-        if (user.Password != password)
+        PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        if (verificationResult == PasswordVerificationResult.Failed)
         {
             _failedLoginAttempts++;
 
@@ -43,6 +47,11 @@ internal class AuthenticationService(UserRepository repository)
             }
 
             return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
+        }
+
+        if (verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.PasswordHash = _passwordHasher.HashPassword(user, password);
         }
 
         _failedLoginAttempts = 0; // Reset counter on successful login
@@ -96,8 +105,9 @@ internal class AuthenticationService(UserRepository repository)
             EmailAddress = customerData.EmailAddress,
             PhoneNumber = customerData.PhoneNumber,
             UserName = customerData.UserName,
-            Password = customerData.Password
         };
+
+        customer.PasswordHash = _passwordHasher.HashPassword(customer, customerData.Password); // user-object is needed for hashing, customer has to be created first.
 
         _repository.AddUser(customer);
         return Result<Customer, RegistrationError>.Success(customer);
