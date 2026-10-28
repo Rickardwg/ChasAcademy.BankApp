@@ -4,7 +4,6 @@ using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
-using System.Security.AccessControl;
 
 namespace BankApp.Controllers;
 
@@ -16,10 +15,9 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
     internal User? Run() // return null to exit
     {
-        _view.DisplayWelcomeMessage();
-
         while (true)
         {
+            ConsoleHeader.DisplayLogo();
             var menuChoice = _view.DisplayMenu();
 
             switch (menuChoice)
@@ -68,6 +66,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
     {
         while (true)
         {
+            ConsoleHeader.DisplayLogo();
             var username = _view.ReadUsername();
             var password = _view.ReadPassword();
 
@@ -77,6 +76,8 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             {
                 return loginResult.Value;
             }
+
+            ConsoleHeader.DisplayLogo();
 
             switch (loginResult.Error)
             {
@@ -120,6 +121,7 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
     private User? Register()
     {
+        ConsoleHeader.DisplayLogo();
         var customerData = _view.DisplayRegisterMenu();
 
         while (true)
@@ -132,6 +134,8 @@ internal class AuthenticationController(AuthenticationService service, Authentic
             }
 
             RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
+
+            ConsoleHeader.DisplayLogo();
             _view.DisplayRegistrationError(error);
 
             string choice = _view.RetryRegistrationPrompt();
