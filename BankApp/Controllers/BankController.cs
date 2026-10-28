@@ -111,31 +111,49 @@ internal class BankController(BankService service, BankView view, AccountReposit
         }
     }
 
-    private void HandleSelfTransfer(List<PersonalAccount> accounts)
+    private void HandleSelfTransfer(List<BankAccount> accounts)
     {
-        if (accounts.Count < 2)
+        List<BankAccount> nonLoanAccounts = [];
+
+        foreach (BankAccount bankAccount in accounts)
         {
-            _errorMessageView.DisplayErrorMessage(ErrorMessages.NotEnoughAccounts);
+            if (bankAccount is not LoanAccount)
+            {
+                nonLoanAccounts.Add(bankAccount);
+            }
+        }
+
+        if (nonLoanAccounts.Count < 1 || accounts.Count < 2)
+        {
+            // TODO: add error message:
+            Console.WriteLine("Self transfers require two accounts, at least one of which is not a loan account."); // TEMP
             return;
         }
 
-        int sourceIndex = _view.SelectOwnAccount(accounts, "Select source account:");
+        int sourceIndex = _view.SelectOwnAccount(nonLoanAccounts, "Select source account:");
         int destinationIndex = _view.SelectOwnAccount(accounts, "Select destination account:");
 
         if (sourceIndex < 0 || destinationIndex < 0 ||
-            sourceIndex >= accounts.Count || destinationIndex >= accounts.Count)
+            sourceIndex >= nonLoanAccounts.Count || destinationIndex >= accounts.Count)
         {
             return;
         }
 
-        if (sourceIndex == destinationIndex)
+        BankAccount sourceAccount = nonLoanAccounts[sourceIndex];
+        BankAccount destinationAccount = accounts[destinationIndex];
+
+        if (sourceAccount.AccountNumber == destinationAccount.AccountNumber)
         {
             _errorMessageView.DisplayErrorMessage(ErrorMessages.SameSourceAndDestinationAccount);
             return;
         }
 
-        PersonalAccount sourceAccount = accounts[sourceIndex];
-        PersonalAccount destinationAccount = accounts[destinationIndex];
+        decimal amount = _view.GetTransferAmount();
+
+        bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
+
+        _view.DisplayTransferResult(transferSuccess);
+    }
 
         decimal amount = _view.GetTransferAmount();
 
