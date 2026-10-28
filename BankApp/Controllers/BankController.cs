@@ -25,7 +25,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
             switch (menuChoice)
             {
                 case ("1"): // Accounts
-                    List<BankAccount>? accountsToDisplay = _repository.GetAllBankAccounts();
+                    List<BankAccount>? accountsToDisplay = _repository.GetBankAccountsOwnedByCustomer(_service.ActiveUser);
 
                     if (accountsToDisplay is not null)
                     {
