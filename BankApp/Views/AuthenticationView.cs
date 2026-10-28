@@ -1,39 +1,51 @@
-﻿using BankApp.Enums;
-using BankApp.Enums.Errors;
-using BankApp.Models;
+﻿using BankApp.Enums.Errors;
+using Spectre.Console;
 
 namespace BankApp.Views;
 
 internal class AuthenticationView
 {
-    public void DisplayWelcomeMessage()
-    {
-        Console.WriteLine("Welcome! What do you want to do?");
-    }
     public string DisplayMenu()
     {
-        Console.WriteLine("\n[1] Login \n[2] Register \n[0] Exit");
-
-        return Console.ReadLine() ?? "";
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]What would you like to do?[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("1", "2", "0")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Login",
+                "2" => "Register",
+                "0" => "Exit",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
     }
 
     public string DisplayBackToMainMenu(bool allowRetry)
     {
-        if (!allowRetry)
+        var prompt = new SelectionPrompt<string>()
+            .Title("[bold gold1]What would you like to do?[/]")
+            .HighlightStyle("bold black on gold1")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Try again",
+                "0" => "Main menu",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            });
+
+        if (allowRetry)
         {
-            Console.WriteLine("\nOption: \n[0] Main menu");
+            prompt.AddChoice("1");
         }
-        else
-        {
-            Console.WriteLine("\nOptions: \n[1] Try again \n[0] Main menu");
-        }
-        return Console.ReadLine() ?? "";
+
+        prompt.AddChoice("0");
+        return AnsiConsole.Prompt(prompt);
     }
 
     public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) DisplayRegisterMenu()
     {
-        Console.WriteLine("\nRegistration form:");
-        Console.WriteLine("Please fill in all the following fields.\n");
+        AnsiConsole.MarkupLine("[bold gold1]Registration form:[/]");
+        AnsiConsole.MarkupLine("[italic grey]Please fill in all the following fields.[/]");
+        AnsiConsole.WriteLine();
 
         string firstName = ReadFirstName();
         string lastName = ReadLastName();
@@ -47,66 +59,46 @@ internal class AuthenticationView
 
     public string ReadUsername()
     {
-        Console.Write("Username: ");
-        string userName = Console.ReadLine() ?? "";
-
-        return userName;
+        return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]Username:[/]"));
     }
 
     public string ReadPassword()
     {
-        Console.Write("Password: ");
-        string userPassword = Console.ReadLine() ?? "";
-
-        return userPassword;
+        return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]Password:[/]").Secret());
     }
 
     public string ReadFirstName()
     {
-        Console.Write("First Name: ");
-        string firstName = Console.ReadLine() ?? "";
-
-        return firstName;
+        return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]First name:[/]"));
     }
 
     public string ReadLastName()
     {
-        Console.Write("Last Name: ");
-        string lastName = Console.ReadLine() ?? "";
-
-        return lastName;
+        return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]Last name:[/]"));
     }
 
     public string ReadEmailAddress()
     {
-        Console.Write("Email Address: ");
-        string emailAddress = Console.ReadLine() ?? "";
-
-        return emailAddress;
+        return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]Email address:[/]"));
     }
 
     public string ReadPhoneNumber()
     {
-        Console.Write("Swedish Phone Number: ");
-        string phoneNumber = Console.ReadLine() ?? "";
-
-        return phoneNumber;
+        return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]Swedish phone number:[/]"));
     }
 
     public string RetryRegistrationPrompt()
     {
-        while (true)
-        {
-            Console.Write("Correct this field? [y] Yes / [n] Cancel registration and return to menu: ");
-            var input = (Console.ReadLine() ?? "").Trim().ToLowerInvariant();
-
-            if (input == "y" || input == "n")
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]Correct this field?[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("y", "n")
+            .UseConverter(choice => choice switch
             {
-                return input;
-            }
-
-            Console.WriteLine("Invalid choice, try again.");
-        }
+                "y" => "Yes",
+                "n" => "Cancel registration and return to menu",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
     }
 
     public void DisplayRegistrationError(RegistrationError error)
@@ -123,6 +115,6 @@ internal class AuthenticationView
             _ => throw new InvalidOperationException("Unexpected display registration error failure.")
         };
 
-        Console.WriteLine(message);
+        AnsiConsole.MarkupLine($"[red1]{message}[/]");
     }
 }

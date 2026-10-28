@@ -102,7 +102,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     _service.CreateNewAccount(accountType, currency);
                     break;
 
-                case ("0"): // Exit
+                case ("0"): // Logout
                     return;
 
                 default: // Inaccessible

@@ -1,32 +1,9 @@
 ﻿using BankApp.Controllers;
-using BankApp.Models;
-using BankApp.Repositories;
-using BankApp.Services;
-using BankApp.Views;
+using BankApp.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
-var userRepository = new UserRepository();
-var errorMessageView = new ErrorMessageView();
-var authenticationService = new AuthenticationService(userRepository);
-var authenticationView = new AuthenticationView();
-var authenticationController = new AuthenticationController(authenticationService, authenticationView, errorMessageView);
+var services = new ServiceCollection();
+services.AddBankAppServices();
 
-var user = authenticationController.Run();
-
-var accountRepository = new AccountRepository();
-var exchangeRateService = new ExchangeRateService();
-
-var bankService = new BankService(accountRepository, exchangeRateService);
-var bankView = new BankView();
-var bankController = new BankController(bankService, bankView, accountRepository, errorMessageView);
-
-var adminView = new AdminView();
-var adminController = new AdminController(adminView, authenticationView, authenticationService, errorMessageView);
-
-if (user is User adminUser && user.IsAdmin)
-{
-    adminController.Run(user);
-}
-else if (user is Customer customer)
-{
-    bankController.Run(customer);
-}
+using var provider = services.BuildServiceProvider();
+provider.GetRequiredService<ApplicationController>().Run();
