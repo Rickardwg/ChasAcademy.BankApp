@@ -16,7 +16,7 @@ internal class AccountRepository
     {
         var number = _accounts.Count + 1;
 
-        while (_accounts.OfType<PersonalAccount>().Any(a => a.AccountNumber == number.ToString()))
+        while (_accounts.Any(a => a.AccountNumber == number.ToString()))
         {
             number++;
         }
