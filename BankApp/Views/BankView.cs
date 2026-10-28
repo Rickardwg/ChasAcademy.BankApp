@@ -123,8 +123,7 @@ internal class BankView
 
         for (int i = 0; i < accounts.Count; i++)
         {
-            Console.WriteLine($"[{i + 1}] {accounts[i].accountType} account");
-            Console.WriteLine($"Account number: {accounts[i].AccountNumber} | Balance: {accounts[i].Balance} {accounts[i].Currency}");
+            Console.WriteLine($"[{i + 1}] Account number: {accounts[i].AccountNumber}");
         }
 
         Console.Write("\nSelect account number: ");
@@ -133,6 +132,7 @@ internal class BankView
 
         return selection - 1;
     }
+
     public decimal GetTransferAmount()
     {
         Console.Write("Enter amount to transfer: ");
