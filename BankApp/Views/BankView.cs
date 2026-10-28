@@ -1,6 +1,7 @@
 ﻿using BankApp.Enums;
 using BankApp.Models;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BankApp.Views;
 
@@ -177,7 +178,7 @@ internal class BankView
     }
     public int GetInterestYears()
     {
-        Console.Write("Enter number of years: ");
+        Console.Write("Enter Years: ");
         int.TryParse(Console.ReadLine(), out int years);
 
         return years;
@@ -185,6 +186,71 @@ internal class BankView
     public void DisplayInvalidInterestInput()
     {
         Console.WriteLine("Invalid amount or number of years.");
+    }
+
+    public void DisplayLoanPreview
+        (decimal loanAmount, decimal interestRate, int years,  decimal totalInterest)
+    {
+        Console.WriteLine("\n\tLoan Preview");
+        Console.WriteLine("");
+
+        Console.WriteLine($"Loan Amount:{loanAmount:F2}");
+        Console.WriteLine($"Annual interest: {interestRate:P2}");
+        Console.WriteLine($"Loan Duration: {years} years");
+
+        Console.WriteLine($"Total Interest:{totalInterest:F2}");
+        Console.WriteLine($"Total Amount Owed: {loanAmount + interestRate:F2}");
+    }
+
+    public decimal GetLoanAmount()
+    {
+        Console.Write("Enter Loan Amount:");
+        decimal.TryParse(Console.ReadLine(), out decimal amount);
+
+        return amount;
+    }
+
+    public bool ConfirmLoan()
+    {
+        while (true)
+        {
+            Console.Write("Would you like to confirm this loan? (Y/N): ");
+
+            string input = Console.ReadLine()?.Trim().ToUpper() ?? "";
+
+            if (input == "Y")
+            {
+                return true;
+            }
+            else if (input == "N")
+            {
+                return false;
+            }
+
+            Console.WriteLine("Invalid input! Please answere with Y or N.");
+        }
+    }
+    public void DisplayLoanResult(bool success)
+    {
+        if (success)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\nYour loan has been registered successfully.");
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("\nThe loan could not be completed.");
+        }
+
+        Console.ResetColor();
+    }
+
+    public void DisplayInvalidLoanInput()
+    {
+        Console.ForegroundColor = ConsoleColor.DarkRed;
+        Console.WriteLine("\nInvalid loan amount or number of years. ");
+        Console.ResetColor();
     }
 }
 

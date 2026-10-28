@@ -109,5 +109,31 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
 
         return balance - depositAmount;
     }
+
+    public decimal CalculateLoanInterest(LoanAccount loanAccount, decimal loanAmount, int years)
+    {
+        if (loanAmount <= 0 || years <= 0 || loanAccount.InterestRate < 0)
+        {
+            return 0m;
+        }
+
+        decimal interestRate = loanAccount.InterestRate;
+
+        return loanAmount * interestRate * years;
+    }
+
+    public bool BorrowMoney(LoanAccount loanAccount, decimal loanAmount , int years)
+    {
+        if (loanAmount <= 0 || years <= 0 || loanAccount.InterestRate < 0)
+        {
+            return false;
+        }
+
+        decimal totalInterest = CalculateLoanInterest(loanAccount, loanAmount, years);
+
+        loanAccount.Owed += loanAmount + totalInterest;
+
+        return true;
+    }
 }
 
