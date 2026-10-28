@@ -32,25 +32,30 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         _repository.Add(account);
     }
 
-    public bool TransferMoney(PersonalAccount sourceAccount, PersonalAccount destinationAccount, decimal amount)
+    public bool TransferMoney(BankAccount sourceAccount, BankAccount destinationAccount, decimal amount)
     {
         if (amount <= 0)
         {
             return false;
         }
 
-        if (sourceAccount.Balance < amount)
+        if (sourceAccount is not PersonalAccount source) // also covers SavingsAccount
         {
+            // TODO: display error:
+            Console.WriteLine("You can't transfer money from a loan account"); // TEMP
             return false;
         }
 
-        if (sourceAccount.OwnerId != destinationAccount.OwnerId)
+        if (source.Balance < amount)
         {
+            // TODO: display error:
+            Console.WriteLine("Insufficient funds"); // TEMP
             return false;
         }
 
         if (ReferenceEquals(sourceAccount, destinationAccount))
         {
+            // TODO: specific error: same source and destination account
             return false;
         }
 
@@ -59,11 +64,19 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
             return false;
         }
 
+        if (destinationAccount is not PersonalAccount destination) // only personal and savings accounts can receive money for now
+        {
+            // TODO: once the rules for Owed are decided,
+            // accept destinationAccount being a loan account
+            Console.WriteLine("You can't transfer money to a loan account"); // TEMP
+            return false;
+        }
+
         decimal destinationAmount = amount * exchangeRate;
         bool hasConverted = sourceAccount.Currency != destinationAccount.Currency;
 
-        sourceAccount.Balance -= amount;
-        destinationAccount.Balance += destinationAmount;
+        source.Balance -= amount;
+        destination.Balance += destinationAmount;
 
         sourceAccount.TransactionHistory.Add(new Transaction
         { 
