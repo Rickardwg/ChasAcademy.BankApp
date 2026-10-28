@@ -49,15 +49,28 @@ internal class AccountRepository
         return customerOwnedAccounts;
     }
 
-    internal List<BankAccount>? GetAllBankAccounts()
+    internal List<BankAccount>? GetBankAccountsOwnedByOthers(Customer customer)
     {
-        if (_accounts.Count > 0)
+        if (_accounts.Count <= 0)
         {
-            return _accounts;
+            return null; // TODO: error message about no accounts in the bank
         }
-        else
+
+        List<BankAccount> accountsOwnedByOthers = [];
+
+        foreach (var account in _accounts)
         {
-            return null;
+            if (account.OwnerId != customer.Id)
+            {
+                accountsOwnedByOthers.Add(account);
+            }
         }
+
+        if (accountsOwnedByOthers.Count <= 0)
+        {
+            return null; // TODO: error message that others have no accounts
+        }
+
+        return accountsOwnedByOthers;
     }
 }
