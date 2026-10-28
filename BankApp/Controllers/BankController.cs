@@ -38,16 +38,44 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("2"): // Transfer
-                    List<BankAccount>? accountsForTransfer = _repository.GetAllBankAccounts();
+                    List<BankAccount>? ownAccountsForTransfer = _repository.GetBankAccountsOwnedByCustomer(_service.ActiveUser);
 
-                    if (accountsForTransfer is not null)
-                    {
-                        List<PersonalAccount> personalAccounts = accountsForTransfer.OfType<PersonalAccount>().ToList();
-                        HandleTransfer(personalAccounts);
-                    }
-                    else
+                    if (ownAccountsForTransfer is null)
                     {
                         _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                        break;
+                    }
+
+                    menuChoice = _view.DisplayTransferMoneyMenu();
+
+                    switch (menuChoice)
+                    {
+                        case "1": // Transfer between own accounts
+
+                            HandleSelfTransfer(ownAccountsForTransfer);
+                            break;
+
+                        case "2": // Transfer to another customer's account
+
+                            List<BankAccount>? otherAccountsForTransfer = _repository.GetBankAccountsOwnedByOthers(_service.ActiveUser);
+
+                            if (otherAccountsForTransfer is null)
+                            {
+                                // TODO: add error message that no other customers have accounts in the bank
+                                break;
+                            }
+
+                            List<PersonalAccount> otherPersonalAccounts = otherAccountsForTransfer.OfType<PersonalAccount>().ToList();
+
+                            HandleOtherCustomerTransfer(ownAccountsForTransfer, otherPersonalAccounts);
+                            break;
+
+                        case "0": // Go back to main menu
+                            break;
+
+                        default:
+                            _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                            break;
                     }
 
                     break;
