@@ -61,7 +61,8 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
                             if (otherAccountsForTransfer is null)
                             {
-                                // TODO: add error message that no other customers have accounts in the bank
+                                // TODO: add error message:
+                                Console.WriteLine("No other customers have accounts in the bank."); // TEMP
                                 break;
                             }
 
@@ -154,6 +155,46 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         _view.DisplayTransferResult(transferSuccess);
     }
+
+    private void HandleOtherCustomerTransfer(List<BankAccount> ownAccounts, List<PersonalAccount> otherAccounts)
+    {
+        List<BankAccount> nonLoanAccounts = [];
+
+        foreach (BankAccount bankAccount in ownAccounts)
+        {
+            if (bankAccount is not LoanAccount)
+            {
+                nonLoanAccounts.Add(bankAccount);
+            }
+        }
+
+        if (nonLoanAccounts.Count < 1)
+        {
+            // TODO: Create error in ErrorMessageView:
+            Console.WriteLine("You need at least one non-loan account to transfer to another customer"); // TEMP
+            return;
+        }
+
+        if (otherAccounts.Count < 1)
+        {
+            // TODO: Create error in ErrorMessageView:
+            Console.WriteLine("No other customer has an account you can send money to."); // TEMP
+            return;
+        }
+
+        int sourceIndex = _view.SelectOwnAccount(nonLoanAccounts, "Select source account:");
+        int destinationIndex = _view.SelectOtherCustomerAccount(otherAccounts, "Select destination account:");
+
+        if (sourceIndex < 0 || destinationIndex < 0 ||
+            sourceIndex >= nonLoanAccounts.Count || destinationIndex >= otherAccounts.Count)
+        {
+            return;
+        }
+
+        BankAccount sourceAccount = nonLoanAccounts[sourceIndex];
+        PersonalAccount destinationAccount = otherAccounts[destinationIndex];
+
+        // Own and others’ accounts never overlap
 
         decimal amount = _view.GetTransferAmount();
 
