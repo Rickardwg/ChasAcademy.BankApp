@@ -52,7 +52,27 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
                     break;
 
-                case ("3"): // TODO Loan
+                case ("3"):
+                   List<BankAccount>? accountsForLoan = _repository.GetBankAccounts();
+
+                    if (accountsForLoan is not null)
+                    {
+                        LoanAccount? loanAccount
+                         = accountsForLoan.OfType<LoanAccount>().FirstOrDefault(a => a.OwnerId == user.Id);
+
+                        if (loanAccount is not null)
+                        {
+                            HandleBorrowMoney(loanAccount);
+                        }
+                        else
+                        {
+                            _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                        }
+                    }
+                    else
+                    {
+                        _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                    }
                     break;
 
                 case ("4"): // Create Account
@@ -135,13 +155,28 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
     public void HandleBorrowMoney(LoanAccount loanAccount)
     {
-        decimal borrowAmount = _view.GetLoanAmount();
-        int years = _view.GetInterestYears();  // Todo: refactor method name since we're able to reuse method 
+        decimal loanAmount = _view.GetLoanAmount();
+        int years = _view.GetInterestYears();
 
-        if (borrowAmount <= 0 || years <= 0)
+        if (loanAmount <= 0 || years <= 0 || loanAccount.InterestRate <= 0)
         {
             _view.DisplayInvalidLoanInput();
             return;
         }
+
+        decimal totalInterest = _service.CalculateLoanInterest(loanAccount, loanAmount, years);
+
+        _view.DisplayLoanPreview(loanAmount, loanAccount.InterestRate, years, totalInterest);
+
+        bool isConfirmed = _view.ConfirmLoan();
+
+        if (!isConfirmed)
+        {
+            return;
+        }
+
+        bool loanSuccess = _service.BorrowMoney(loanAccount, loanAmount, years);
+
+        _view.DisplayLoanResult(loanSuccess);
     }
 }
