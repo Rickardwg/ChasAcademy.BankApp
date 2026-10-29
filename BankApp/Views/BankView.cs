@@ -1,5 +1,6 @@
 ﻿using BankApp.Enums;
 using BankApp.Models;
+using System.Drawing;
 using System.Net.Http.Headers;
 
 namespace BankApp.Views;
@@ -23,12 +24,13 @@ internal class BankView
             if (account is PersonalAccount personalAccount)
             {
                 Console.WriteLine($"Balance: {personalAccount.Balance}");
-                Console.WriteLine($"Account Number: {personalAccount.AccountNumber}");
             }
             else if (account is LoanAccount loanAccount)
             {
                 Console.WriteLine($"Amount Owed: {loanAccount.Owed}");
             }
+
+            Console.WriteLine($"Account Number: {account.AccountNumber}");
 
             // Visual separator between accounts in console window.
             Console.WriteLine("------------------");
@@ -88,22 +90,67 @@ internal class BankView
         return userChoice;
     }
 
-    public int SelectAccount(List<PersonalAccount> accounts, string prompt)
+    public int SelectOwnAccount(List<BankAccount> accounts, string prompt)
     {
         Console.WriteLine($"\n{prompt}");
 
         for (int i = 0; i < accounts.Count; i++)
         {
-            Console.WriteLine($"[{i + 1}] {accounts[i].accountType} account");
-            Console.WriteLine($"Account number: {accounts[i].AccountNumber} | Balance: {accounts[i].Balance} {accounts[i].Currency}");
+            Console.WriteLine($"\n[{i + 1}] {accounts[i].accountType} account");
+            Console.Write($"Account number: {accounts[i].AccountNumber} | ");
+
+            string details = accounts[i] switch
+            {
+                PersonalAccount p => $"Balance: {p.Balance} ", // also covers SavingsAccount
+                LoanAccount l => $"Owed: {l.Owed} ",
+                _ => ""
+            };
+
+            Console.Write(details);
+
+            Console.Write($"{accounts[i].Currency}\n");
         }
 
-        Console.Write("\nSelect account number: ");
+        while (true)
+        {
+            Console.Write("\nSelect account number: ");
 
-        int.TryParse(Console.ReadLine(), out int selection);
+            if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
+            {
+                return selection - 1;
+            }
 
-        return selection - 1;
+            // TODO? error text should come from ErrorMessageView, to match the other messages
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\nPlease enter a number between 1 and {accounts.Count}.");
+            Console.ResetColor();
+        }
     }
+
+    public int SelectOtherCustomerAccount(List<PersonalAccount> accounts, string prompt)
+    {
+        Console.WriteLine($"\n{prompt}");
+
+        for (int i = 0; i < accounts.Count; i++)
+        {
+            Console.WriteLine($"[{i + 1}] Account number: {accounts[i].AccountNumber}");
+        }
+
+        while (true)
+        {
+            Console.Write("\nSelect account number: ");
+
+            if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
+            {
+                return selection - 1;
+            }
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\nPlease enter a number between 1 and {accounts.Count}.");
+            Console.ResetColor();
+        }
+    }
+
     public decimal GetTransferAmount()
     {
         Console.Write("Enter amount to transfer: ");
