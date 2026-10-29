@@ -134,12 +134,6 @@ internal class BankController(BankService service, BankView view, AccountReposit
         int sourceIndex = _view.SelectOwnAccount(nonLoanAccounts, "Select source account:");
         int destinationIndex = _view.SelectOwnAccount(accounts, "Select destination account:");
 
-        if (sourceIndex < 0 || destinationIndex < 0 ||
-            sourceIndex >= nonLoanAccounts.Count || destinationIndex >= accounts.Count)
-        {
-            return;
-        }
-
         BankAccount sourceAccount = nonLoanAccounts[sourceIndex];
         BankAccount destinationAccount = accounts[destinationIndex];
 

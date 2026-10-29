@@ -110,11 +110,20 @@ internal class BankView
             Console.Write($"{accounts[i].Currency}\n");
         }
 
+        while (true)
+        {
         Console.Write("\nSelect account number: ");
 
-        int.TryParse(Console.ReadLine(), out int selection);
-
+            if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
+            {
         return selection - 1;
+    }
+
+            // TODO? error text should come from ErrorMessageView, to match the other messages
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\nPlease enter a number between 1 and {accounts.Count}.");
+            Console.ResetColor();
+        }
     }
 
     public int SelectOtherCustomerAccount(List<PersonalAccount> accounts, string prompt)
