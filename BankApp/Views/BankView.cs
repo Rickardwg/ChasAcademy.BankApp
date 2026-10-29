@@ -1,4 +1,5 @@
 ﻿using BankApp.Models;
+using Spectre.Console;
 
 namespace BankApp.Views;
 
@@ -6,9 +7,24 @@ internal class BankView
 {
     public string DisplayMenu()
     {
-        Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
+        // Console.WriteLine("\nMenu: \n[1] Accounts \n[2] Transfer money \n[3] Loans  \n[4] Create account \n[0] Logout");
 
-        return Console.ReadLine() ?? "";
+        // return Console.ReadLine() ?? "";
+
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]Main menu:[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("1", "2", "3", "4", "0")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Accounts",
+                "2" => "Transfer money",
+                "3" => "Loans",
+                "4" => "Create account",
+                "0" => "Logout",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            })
+        );
     }
 
     public void DisplayAccounts(List<BankAccount> accounts)
