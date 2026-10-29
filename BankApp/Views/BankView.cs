@@ -1,5 +1,6 @@
 ﻿using BankApp.Enums;
 using BankApp.Models;
+using System.Drawing;
 using System.Net.Http.Headers;
 
 namespace BankApp.Views;
@@ -112,12 +113,12 @@ internal class BankView
 
         while (true)
         {
-        Console.Write("\nSelect account number: ");
+            Console.Write("\nSelect account number: ");
 
             if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
             {
-        return selection - 1;
-    }
+                return selection - 1;
+            }
 
             // TODO? error text should come from ErrorMessageView, to match the other messages
             Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -135,11 +136,19 @@ internal class BankView
             Console.WriteLine($"[{i + 1}] Account number: {accounts[i].AccountNumber}");
         }
 
-        Console.Write("\nSelect account number: ");
+        while (true)
+        {
+            Console.Write("\nSelect account number: ");
 
-        int.TryParse(Console.ReadLine(), out int selection);
+            if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
+            {
+                return selection - 1;
+            }
 
-        return selection - 1;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\nPlease enter a number between 1 and {accounts.Count}.");
+            Console.ResetColor();
+        }
     }
 
     public decimal GetTransferAmount()
