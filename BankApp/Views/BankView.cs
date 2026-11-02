@@ -144,17 +144,30 @@ internal class BankView
     {
         if (success)
         {
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("\nThe transfer has been completed successfully.");
-            Console.ResetColor();
+            var panel = new Panel(
+                new Markup("[green] The transfer has been completed successfully.[/]")
+            )
+            .Header("[green bold]Transfer Successful[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.DarkGreen)
+            .Padding(2, 1);
+
+            AnsiConsole.Write(panel);
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nThe transfer could not be completed.");
-            Console.ResetColor();
+            var panel = new Panel(
+                new Rows(
+                    new Markup("[red]The transfer could not be completed.[/]"),
+                    new Markup("[grey]Please check the account balance and transfer amount.[/]")
+                )
+            )
+            .Header("[red bold]X Transfer failed[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.DarkRed)
+            .Padding(2, 1);
 
-            Console.WriteLine("Please check the account balance and transfer amount.");
+            AnsiConsole.Write(panel);
         }
     }
 
