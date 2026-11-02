@@ -79,7 +79,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         destination.Balance += destinationAmount;
 
         sourceAccount.TransactionHistory.Add(new Transaction
-        { 
+        {
             Type = TransactionType.Transfer,
             Amount = -amount,
             Currency = sourceAccount.Currency,
@@ -89,7 +89,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
             RelatedAccountId = destinationAccount.AccountNumber,
             Desciption = $"Transfer to {destinationAccount.AccountNumber}"
         });
-        
+
         destinationAccount.TransactionHistory.Add(new Transaction
         {
             Type = TransactionType.Transfer,
@@ -105,7 +105,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         return true;
     }
 
-    public decimal CalculateExpectedInterest(SavingsAccount savingsAccount, decimal depositAmount, int years)                 
+    public decimal CalculateExpectedInterest(SavingsAccount savingsAccount, decimal depositAmount, int years)
     {
         if (depositAmount <= 0 || years <= 0)
         {
@@ -135,7 +135,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         return loanAmount * interestRate * years;
     }
 
-    public bool BorrowMoney(LoanAccount loanAccount, decimal loanAmount , int years)
+    public bool BorrowMoney(LoanAccount loanAccount, decimal loanAmount, int years)
     {
         if (loanAmount <= 0 || years <= 0 || loanAccount.InterestRate < 0)
         {
@@ -147,6 +147,28 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         loanAccount.Owed += loanAmount + totalInterest;
 
         return true;
+    }
+
+    public decimal CalcuclateMaxLaonAmount(LoanAccount loanAccount)
+    {
+        List<BankAccount>? customerAccounts =
+             _repository.GetBankAccountsOwnedByCustomer(ActiveUser);
+
+        if (customerAccounts is null)
+        {
+            return 0m;
+        }
+
+        customerAccounts.OfType<PersonalAccount>();
+
+        List<PersonalAccount> balanceAccounts = customerAccounts.OfType<PersonalAccount>().ToList();
+
+        decimal totalBalance = 0m;
+
+        foreach (var accounts in balanceAccounts)
+        {
+            totalBalance += accounts.Balance;
+        }
     }
 }
 
