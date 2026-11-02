@@ -136,11 +136,9 @@ internal class BankView
     }
     public decimal GetTransferAmount()
     {
-        Console.Write("Enter amount to transfer: ");
-
-        decimal.TryParse(Console.ReadLine(), out decimal amount);
-
-        return amount;
+        return AnsiConsole.Ask<decimal>(
+            "[bold gold1]Enter amount to transfer:[/]"
+        );
     }
     public void DisplayTransferResult(bool success)
     {
