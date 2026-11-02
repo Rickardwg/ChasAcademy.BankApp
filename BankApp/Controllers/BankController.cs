@@ -25,7 +25,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
             switch (menuChoice)
             {
                 case ("1"): // Accounts
-                    List<BankAccount>? accountsToDisplay = _repository.GetBankAccounts();
+                    List<BankAccount>? accountsToDisplay = _repository.GetBankAccountsOwnedByCustomer(_service.ActiveUser);
 
                     if (accountsToDisplay is not null)
                     {
@@ -38,16 +38,45 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("2"): // Transfer
-                    List<BankAccount>? accountsForTransfer = _repository.GetBankAccounts();
+                    List<BankAccount>? ownAccountsForTransfer = _repository.GetBankAccountsOwnedByCustomer(_service.ActiveUser);
 
-                    if (accountsForTransfer is not null)
-                    {
-                        List<PersonalAccount> personalAccounts = accountsForTransfer.OfType<PersonalAccount>().ToList();
-                        HandleTransfer(personalAccounts);
-                    }
-                    else
+                    if (ownAccountsForTransfer is null)
                     {
                         _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                        break;
+                    }
+
+                    menuChoice = _view.DisplayTransferMoneyMenu();
+
+                    switch (menuChoice)
+                    {
+                        case "1": // Transfer between own accounts
+
+                            HandleSelfTransfer(ownAccountsForTransfer);
+                            break;
+
+                        case "2": // Transfer to another customer's account
+
+                            List<BankAccount>? otherAccountsForTransfer = _repository.GetBankAccountsOwnedByOthers(_service.ActiveUser);
+
+                            if (otherAccountsForTransfer is null)
+                            {
+                                // TODO: add error message:
+                                Console.WriteLine("No other customers have accounts in the bank."); // TEMP
+                                break;
+                            }
+
+                            List<PersonalAccount> otherPersonalAccounts = otherAccountsForTransfer.OfType<PersonalAccount>().ToList();
+
+                            HandleOtherCustomerTransfer(ownAccountsForTransfer, otherPersonalAccounts);
+                            break;
+
+                        case "0": // Go back to main menu
+                            break;
+
+                        default:
+                            _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                            break;
                     }
 
                     break;
@@ -83,31 +112,77 @@ internal class BankController(BankService service, BankView view, AccountReposit
         }
     }
 
-    private void HandleTransfer(List<PersonalAccount> accounts)
+    private void HandleSelfTransfer(List<BankAccount> accounts)
     {
-        if (accounts.Count < 2)
+        List<BankAccount> nonLoanAccounts = [];
+
+        foreach (BankAccount bankAccount in accounts)
         {
-            _errorMessageView.DisplayErrorMessage(ErrorMessages.NotEnoughAccounts);
+            if (bankAccount is not LoanAccount)
+            {
+                nonLoanAccounts.Add(bankAccount);
+            }
+        }
+
+        if (nonLoanAccounts.Count < 1 || accounts.Count < 2)
+        {
+            // TODO: add error message:
+            Console.WriteLine("Self transfers require two accounts, at least one of which is not a loan account."); // TEMP
             return;
         }
 
-        int sourceIndex = _view.SelectAccount(accounts, "Select source account:");
-        int destinationIndex = _view.SelectAccount(accounts, "Select destination account:");
+        int sourceIndex = _view.SelectOwnAccount(nonLoanAccounts, "Select source account:");
+        int destinationIndex = _view.SelectOwnAccount(accounts, "Select destination account:");
 
-        if (sourceIndex < 0 || destinationIndex < 0 ||
-            sourceIndex >= accounts.Count || destinationIndex >= accounts.Count)
-        {
-            return;
-        }
+        BankAccount sourceAccount = nonLoanAccounts[sourceIndex];
+        BankAccount destinationAccount = accounts[destinationIndex];
 
-        if (sourceIndex == destinationIndex)
+        if (sourceAccount.AccountNumber == destinationAccount.AccountNumber)
         {
             _errorMessageView.DisplayErrorMessage(ErrorMessages.SameSourceAndDestinationAccount);
             return;
         }
 
-        PersonalAccount sourceAccount = accounts[sourceIndex];
-        PersonalAccount destinationAccount = accounts[destinationIndex];
+        decimal amount = _view.GetTransferAmount();
+
+        bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
+
+        _view.DisplayTransferResult(transferSuccess);
+    }
+
+    private void HandleOtherCustomerTransfer(List<BankAccount> ownAccounts, List<PersonalAccount> otherAccounts)
+    {
+        List<BankAccount> nonLoanAccounts = [];
+
+        foreach (BankAccount bankAccount in ownAccounts)
+        {
+            if (bankAccount is not LoanAccount)
+            {
+                nonLoanAccounts.Add(bankAccount);
+            }
+        }
+
+        if (nonLoanAccounts.Count < 1)
+        {
+            // TODO: Create error in ErrorMessageView:
+            Console.WriteLine("You need at least one non-loan account to transfer to another customer"); // TEMP
+            return;
+        }
+
+        if (otherAccounts.Count < 1)
+        {
+            // TODO: Create error in ErrorMessageView:
+            Console.WriteLine("No other customer has an account you can send money to."); // TEMP
+            return;
+        }
+
+        int sourceIndex = _view.SelectOwnAccount(nonLoanAccounts, "Select source account:");
+        int destinationIndex = _view.SelectOtherCustomerAccount(otherAccounts, "Select destination account:");
+
+        BankAccount sourceAccount = nonLoanAccounts[sourceIndex];
+        PersonalAccount destinationAccount = otherAccounts[destinationIndex];
+
+        // Own and others’ accounts never overlap
 
         decimal amount = _view.GetTransferAmount();
 
