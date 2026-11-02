@@ -25,24 +25,50 @@ internal class BankView
 
     public void DisplayAccounts(List<BankAccount> accounts)
     {
+
+        var table = new Table();
+
+        table.Border(TableBorder.Rounded);
+        table.BorderColor(Color.Gold1);
+        table.Title("[bold gold1]Bank Accounts[/]");
+
+        table.AddColumn("[bold]Account Type[/]");
+        table.AddColumn("[bold]Currency[/]");
+        table.AddColumn("[bold]Balance / Amount Owed[/]");
+        table.AddColumn("[bold]Account Number[/]");
+
         foreach (var account in accounts)
         {
-            Console.WriteLine($"{account.accountType} account");
-            Console.WriteLine($"Currency: {account.Currency}");
-
-            if (account is PersonalAccount personalAccount)
+            switch (account)
             {
-                Console.WriteLine($"Balance: {personalAccount.Balance}");
-                Console.WriteLine($"Account Number: {personalAccount.AccountNumber}");
+                case SavingsAccount savingAccount:
+                    table.AddRow(
+                        "[blue]Savings[/]",
+                        savingAccount.Currency.ToString(),
+                        $"[blue]{savingAccount.Balance:N2}[/]",
+                        savingAccount.AccountNumber.ToString()
+                    );
+                    break;
+                case PersonalAccount personalAccount:
+                    table.AddRow(
+                        "[green]Personal[/]",
+                        personalAccount.Currency.ToString(),
+                        $"[green]{personalAccount.Balance:N2}[/]",
+                        personalAccount.AccountNumber.ToString()
+                    );
+                    break;
+                case LoanAccount loanAccount:
+                    table.AddRow(
+                        "[red]Loan[/]",
+                        loanAccount.Currency.ToString(),
+                        $"[red]{loanAccount.Owed:N2}[/]",
+                        "[dim]N/A[/]"
+                    );
+                    break;
             }
-            else if (account is LoanAccount loanAccount)
-            {
-                Console.WriteLine($"Amount Owed: {loanAccount.Owed}");
-            }
-
-            // Visual separator between accounts in console window.
-            Console.WriteLine("------------------");
         }
+
+        AnsiConsole.Write(table);
     }
 
     public T? ReadEnumChoice<T>(string title) where T : struct, Enum
