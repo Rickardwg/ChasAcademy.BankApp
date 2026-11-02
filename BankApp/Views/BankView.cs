@@ -25,7 +25,6 @@ internal class BankView
 
     public void DisplayAccounts(List<BankAccount> accounts)
     {
-
         var table = new Table();
 
         table.Border(TableBorder.Rounded);
@@ -118,19 +117,22 @@ internal class BankView
 
     public int SelectAccount(List<PersonalAccount> accounts, string prompt)
     {
-        Console.WriteLine($"\n{prompt}");
-
-        for (int i = 0; i < accounts.Count; i++)
+        var choices = accounts.Select((account, index) => new
         {
-            Console.WriteLine($"[{i + 1}] {accounts[i].accountType} account");
-            Console.WriteLine($"Account number: {accounts[i].AccountNumber} | Balance: {accounts[i].Balance} {accounts[i].Currency}");
-        }
+            Index = index,
+            Display = $"[[{account.accountType}]] Account: {account.AccountNumber} | " +
+                 $"Balance: {account.Balance:N2} {account.Currency}"
+        }).ToList();
 
-        Console.Write("\nSelect account number: ");
+        var selected = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title($"[bold gold1]{prompt}[/]")
+                .HighlightStyle("bold black on gold1")
+                .PageSize(10)
+                .AddChoices(choices.Select(x => x.Display))
+        );
 
-        int.TryParse(Console.ReadLine(), out int selection);
-
-        return selection - 1;
+        return choices.First(x => x.Display == selected).Index;
     }
     public decimal GetTransferAmount()
     {
