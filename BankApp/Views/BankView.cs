@@ -51,7 +51,7 @@ internal class BankView
 
         while (true)
         {
-            Console.WriteLine("Select currency or enter '0' to go back:");
+            Console.WriteLine("Select valid option or enter '0' to go back:");
             var input = Console.ReadLine();
 
             if (int.TryParse(input, out int choice))
