@@ -49,33 +49,25 @@ internal class BankView
     {
         var values = Enum.GetValues<T>();
 
-        Console.WriteLine($"\n{title}:");
+        var choices = values
+            .Select(value => value.ToString())
+            .ToList();
 
-        for (int i = 0; i < values.Length; i++)
+        choices.Add("Go back");
+
+        var selected = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title($"[bold gold1]{title}:[/]")
+                .HighlightStyle("bold black on gold1")
+                .AddChoices(choices)
+        );
+
+        if (selected == "Go back")
         {
-            Console.WriteLine($"[{i + 1}] {values[i]}");
+            return null;
         }
 
-        while (true)
-        {
-            Console.WriteLine("Select currency or enter '0' to go back:");
-            var input = Console.ReadLine();
-
-            if (int.TryParse(input, out int choice))
-            {
-                if (choice == 0)
-                {
-                    return null; // EXIT
-                }
-
-                if (choice >= 1 && choice <= values.Length)
-                {
-                    return values[choice - 1];
-                }
-            }
-
-            Console.WriteLine("Invalid choice, try again.");
-        }
+        return Enum.Parse<T>(selected);
     }
 
     internal string DisplayTransferMoneyMenu()
