@@ -1,6 +1,7 @@
-using BankApp.Models;
 using BankApp.Enums;
+using BankApp.Models;
 using BankApp.Repositories;
+using System.Security.Principal;
 
 namespace BankApp.Services;
 
@@ -149,7 +150,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         return true;
     }
 
-    public decimal CalcuclateMaxLaonAmount(LoanAccount loanAccount)
+    public decimal CalculateMaxLoanAmount(LoanAccount loanAccount)
     {
         List<BankAccount>? customerAccounts =
              _repository.GetBankAccountsOwnedByCustomer(ActiveUser);
@@ -159,16 +160,23 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
             return 0m;
         }
 
-        customerAccounts.OfType<PersonalAccount>();
-
         List<PersonalAccount> balanceAccounts = customerAccounts.OfType<PersonalAccount>().ToList();
 
         decimal totalBalance = 0m;
 
-        foreach (var accounts in balanceAccounts)
+        foreach (PersonalAccount account in balanceAccounts)
         {
-            totalBalance += accounts.Balance;
+            if (!_exchangeRateService.TryGetRate(account.Currency, loanAccount.Currency, out decimal exchangeRate))
+            {
+                throw new InvalidOperationException("Currency conversion failed.");
+            }
+
+            decimal convertedBalance = account.Balance * exchangeRate;
+
+            totalBalance += convertedBalance;
         }
+
+        return totalBalance * 5;
     }
 }
 
