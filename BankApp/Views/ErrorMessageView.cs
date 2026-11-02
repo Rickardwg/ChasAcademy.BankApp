@@ -11,13 +11,13 @@ public class ErrorMessageView
             case ErrorMessages.LockedAccount:
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYour account has been locked after unsuccessful attempts.");
+                Console.WriteLine("\nLogin blocked after three consecutive failed attempts.");
                 Console.ResetColor();
 
-                Console.WriteLine("\nFor your security, access to your account has been temporarily restricted.");
+                Console.WriteLine("\nAccess to banking services has been restricted.");
 
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("Please contact your bank for more information and assistance with unlocking your account.");
+                Console.WriteLine("Please contact your bank for further information and assistance.");
                 Console.ResetColor();
 
                 break;

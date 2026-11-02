@@ -1,4 +1,6 @@
+using BankApp.Common.Results;
 using BankApp.Enums;
+using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
@@ -13,15 +15,15 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
     internal User? Run() // return null to exit
     {
-        _view.DisplayWelcomeMessage();
-
         while (true)
         {
+            ConsoleHeader.DisplayLogo();
             var menuChoice = _view.DisplayMenu();
 
             switch (menuChoice)
             {
                 case "1": // Log in
+                {
                     User? user = Login();
 
                     if (user is not null)
@@ -30,28 +32,19 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
 
                     break;
+                }
 
                 case "2": // Register
-                    var customerData = _view.DisplayRegisterMenu();
+                {
+                    User? user = Register();
 
-                    var customer = _service.RegisterCustomer(customerData);
-
-                    if (customer is null)
+                    if (user is not null)
                     {
-                        // TODO: Display Error for each of these outcomes:
-                        // Invalid first name
-                        // Invalid last name
-                        // Invalid email address
-                        // Non-Swedish phone number
-                        // Too short username
-                        // Too short password
-                        // User already exist
-
-                        return null;
+                        return user;
                     }
 
-                    // TODO: Display registration succeeded confirmation
-                    return customer;
+                    break;
+                }
 
                 case "0":
                     return null;
@@ -73,26 +66,34 @@ internal class AuthenticationController(AuthenticationService service, Authentic
     {
         while (true)
         {
+            ConsoleHeader.DisplayLogo();
             var username = _view.ReadUsername();
-            var password = _view.ReadUserPassword();
+            var password = _view.ReadPassword();
 
-            User? user = _service.AuthenticateUser(username, password);
+            Result<User, LoginError> loginResult = _service.AuthenticateUser(username, password);
 
-            if (user is null)
+            if (loginResult.IsSuccess)
             {
-                _errorMessageView.DisplayErrorMessage(ErrorMessages.UserNotFound);
-            }
-            else if (user.IsLocked)
-            {
-                _errorMessageView.DisplayErrorMessage(ErrorMessages.LockedAccount);
-                return HandleLoginMenu(user);
-            }
-            else
-            {
-                return user;
+                return loginResult.Value;
             }
 
-            var choice = _view.DisplayBackToMainMenu(null);
+            ConsoleHeader.DisplayLogo();
+
+            switch (loginResult.Error)
+            {
+                case LoginError.InvalidCredentials:
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.UserNotFound);
+                    break;
+
+                case LoginError.LoginLimitReached:
+                    _errorMessageView.DisplayErrorMessage(ErrorMessages.LockedAccount);
+                    return HandleLoginMenu();
+
+                default:
+                    throw new InvalidOperationException("Unexpected login failure.");
+            }
+
+            var choice = _view.DisplayBackToMainMenu(allowRetry: true);
 
             switch (choice)
             {
@@ -105,10 +106,74 @@ internal class AuthenticationController(AuthenticationService service, Authentic
 
                     while (choice != "0" && choice != "1")
                     {
-                        choice = _view.DisplayBackToMainMenu(null);
+                        choice = _view.DisplayBackToMainMenu(allowRetry: true);
+                    }
+
+                    if (choice == "0")
+                    {
+                        return null;
                     }
 
                     break;
+            }
+        }
+    }
+
+    private User? Register()
+    {
+        ConsoleHeader.DisplayLogo();
+        var customerData = _view.DisplayRegisterMenu();
+
+        while (true)
+        {
+            var registrationResult = _service.RegisterCustomer(customerData);
+
+            if (registrationResult.IsSuccess)
+            {
+                return registrationResult.Value;
+            }
+
+            RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
+
+            ConsoleHeader.DisplayLogo();
+            _view.DisplayRegistrationError(error);
+
+            string choice = _view.RetryRegistrationPrompt();
+
+            if (choice == "n")
+            {
+                return null;
+            }
+
+            switch (error)
+            {
+                case RegistrationError.UsernameAlreadyExists:
+                case RegistrationError.InvalidUsername:
+                    customerData.UserName = _view.ReadUsername();
+                    break;
+
+                case RegistrationError.InvalidFirstName:
+                    customerData.FirstName = _view.ReadFirstName();
+                    break;
+
+                case RegistrationError.InvalidLastName:
+                    customerData.LastName = _view.ReadLastName();
+                    break;
+
+                case RegistrationError.InvalidEmailAddress:
+                    customerData.EmailAddress = _view.ReadEmailAddress();
+                    break;
+
+                case RegistrationError.InvalidPhoneNumber:
+                    customerData.PhoneNumber = _view.ReadPhoneNumber();
+                    break;
+
+                case RegistrationError.InvalidPassword:
+                    customerData.Password = _view.ReadPassword();
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unexpected registration failure.");
             }
         }
     }
@@ -117,13 +182,12 @@ internal class AuthenticationController(AuthenticationService service, Authentic
     /// Displays the login menu for a locked user and prompts them to return to the main menu.
     /// Repeats the menu if the user enters an invalid option.
     /// </summary>
-    /// <param name="user">The locked user attempting to log in.</param>
     /// <returns>Null to return to the main menu.</returns>
-    private User? HandleLoginMenu(User user)
+    private User? HandleLoginMenu()
     {
         while (true)
         {
-            var choice = _view.DisplayBackToMainMenu(user);
+            var choice = _view.DisplayBackToMainMenu(allowRetry: false);
 
             switch (choice)
             {

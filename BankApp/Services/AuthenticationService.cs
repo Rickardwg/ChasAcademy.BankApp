@@ -1,106 +1,116 @@
-﻿using BankApp.Models;
+﻿using BankApp.Common.Results;
+using BankApp.Enums.Errors;
+using BankApp.Models;
 using BankApp.Repositories;
+using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 
 namespace BankApp.Services;
 
-internal class AuthenticationService(UserRepository repository)
+internal class AuthenticationService(UserRepository repository, IPasswordHasher<User> passwordHasher)
 {
     private readonly UserRepository _repository = repository;
+    private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
+    private const int MaxFailedLoginAttemps = 3;
+    private int _failedLoginAttempts = 0;
 
-    internal User? AuthenticateUser(string username, string password)
+    internal Result<User, LoginError> AuthenticateUser(string username, string password)
     {
+        if (_failedLoginAttempts == MaxFailedLoginAttemps)
+        {
+            return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
+        }
+
         var user = _repository.GetByUsername(username);
 
         if (user is null)
         {
-            return null;
-        }
+            _failedLoginAttempts++;
 
-        if (user.IsLocked)
-        {
-            return user;
-        }
-
-        if (user.Password != password)
-        {
-            user.FailedLoginCounter++;
-
-            if (user.FailedLoginCounter >= 3)
+            if (_failedLoginAttempts == MaxFailedLoginAttemps)
             {
-                user.IsLocked = true;
-                return user;
+                return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
             }
 
-            return null;
+            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
         }
 
-        user.FailedLoginCounter = 0; // Reset counter on successful login
-        return user;
+        PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        if (verificationResult == PasswordVerificationResult.Failed)
+        {
+            _failedLoginAttempts++;
+
+            if (_failedLoginAttempts == MaxFailedLoginAttemps)
+            {
+                return Result<User, LoginError>.Failure(LoginError.LoginLimitReached);
+            }
+
+            return Result<User, LoginError>.Failure(LoginError.InvalidCredentials);
+        }
+
+        if (verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.PasswordHash = _passwordHasher.HashPassword(user, password);
+        }
+
+        _failedLoginAttempts = 0; // Reset counter on successful login
+        return Result<User, LoginError>.Success(user);
     }
 
-    internal Customer? RegisterCustomer((string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) customerData)
+    internal Result<Customer, RegistrationError> RegisterCustomer((string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) customerData)
     {
         var existingCustomer = _repository.GetByUsername(customerData.UserName);
 
-        if (existingCustomer is null)
+        if (existingCustomer is not null)
         {
-            if (customerData.FirstName.Length < 2)
-            {
-                // TODO: signal "first name too short" to AuthenticationController
-                return null;
-            }
-
-            if (customerData.LastName.Length < 4)
-            {
-                // TODO: signal "last name too short" to AuthenticationController
-                return null;
-            }
-
-            if (!IsValidEmailAddress(customerData.EmailAddress))
-            {
-                // TODO: signal "unvalid email address" to AuthenticationController
-                return null;
-            }
-
-            if (!IsValidPhoneNumber(customerData.PhoneNumber))
-            {
-                // TODO: signal "non-swedish phone number" to AuthenticationController
-                return null;
-            }
-
-            if (customerData.UserName.Length < 5)
-            {
-                // TODO: signal "username too short" to AuthenticationController
-                return null;
-            }
-
-            if (customerData.Password.Length < 7)
-            {
-                // TODO: signal "password too short" to AuthenticationController
-                return null;
-            }
-            
-            Customer customer = new Customer
-            {
-                // Not assigned here, so they keep their defaults:
-                // IsLocked = false, IsAdmin = false, FailedLoginCounter = 0
-                Id = Guid.NewGuid(),
-                FirstName = customerData.FirstName,
-                LastName = customerData.LastName,
-                EmailAddress = customerData.EmailAddress,
-                PhoneNumber = customerData.PhoneNumber,
-                UserName = customerData.UserName,
-                Password = customerData.Password
-            };
-
-            _repository.AddUser(customer);
-            // TODO: signal "registration success" to AuthenticationController
-            return customer;
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.UsernameAlreadyExists);
         }
 
-        // TODO: signal "customer already exists" to AuthenticationController
-        return null;
+        if (customerData.FirstName.Length < 2)
+        {
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidFirstName);
+        }
+
+        if (customerData.LastName.Length < 4)
+        {
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidLastName);
+        }
+
+        if (!IsValidEmailAddress(customerData.EmailAddress))
+        {
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidEmailAddress);
+        }
+
+        if (!IsValidPhoneNumber(customerData.PhoneNumber))
+        {
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidPhoneNumber);
+        }
+
+        if (customerData.UserName.Length < 5)
+        {
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidUsername);
+        }
+
+        if (customerData.Password.Length < 7)
+        {
+            return Result<Customer, RegistrationError>.Failure(RegistrationError.InvalidPassword);
+        }
+            
+        Customer customer = new Customer
+        {
+            Id = Guid.NewGuid(),
+            FirstName = customerData.FirstName,
+            LastName = customerData.LastName,
+            EmailAddress = customerData.EmailAddress,
+            PhoneNumber = customerData.PhoneNumber,
+            UserName = customerData.UserName,
+        };
+
+        customer.PasswordHash = _passwordHasher.HashPassword(customer, customerData.Password); // user-object is needed for hashing, customer has to be created first.
+
+        _repository.AddUser(customer);
+        return Result<Customer, RegistrationError>.Success(customer);
     }
 
     // Validates email address
