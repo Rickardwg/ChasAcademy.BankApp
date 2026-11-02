@@ -32,27 +32,21 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         _repository.Add(account);
     }
 
+    /* LEFT TO DO:
+     * 1. Make sure currency conversion is taken into consideration.
+     * 2. Make sure converted amounts are rounded.
+     * 3. Make sure transaction history works for loan accounts!
+     * 4. Look through the comments...
+     * 5. Test!
+     */
+    
     public bool TransferMoney(BankAccount sourceAccount, BankAccount destinationAccount, decimal amount)
     {
         if (amount <= 0)
         {
             return false;
         }
-
-        if (sourceAccount is not PersonalAccount source) // also covers SavingsAccount
-        {
-            // TODO: display error:
-            Console.WriteLine("You can't transfer money from a loan account"); // TEMP
-            return false;
-        }
-
-        if (source.Balance < amount)
-        {
-            // TODO: display error:
-            Console.WriteLine("Insufficient funds"); // TEMP
-            return false;
-        }
-
+        
         if (ReferenceEquals(sourceAccount, destinationAccount))
         {
             // TODO: specific error: same source and destination account
@@ -63,21 +57,70 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         {
             return false;
         }
+        
+        // Add currency conversion calculation here?
+        // This would have to go here, I think...
 
-        if (destinationAccount is not PersonalAccount destination) // only personal and savings accounts can receive money for now
+        // I think this will work?
+        if (sourceAccount is LoanAccount loanSource)
         {
-            // TODO: once the rules for Owed are decided,
-            // accept destinationAccount being a loan account
-            Console.WriteLine("You can't transfer money to a loan account"); // TEMP
-            return false;
+            if (loanSource.Owed <= 0)
+            {
+                // TODO: Display error message: you don't have a loan
+                return false;
+            }
+
+            // Can you do this here - will the value be reset on false return...?
+            loanSource.AmountWithdrawn += amount;
+            // Nothing is done with LoanAccount.Owed - the loan remains
+            
+            if (amount > (loanSource.Owed - loanSource.AmountWithdrawn))
+            {
+                // TODO: Display error message: your loan isn't big enough
+                return false;
+            }
+        }
+        
+        if (sourceAccount is PersonalAccount personalSource) // also covers savings account
+        {
+            if (personalSource.Balance < amount)
+            {
+                // TODO: display error:
+                Console.WriteLine("Insufficient funds"); // TEMP
+                return false;
+            }
+            
+            personalSource.Balance -= amount;
         }
 
+        if (sourceAccount is LoanAccount && destinationAccount is LoanAccount)
+        {
+            // TODO: add error message: both accounts can't be loan account.
+            Console.WriteLine("Both accounts can't be loan accounts!"); // TEMP
+            // Is this check even necessary if we make sure only one loan account can be created?
+        }
+        
         decimal destinationAmount = amount * exchangeRate;
         bool hasConverted = sourceAccount.Currency != destinationAccount.Currency;
+        
+        if (destinationAccount is LoanAccount loanDestination)
+        {
+            if (amount > loanDestination.Owed)
+            {
+                // TODO: inform about max amount = LoanAccount.Owed
+                return false;
+            }
+            
+            loanDestination.Owed -= destinationAmount; // This is already converted into correct currency
+            loanDestination.AmountWithdrawn -= destinationAmount;
+        }
 
-        source.Balance -= amount;
-        destination.Balance += destinationAmount;
+        if (destinationAccount is PersonalAccount personalDestination)
+        {
+            personalDestination.Balance += destinationAmount;
+        }
 
+        // Add correct transaction history for loan accounts!
         sourceAccount.TransactionHistory.Add(new Transaction
         { 
             Type = TransactionType.Transfer,
