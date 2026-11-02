@@ -145,6 +145,15 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
 
         decimal totalInterest = CalculateLoanInterest(loanAccount, loanAmount, years);
 
+        decimal maxLoanAmount = CalculateMaxLoanAmount(loanAccount);
+
+        decimal newTotalDebt = loanAccount.Owed + loanAmount + totalInterest;
+
+        if (newTotalDebt > maxLoanAmount)
+        {
+            return false;
+        }
+
         loanAccount.Owed += loanAmount + totalInterest;
 
         return true;
