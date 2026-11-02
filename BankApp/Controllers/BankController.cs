@@ -82,12 +82,11 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("3"):
-                   List<BankAccount>? accountsForLoan = _repository.GetBankAccounts();
-
+                   List<BankAccount>? accountsForLoan = _repository.GetBankAccountsOwnedByCustomer(user);
                     if (accountsForLoan is not null)
                     {
                         LoanAccount? loanAccount
-                         = accountsForLoan.OfType<LoanAccount>().FirstOrDefault(a => a.OwnerId == user.Id);
+                         = accountsForLoan.OfType<LoanAccount>().FirstOrDefault();
 
                         if (loanAccount is not null)
                         {

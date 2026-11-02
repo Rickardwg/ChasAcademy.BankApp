@@ -246,7 +246,7 @@ internal class BankView
         Console.WriteLine($"Loan Duration: {years} years");
 
         Console.WriteLine($"Total Interest:{totalInterest:F2}");
-        Console.WriteLine($"Total Amount Owed: {loanAmount + interestRate:F2}");
+        Console.WriteLine($"Total Amount Owed: {loanAmount + totalInterest:F2}");
     }
 
     public decimal GetLoanAmount()
