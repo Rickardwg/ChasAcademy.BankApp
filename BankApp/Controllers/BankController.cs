@@ -61,8 +61,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
                             if (otherAccountsForTransfer is null)
                             {
-                                // TODO: add error message:
-                                Console.WriteLine("No other customers have accounts in the bank."); // TEMP
+                                _errorMessageView.DisplayErrorMessage(ErrorMessages.NoOtherCustomerAccounts);
                                 break;
                             }
 
@@ -82,7 +81,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("3"):
-                   List<BankAccount>? accountsForLoan = _repository.GetBankAccountsOwnedByCustomer(user);
+                    List<BankAccount>? accountsForLoan = _repository.GetBankAccountsOwnedByCustomer(user);
                     if (accountsForLoan is not null)
                     {
                         LoanAccount? loanAccount
@@ -104,21 +103,26 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("4"): // Create Account
-                    var accountTypeChoice = _view.ReadEnumChoice<AccountType>("Account types");
-
-                    if (accountTypeChoice is not AccountType accountType)
+                    while (true)
                     {
+                        var accountTypeChoice = _view.ReadEnumChoice<AccountType>("Account types");
+
+                        if (accountTypeChoice is not AccountType accountType)
+                        {
+                            break;
+                        }
+
+                        var currencyChoice = _view.ReadEnumChoice<Currency>("Available currencies");
+
+                        if (currencyChoice is not Currency currency)
+                        {
+                            continue; // Go back to account type selection
+                        }
+
+                        _service.CreateNewAccount(accountType, currency);
                         break;
                     }
 
-                    var currencyChoice = _view.ReadEnumChoice<Currency>("Available currencies");
-
-                    if (currencyChoice is not Currency currency)
-                    {
-                        break;
-                    }
-
-                    _service.CreateNewAccount(accountType, currency);
                     break;
 
                 case ("0"): // Logout
@@ -145,8 +149,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         if (nonLoanAccounts.Count < 1 || accounts.Count < 2)
         {
-            // TODO: add error message:
-            Console.WriteLine("Self transfers require two accounts, at least one of which is not a loan account."); // TEMP
+            _errorMessageView.DisplayErrorMessage(ErrorMessages.NotEnoughAccounts);
             return;
         }
 
