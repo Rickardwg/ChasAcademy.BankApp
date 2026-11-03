@@ -133,34 +133,24 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
     private void HandleSelfTransfer(List<BankAccount> accounts)
     {
-        List<BankAccount> nonLoanAccounts = [];
-
-        foreach (BankAccount bankAccount in accounts)
-        {
-            if (bankAccount is not LoanAccount)
-            {
-                nonLoanAccounts.Add(bankAccount);
-            }
-        }
-
-        if (nonLoanAccounts.Count < 1 || accounts.Count < 2)
+        if (accounts.Count < 2)
         {
             // TODO: add error message:
-            Console.WriteLine("Self transfers require two accounts, at least one of which is not a loan account."); // TEMP
+            Console.WriteLine("Self transfers require two accounts."); // TEMP
             return;
         }
 
-        int sourceIndex = _view.SelectOwnAccount(nonLoanAccounts, "Select source account:");
+        int sourceIndex = _view.SelectOwnAccount(accounts, "Select source account:");
         int destinationIndex = _view.SelectOwnAccount(accounts, "Select destination account:");
 
-        BankAccount sourceAccount = nonLoanAccounts[sourceIndex];
-        BankAccount destinationAccount = accounts[destinationIndex];
-
-        if (sourceAccount.AccountNumber == destinationAccount.AccountNumber)
+        if (sourceIndex == destinationIndex)
         {
             _errorMessageView.DisplayErrorMessage(ErrorMessages.SameSourceAndDestinationAccount);
             return;
-        }
+        }    
+
+        BankAccount sourceAccount = accounts[sourceIndex];
+        BankAccount destinationAccount = accounts[destinationIndex];
 
         decimal amount = _view.GetTransferAmount();
 
