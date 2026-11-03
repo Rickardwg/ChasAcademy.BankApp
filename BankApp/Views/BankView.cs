@@ -144,26 +144,13 @@ internal class BankView
 
     public int SelectOtherCustomerAccount(List<PersonalAccount> accounts, string prompt)
     {
-        Console.WriteLine($"\n{prompt}");
-
-        for (int i = 0; i < accounts.Count; i++)
-        {
-            Console.WriteLine($"[{i + 1}] Account number: {accounts[i].AccountNumber}");
-        }
-
-        while (true)
-        {
-            Console.Write("\nSelect account number: ");
-
-            if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
-            {
-                return selection - 1;
-            }
-
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"\nPlease enter a number between 1 and {accounts.Count}.");
-            Console.ResetColor();
-        }
+        return AnsiConsole.Prompt(new SelectionPrompt<int>()
+            .Title($"[bold gold1]{prompt}[/]")
+            .HighlightStyle("bold black on gold1")
+            .PageSize(10)
+            .AddChoices(Enumerable.Range(1, accounts.Count))
+            .UseConverter(selection => $"Account number: {accounts[selection - 1].AccountNumber}")
+        ) - 1;
     }
 
     public decimal GetTransferAmount()
@@ -207,121 +194,143 @@ internal class BankView
     {
         if (transactions.Count == 0)
         {
-            Console.WriteLine("No transactions registered.");
+            var emptyPanel = new Panel(
+                new Markup("[yellow]No transactions registered.[/]")
+            )
+            .Header("[yellow bold]TRANSACTION HISTORY[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.Gold1)
+            .Padding(2, 1);
+
+            AnsiConsole.Write(emptyPanel);
             return;
         }
 
-        Console.WriteLine("Transactions:");
+        var table = new Table()
+            .Border(TableBorder.Rounded)
+            .BorderColor(Color.Gold1)
+            .Title("[bold gold1]TRANSACTION HISTORY[/]")
+            .AddColumn("[bold]Date[/]")
+            .AddColumn("[bold]Description[/]")
+            .AddColumn("[bold]Amount[/]")
+            .AddColumn("[bold]Type[/]");
 
-        foreach (var transaction in transactions.Reverse<Transaction>())
+        foreach (var transaction in transactions.AsEnumerable().Reverse())
         {
-            Console.WriteLine($"{transaction.Date:d}");
-
-            if (transaction.Desciption is not null)
-            {
-                Console.WriteLine(transaction.Desciption);
-            }
-
-            Console.WriteLine(transaction.Amount);
-
-            Console.WriteLine(transaction.Type);
-
-            Console.WriteLine();
+            table.AddRow(
+                transaction.Date.ToString("d"),
+                transaction.Desciption ?? "-",
+                transaction.Amount.ToString("F2"),
+                transaction.Type.ToString()
+            );
         }
+
+        AnsiConsole.Write(table);
     }
     public void DisplayInterestPreview(decimal depositAmount, decimal interestRate, int years, decimal expectedInterest)
     {
-        Console.WriteLine("\n\tSavings Account Interest Preview");
+        var panel = new Panel(
+            new Markup(
+                $"[bold]Deposit Amount:[/] {depositAmount:F2}\n" +
+                $"[bold]Yearly Interest Rate:[/] {interestRate:P2}\n" +
+                $"[bold]Number of Years:[/] {years}\n\n" +
+                $"[bold]Expected Interest:[/] {expectedInterest:F2}\n" +
+                $"[bold gold1]Estimated Total:[/] [gold1]{depositAmount + expectedInterest:F2}[/]"
+            )
+        )
+        .Header("[bold gold1]SAVINGS ACCOUNT INTEREST PREVIEW[/]", Justify.Center)
+        .RoundedBorder()
+        .BorderColor(Color.Gold1)
+        .Padding(2, 1);
 
-        Console.WriteLine($"Deposit Amount: {depositAmount:F2}");
-        Console.WriteLine($"Yearly Interest Rate: {interestRate:P2}");
-        Console.WriteLine($"Number of Years: {years}");
-        Console.WriteLine($"Expected Interest: {expectedInterest:F2}");
-        Console.WriteLine($"Estimated Total: {depositAmount + expectedInterest:F2}");
+        AnsiConsole.Write(panel);
     }
 
     public decimal GetDepositAmount()
     {
-        Console.Write("Enter amount to deposit: ");
-        decimal.TryParse(Console.ReadLine(), out decimal amount);
-
-        return amount;
+        return AnsiConsole.Ask<decimal>(
+            "[bold gold1]Enter deposit amount:[/]"
+        );
     }
     public int GetInterestYears()
     {
-        Console.Write("Enter Years: ");
-        int.TryParse(Console.ReadLine(), out int years);
-
-        return years;
+        return AnsiConsole.Ask<int>(
+            "[bold gold1]Enter loan duration (years):[/]"
+        );
     }
     public void DisplayInvalidInterestInput()
     {
-        Console.WriteLine("Invalid amount or number of years.");
+        var panel = new Panel(
+            new Markup("[red]Invalid loan amount or duration.[/]")
+        )
+        .Header("[red bold]X[/] [red]INVALID LOAN INPUT[/]", Justify.Center)
+        .RoundedBorder()
+        .BorderColor(Color.DarkRed)
+        .Padding(2, 1);
+
+        AnsiConsole.Write(panel);
     }
 
-    public void DisplayLoanPreview
-        (decimal loanAmount, decimal interestRate, int years, decimal totalInterest)
+    public void DisplayLoanPreview(decimal loanAmount, decimal interestRate, int years, decimal totalInterest)
     {
-        Console.WriteLine("\n\tLoan Preview");
-        Console.WriteLine("");
+        var panel = new Panel(
+            new Markup(
+                $"[bold]Loan Amount:[/] {loanAmount:F2}\n" +
+                $"[bold]Annual Interest:[/] {interestRate:P2}\n" +
+                $"[bold]Loan Duration:[/] {years} years\n\n" +
+                $"[bold]Total Interest:[/] {totalInterest:F2}\n" +
+                $"[bold gold1]Total Amount Owed:[/] [gold1]{loanAmount + totalInterest:F2}[/]"
+            )
+        )
+        .Header("[bold gold1]Loan Preview[/]", Justify.Center)
+        .RoundedBorder()
+        .BorderColor(Color.Gold1)
+        .Padding(2, 1);
 
-        Console.WriteLine($"Loan Amount:{loanAmount:F2}");
-        Console.WriteLine($"Annual interest: {interestRate:P2}");
-        Console.WriteLine($"Loan Duration: {years} years");
-
-        Console.WriteLine($"Total Interest:{totalInterest:F2}");
-        Console.WriteLine($"Total Amount Owed: {loanAmount + totalInterest:F2}");
+        AnsiConsole.Write(panel);
     }
 
     public decimal GetLoanAmount()
     {
-        Console.Write("Enter Loan Amount:");
-        decimal.TryParse(Console.ReadLine(), out decimal amount);
-
-        return amount;
+        return AnsiConsole.Ask<decimal>(
+            "[bold gold1]Enter loan amount:[/]"
+        );
     }
 
     public bool ConfirmLoan()
     {
-        while (true)
-        {
-            Console.Write("Would you like to confirm this loan? (Y/N): ");
-
-            string input = Console.ReadLine()?.Trim().ToUpper() ?? "";
-
-            if (input == "Y")
-            {
-                return true;
-            }
-            else if (input == "N")
-            {
-                return false;
-            }
-
-            Console.WriteLine("Invalid input! Please answere with Y or N.");
-        }
+        return AnsiConsole.Confirm(
+            "[bold gold1]Would you like to confirm this loan?[/]"
+        );
     }
+
     public void DisplayLoanResult(bool success)
     {
-        if (success)
-        {
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("\nYour loan has been registered successfully.");
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nThe loan could not be completed.");
-        }
+        var panel = new Panel(
+            new Markup(success
+                ? "[green]Your loan has been registered successfully.[/]"
+                : "[red]The loan could not be completed.[/]"
+            )
+        )
+        .Header(success ? "[green bold]Loan Successful[/]" : "[red bold]Loan Failed[/]", Justify.Center)
+        .RoundedBorder()
+        .BorderColor(success ? Color.DarkGreen : Color.DarkRed)
+        .Padding(2, 1);
 
-        Console.ResetColor();
+        AnsiConsole.Write(panel);
     }
 
     public void DisplayInvalidLoanInput()
     {
-        Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.WriteLine("\nInvalid loan amount or number of years. ");
-        Console.ResetColor();
+        var panel = new Panel(
+            new Markup("[red]Invalid loan amount or number of years.[/]")
+        )
+        .Header("[red bold] X [/][red]INVALID LOAN DETAILS[/]", Justify.Center)
+        .RoundedBorder()
+        .BorderColor(Color.DarkRed)
+        .Padding(2, 1);
+
+        AnsiConsole.Write(panel);
     }
 }
 
