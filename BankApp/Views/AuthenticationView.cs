@@ -49,6 +49,4 @@ internal class AuthenticationView
     {
         return AnsiConsole.Prompt(new TextPrompt<string>("[bold gold1]Password:[/]").Secret());
     }
-
-    
 }

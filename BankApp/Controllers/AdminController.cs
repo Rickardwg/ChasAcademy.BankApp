@@ -15,12 +15,11 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
     internal void Run(User user)
     {
-        ConsoleHeader.DisplayLogo();
-        _view.DisplayWelcomeMessage(user);
-
         while (true)
         {
             // Main menu
+            ConsoleHeader.DisplayLogo();
+            _view.DisplayWelcomeMessage(user);
             var mainMenuChoice = _view.DisplayMenu();
 
             switch (mainMenuChoice)
@@ -47,6 +46,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
         while (showMenu)
         {
+            ConsoleHeader.DisplayLogo();
             var userToManageChoice = _view.DisplayUserManagementMenu();
 
             switch (userToManageChoice)
@@ -95,6 +95,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
     private void AddCustomer()
     {
+        ConsoleHeader.DisplayLogo();
         var customerData = _view.DisplayRegisterCustomerMenu();
 
         while (true)
@@ -103,6 +104,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
             if (registrationResult.IsSuccess)
             {
+                ConsoleHeader.DisplayLogo();
                 _view.DisplayRegistrationSuccess(registrationResult.Value!.UserName);
                 break;
             }
@@ -154,6 +156,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
     private void AddAdmin()
     {
+        ConsoleHeader.DisplayLogo();
         _view.DisplayRegisterHeader();
 
         string username = _view.ReadUsername();
@@ -165,6 +168,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
             if (result.IsSuccess)
             {
+                ConsoleHeader.DisplayLogo();
                 _view.DisplayRegistrationSuccess(result.Value!.UserName);
                 break;
             }

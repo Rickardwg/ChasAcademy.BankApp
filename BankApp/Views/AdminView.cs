@@ -8,8 +8,9 @@ internal class AdminView
 {
     public void DisplayWelcomeMessage(User user)
     {
-        Console.WriteLine("\nAdmin portal.");
-        Console.WriteLine($"Welcome {user.UserName}!");
+        AnsiConsole.MarkupLine("[bold gold1] Admin portal[/]");
+        AnsiConsole.MarkupLine($"[grey]Signed in as: {Markup.Escape(user.UserName)}[/]");
+        AnsiConsole.WriteLine();
     }
 
     public string DisplayMenu()
@@ -31,7 +32,7 @@ internal class AdminView
     public string DisplayUserManagementMenu()
     {
         return AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title("[bold gold1]What would you like to do?[/]")
+            .Title("[bold gold1]Manage Users[/]")
             .HighlightStyle("bold black on gold1")
             .AddChoices("1", "2", "3", "0")
             .UseConverter(choice => choice switch
@@ -47,7 +48,7 @@ internal class AdminView
     public string DisplayUserTypeMenu()
     {
         return AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title("[bold gold1]What would you like to do?[/]")
+            .Title("[bold gold1]Select User Type[/]")
             .HighlightStyle("bold black on gold1")
             .AddChoices("1", "2", "0")
             .UseConverter(choice => choice switch
@@ -126,6 +127,9 @@ internal class AdminView
     public void DisplayRegistrationSuccess(string username)
     {
         AnsiConsole.MarkupLine($"[green]User[/] '{Markup.Escape(username)}' [green]created successfully.[/]");
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
+        Console.ReadKey(intercept: true);
     }
 
     public void DisplayRegistrationError(RegistrationError error)
