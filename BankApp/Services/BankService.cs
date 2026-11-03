@@ -59,25 +59,33 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
             return false;
         }
         
-        // Add currency conversion calculation here?
-        // This would have to go here, I think...
-
-        // I think this will work?
+        // I think this will work...?
         if (sourceAccount is LoanAccount loanSource)
         {
             if (loanSource.Owed <= 0)
             {
-                // TODO: Display error message: you don't have a loan
+                // TODO: Display error message:
+                Console.WriteLine("You don't have a loan!"); // TEMP
                 return false;
             }
 
-            // Can you do this here - will the value be reset on false return...?
+            if (amount > loanSource.Owed)
+            {
+                // TODO: Display error message:
+                Console.WriteLine("Your loan isn't big enough for that transfer!"); // TEMP
+                return false;
+            }
+
+            // Nothing is done with LoanAccount.Owed since the loan remains.
             loanSource.AmountWithdrawn += amount;
-            // Nothing is done with LoanAccount.Owed - the loan remains
-            
+
             if (amount > (loanSource.Owed - loanSource.AmountWithdrawn))
             {
-                // TODO: Display error message: your loan isn't big enough
+                // TODO: Display error message:
+                Console.WriteLine("Your loan isn't big enough for that transfer!"); // TEMP
+
+                loanSource.AmountWithdrawn -= amount; // reset tracker
+
                 return false;
             }
         }
@@ -96,9 +104,8 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
 
         if (sourceAccount is LoanAccount && destinationAccount is LoanAccount)
         {
-            // TODO: add error message: both accounts can't be loan account.
+            // TODO: add error message: (is this necessary?)
             Console.WriteLine("Both accounts can't be loan accounts!"); // TEMP
-            // Is this check even necessary if we make sure only one loan account can be created?
         }
         
         decimal destinationAmount = amount * exchangeRate;
@@ -106,14 +113,28 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         
         if (destinationAccount is LoanAccount loanDestination)
         {
-            if (amount > loanDestination.Owed)
+            if (destinationAmount > loanDestination.Owed)
             {
-                // TODO: inform about max amount = LoanAccount.Owed
+                // TODO: display error message
+                Console.WriteLine($"Maximum amount available to transfer into loan account equals the amount owed: {loanDestination.Owed} {loanDestination.Currency}."); // TEMP
                 return false;
             }
             
             loanDestination.Owed -= destinationAmount; // This is already converted into correct currency
-            loanDestination.AmountWithdrawn -= destinationAmount;
+
+            if (loanDestination.Owed == 0)
+            {
+                loanDestination.AmountWithdrawn = 0;
+                // TODO: display information:
+                Console.WriteLine("Your loan was successfully payed off!"); // TEMP
+            }
+
+            if (destinationAmount < loanDestination.AmountWithdrawn)
+            {
+                loanDestination.AmountWithdrawn -= destinationAmount;
+                // TODO: display information:
+                Console.WriteLine($"Your withdrawn amount was decreased with {destinationAmount} {loanDestination.Currency}");
+            }
         }
 
         if (destinationAccount is PersonalAccount personalDestination)
@@ -122,6 +143,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         }
 
         // Add correct transaction history for loan accounts!
+
         sourceAccount.TransactionHistory.Add(new Transaction
         {
             Type = TransactionType.Transfer,
