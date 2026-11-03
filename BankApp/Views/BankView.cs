@@ -97,22 +97,18 @@ internal class BankView
 
     internal string DisplayTransferMoneyMenu()
     {
-        Console.WriteLine("Select transfer type:\n[1] Transfer between your own accounts\n[2] Transfer to another customer's account\n[0] Go back");
-
-        string userChoice;
-        while (true)
-        {
-            userChoice = Console.ReadLine() ?? "";
-
-            if (userChoice == "1" || userChoice == "2" || userChoice == "0")
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]Select transfer type:[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("1", "2", "0")
+            .UseConverter(choice => choice switch
             {
-                break;
-            }
-
-            Console.WriteLine("Please enter one of the valid options.");
-        }
-
-        return userChoice;
+                "1" => "Transfer between your own accounts",
+                "2" => "Transfer to another customer's account",
+                "0" => "Go back",
+                _ => throw new InvalidOperationException("Unexpected transfer choice.")
+            })
+        );
     }
 
     public int SelectOwnAccount(List<BankAccount> accounts, string prompt)
