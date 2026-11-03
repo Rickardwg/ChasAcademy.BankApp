@@ -29,6 +29,7 @@ internal class BankView
             else if (account is LoanAccount loanAccount)
             {
                 Console.WriteLine($"Amount Owed: {loanAccount.Owed}");
+                Console.WriteLine($"Amount withdrawn: {loanAccount.AmountWithdrawn}");
             }
 
             Console.WriteLine($"Account Number: {account.AccountNumber}");
