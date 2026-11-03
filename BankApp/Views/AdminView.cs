@@ -45,8 +45,16 @@ public class AdminView
 
     public string DisplayUserTypeMenu()
     {
-        Console.WriteLine("\nChoose user:");
-        Console.WriteLine("[1] Admin \n[2] Customer \n[9] Go back\n[0] Main menu");
-        return Console.ReadLine() ?? "";
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]What would you like to do?[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("1", "2", "0")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Add Admin",
+                "2" => "Add Customer",
+                "0" => "Go Back",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
     }
 }
