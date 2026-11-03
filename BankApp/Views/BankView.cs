@@ -287,7 +287,7 @@ internal class BankView
         .BorderColor(Color.Gold1)
         .Padding(2, 1);
 
-        AnsiConsole.Write(panel);
+        AnsiConsole.Write(new Padder(panel, new Padding(0, 1)));
     }
 
     public decimal GetLoanAmount()
@@ -317,7 +317,7 @@ internal class BankView
         .BorderColor(success ? Color.DarkGreen : Color.DarkRed)
         .Padding(2, 1);
 
-        AnsiConsole.Write(panel);
+        AnsiConsole.Write(new Padder(panel, new Padding(0, 1)));
     }
 
     public void DisplayInvalidLoanInput()
