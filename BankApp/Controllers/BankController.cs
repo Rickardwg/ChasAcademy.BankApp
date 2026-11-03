@@ -61,8 +61,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
                             if (otherAccountsForTransfer is null)
                             {
-                                // TODO: add error message:
-                                Console.WriteLine("No other customers have accounts in the bank."); // TEMP
+                                _errorMessageView.DisplayErrorMessage(ErrorMessages.NoOtherCustomerAccounts);
                                 break;
                             }
 
@@ -82,7 +81,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     break;
 
                 case ("3"):
-                   List<BankAccount>? accountsForLoan = _repository.GetBankAccountsOwnedByCustomer(user);
+                    List<BankAccount>? accountsForLoan = _repository.GetBankAccountsOwnedByCustomer(user);
                     if (accountsForLoan is not null)
                     {
                         LoanAccount? loanAccount
@@ -150,8 +149,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         if (nonLoanAccounts.Count < 1 || accounts.Count < 2)
         {
-            // TODO: add error message:
-            Console.WriteLine("Self transfers require two accounts, at least one of which is not a loan account."); // TEMP
+            _errorMessageView.DisplayErrorMessage(ErrorMessages.NotEnoughAccounts);
             return;
         }
 
