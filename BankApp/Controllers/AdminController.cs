@@ -26,14 +26,15 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
             {
                 case "1": // Manage users
                     ShowUserManagementMenu();
+                    break;
+
+                case "2": // Manage currency
 
                     break;
-                case "2": // Manage interest
-                    break;
-                case "3": // Manage currency
-                    break;
+
                 case "0": // Logout
                     return;
+
                 default:
                     break;
             }
