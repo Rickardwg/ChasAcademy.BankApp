@@ -23,6 +23,11 @@ public enum ErrorMessages
     NoBankAccountFound,
 
     /// <summary>
+    /// Indicates that no other customers have bank accounts.
+    /// </summary>
+    NoOtherCustomerAccounts,
+
+    /// <summary>
     /// Not enough accounts available to make a transfer.
     /// </summary>
     NotEnoughAccounts,

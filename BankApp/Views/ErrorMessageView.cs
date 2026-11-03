@@ -63,6 +63,15 @@ public class ErrorMessageView
                     );
                 }
                 break;
+            case ErrorMessages.NoOtherCustomerAccounts:
+                {
+                    DisplayErrorPanel(
+                        "X",
+                        "NO OTHER CUSTOMER ACCOUNTS",
+                        new Markup("[red]No other customers have accounts in the bank.[/]")
+                    );
+                    break;
+                }
             case ErrorMessages.NotEnoughAccounts:
                 {
                     DisplayErrorPanel(
