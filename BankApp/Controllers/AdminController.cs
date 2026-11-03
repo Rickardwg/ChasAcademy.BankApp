@@ -1,15 +1,15 @@
 using BankApp.Enums;
+using BankApp.Enums.Errors;
 using BankApp.Models;
 using BankApp.Services;
 using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class AdminController(AdminView adminView, AuthenticationView authenticationView, AuthenticationService authenticationService, ErrorMessageView errorMessageView)
+internal class AdminController(AdminView adminView, AdminService service, ErrorMessageView errorMessageView)
 {
     private readonly AdminView _view = adminView;
-    private readonly AuthenticationView _authView = authenticationView;
-    private readonly AuthenticationService _authService = authenticationService;
+    private readonly AdminService _service = service;
     private readonly ErrorMessageView _errorMessageView = errorMessageView;
 
     internal void Run(User user)
@@ -50,14 +50,70 @@ internal class AdminController(AdminView adminView, AuthenticationView authentic
             switch (userToManageChoice)
             {
                 case "1": // Add
-                    bool returnToMainMenu = ShowUserTypeMenu();
+                    ConsoleHeader.DisplayLogo();
+                    string typeChoice = _view.DisplayUserTypeMenu();
 
-                    if (returnToMainMenu)
+                    if (typeChoice == "0")
                     {
-                        showMenu = false;
+                        break;
                     }
 
+                    var customerData = _view.DisplayRegisterMenu();
+
+                    while (true)
+                    {
+                        var registrationResult = _service.RegisterCustomer(customerData);
+
+                        if (registrationResult.IsSuccess)
+                        {
+                            break;
+                        }
+
+                        RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
+
+                        ConsoleHeader.DisplayLogo();
+                        _view.DisplayRegistrationError(error);
+
+                        string retryChoice = _view.RetryRegistrationPrompt();
+
+                        if (retryChoice == "n")
+                        {
+                            break;
+                        }
+
+                        switch (error)
+                        {
+                            case RegistrationError.UsernameAlreadyExists:
+                            case RegistrationError.InvalidUsername:
+                                customerData.UserName = _view.ReadUsername();
+                                break;
+
+                            case RegistrationError.InvalidFirstName:
+                                customerData.FirstName = _view.ReadFirstName();
+                                break;
+
+                            case RegistrationError.InvalidLastName:
+                                customerData.LastName = _view.ReadLastName();
+                                break;
+
+                            case RegistrationError.InvalidEmailAddress:
+                                customerData.EmailAddress = _view.ReadEmailAddress();
+                                break;
+
+                            case RegistrationError.InvalidPhoneNumber:
+                                customerData.PhoneNumber = _view.ReadPhoneNumber();
+                                break;
+
+                            case RegistrationError.InvalidPassword:
+                                customerData.Password = _view.ReadPassword();
+                                break;
+
+                            default:
+                                throw new InvalidOperationException("Unexpected registration failure.");
+                        }
+                    }
                     break;
+
                 case "2":
                     // Change
                     break;
@@ -71,38 +127,6 @@ internal class AdminController(AdminView adminView, AuthenticationView authentic
                 default:
                     _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
                     break;
-            }
-        }
-    }
-
-    private bool ShowUserTypeMenu()
-    {
-        while (true)
-        {
-
-            var userTypeChoice = _view.DisplayUserTypeMenu();
-
-            switch (userTypeChoice)
-            {
-                case "1":
-                    // Admin
-
-                    return true; // Return to main menu
-                case "2":
-                    // Customer
-                    var customerData = _authView.DisplayRegisterMenu();
-                    _authService.RegisterCustomer(customerData);
-
-                    return true; // Return to main menu
-                case "9": // Go back
-
-                    return false; // Shows the previous menu
-                case "0":
-
-                    return true; // Return to main menu
-                default:
-                    _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
-                    return false; // Shows the previous menu
             }
         }
     }
