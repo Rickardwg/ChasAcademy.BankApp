@@ -1,4 +1,5 @@
 using BankApp.Models;
+using Spectre.Console;
 
 namespace BankApp.Views;
 
@@ -12,9 +13,18 @@ public class AdminView
 
     public string DisplayMenu()
     {
-        Console.WriteLine("\nMain menu:");
-        Console.WriteLine("[1] Manage users \n[2] Manage interest \n[3] Manage currency \n[0] Logout");
-        return Console.ReadLine() ?? "";
+        // EXTRA: Manage Interest
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]What would you like to do?[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("1", "2", "0")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Manage Users",
+                "2" => "Manage Currencies",
+                "0" => "Logout",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
     }
 
     public string DisplayUserManagementMenu()
