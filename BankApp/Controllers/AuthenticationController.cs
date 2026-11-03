@@ -34,18 +34,6 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     break;
                 }
 
-                case "2": // Register
-                {
-                    User? user = Register();
-
-                    if (user is not null)
-                    {
-                        return user;
-                    }
-
-                    break;
-                }
-
                 case "0":
                     return null;
 
@@ -115,65 +103,6 @@ internal class AuthenticationController(AuthenticationService service, Authentic
                     }
 
                     break;
-            }
-        }
-    }
-
-    private User? Register()
-    {
-        ConsoleHeader.DisplayLogo();
-        var customerData = _view.DisplayRegisterMenu();
-
-        while (true)
-        {
-            var registrationResult = _service.RegisterCustomer(customerData);
-
-            if (registrationResult.IsSuccess)
-            {
-                return registrationResult.Value;
-            }
-
-            RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
-
-            ConsoleHeader.DisplayLogo();
-            _view.DisplayRegistrationError(error);
-
-            string choice = _view.RetryRegistrationPrompt();
-
-            if (choice == "n")
-            {
-                return null;
-            }
-
-            switch (error)
-            {
-                case RegistrationError.UsernameAlreadyExists:
-                case RegistrationError.InvalidUsername:
-                    customerData.UserName = _view.ReadUsername();
-                    break;
-
-                case RegistrationError.InvalidFirstName:
-                    customerData.FirstName = _view.ReadFirstName();
-                    break;
-
-                case RegistrationError.InvalidLastName:
-                    customerData.LastName = _view.ReadLastName();
-                    break;
-
-                case RegistrationError.InvalidEmailAddress:
-                    customerData.EmailAddress = _view.ReadEmailAddress();
-                    break;
-
-                case RegistrationError.InvalidPhoneNumber:
-                    customerData.PhoneNumber = _view.ReadPhoneNumber();
-                    break;
-
-                case RegistrationError.InvalidPassword:
-                    customerData.Password = _view.ReadPassword();
-                    break;
-
-                default:
-                    throw new InvalidOperationException("Unexpected registration failure.");
             }
         }
     }

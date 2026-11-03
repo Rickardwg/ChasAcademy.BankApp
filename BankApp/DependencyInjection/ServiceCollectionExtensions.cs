@@ -18,6 +18,7 @@ internal static class ServiceCollectionExtensions
 
         services.AddTransient<AuthenticationService>();
         services.AddTransient<BankService>();
+        services.AddTransient<AdminService>();
         services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
         services.AddTransient<AuthenticationController>();
