@@ -29,9 +29,18 @@ public class AdminView
 
     public string DisplayUserManagementMenu()
     {
-        Console.WriteLine("Manage users:");
-        Console.WriteLine("[1] Add \n[2] Change \n[3] Remove \n[0] Main menu");
-        return Console.ReadLine() ?? "";
+        return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold gold1]What would you like to do?[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices("1", "2", "3", "0")
+            .UseConverter(choice => choice switch
+            {
+                "1" => "Add User",
+                "2" => "Edit User",
+                "3" => "Remove User",
+                "0" => "Go Back",
+                _ => throw new InvalidOperationException("Unexpected menu choice.")
+            }));
     }
 
     public string DisplayUserTypeMenu()
