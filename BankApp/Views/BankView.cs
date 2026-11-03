@@ -60,7 +60,7 @@ internal class BankView
                     table.AddRow(
                         "[red]Loan[/]",
                         loanAccount.Currency.ToString(),
-                        $"[red]{loanAccount.Owed:N2}[/]",
+                        $"[red]{loanAccount.Owed:N2} (Withdrawn: {loanAccount.AmountWithdrawn:N2})[/]",
                         "[dim]N/A[/]"
                     );
                     break;
