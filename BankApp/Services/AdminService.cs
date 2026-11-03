@@ -67,6 +67,38 @@ internal class AdminService(UserRepository userRepository, IPasswordHasher<User>
         return Result<Customer, RegistrationError>.Success(customer);
     }
 
+    public Result<User, RegistrationError> RegisterAdmin(string username, string password)
+    {
+        User? existingUser = _userRepository.GetByUsername(username);
+
+        if (existingUser is not null)
+        {
+            return Result<User, RegistrationError>.Failure(RegistrationError.UsernameAlreadyExists);
+        }
+
+        if (username.Length < 5)
+        {
+            return Result<User, RegistrationError>.Failure(RegistrationError.InvalidUsername);
+        }
+
+        if (password.Length < 7)
+        {
+            return Result<User, RegistrationError>.Failure(RegistrationError.InvalidPassword);
+        }
+
+        User user = new()
+        {
+            Id = Guid.NewGuid(),
+            UserName = username,
+            IsAdmin = true
+        };
+
+        user.PasswordHash = _passwordHasher.HashPassword(user, password);
+        _userRepository.AddUser(user);
+
+        return Result<User, RegistrationError>.Success(user);
+    }
+
     // Validates email address
     private bool IsValidEmailAddress(string emailAddress)
     {

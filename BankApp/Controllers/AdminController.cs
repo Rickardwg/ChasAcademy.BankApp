@@ -1,3 +1,4 @@
+using BankApp.Common.Results;
 using BankApp.Enums;
 using BankApp.Enums.Errors;
 using BankApp.Models;
@@ -14,6 +15,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
     internal void Run(User user)
     {
+        ConsoleHeader.DisplayLogo();
         _view.DisplayWelcomeMessage(user);
 
         while (true)
@@ -50,69 +52,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
             switch (userToManageChoice)
             {
                 case "1": // Add
-                    ConsoleHeader.DisplayLogo();
-                    string typeChoice = _view.DisplayUserTypeMenu();
-
-                    if (typeChoice == "0")
-                    {
-                        break;
-                    }
-
-                    var customerData = _view.DisplayRegisterMenu();
-
-                    while (true)
-                    {
-                        var registrationResult = _service.RegisterCustomer(customerData);
-
-                        if (registrationResult.IsSuccess)
-                        {
-                            _view.DisplayRegistrationSuccess(registrationResult.Value!.UserName);
-                            break;
-                        }
-
-                        RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
-
-                        ConsoleHeader.DisplayLogo();
-                        _view.DisplayRegistrationError(error);
-
-                        string retryChoice = _view.RetryRegistrationPrompt();
-
-                        if (retryChoice == "n")
-                        {
-                            break;
-                        }
-
-                        switch (error)
-                        {
-                            case RegistrationError.UsernameAlreadyExists:
-                            case RegistrationError.InvalidUsername:
-                                customerData.UserName = _view.ReadUsername();
-                                break;
-
-                            case RegistrationError.InvalidFirstName:
-                                customerData.FirstName = _view.ReadFirstName();
-                                break;
-
-                            case RegistrationError.InvalidLastName:
-                                customerData.LastName = _view.ReadLastName();
-                                break;
-
-                            case RegistrationError.InvalidEmailAddress:
-                                customerData.EmailAddress = _view.ReadEmailAddress();
-                                break;
-
-                            case RegistrationError.InvalidPhoneNumber:
-                                customerData.PhoneNumber = _view.ReadPhoneNumber();
-                                break;
-
-                            case RegistrationError.InvalidPassword:
-                                customerData.Password = _view.ReadPassword();
-                                break;
-
-                            default:
-                                throw new InvalidOperationException("Unexpected registration failure.");
-                        }
-                    }
+                    AddUser();
                     break;
 
                 case "2":
@@ -128,6 +68,132 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
                 default:
                     _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
                     break;
+            }
+        }
+    }
+
+    private void AddUser()
+    {
+        ConsoleHeader.DisplayLogo();
+        string typeChoice = _view.DisplayUserTypeMenu();
+
+        if (typeChoice == "0") // Go back
+        {
+            return;
+        }
+
+        if (typeChoice == "1") // Admin
+        {
+            AddAdmin();
+        }
+
+        if (typeChoice == "2") // Customer
+        {
+            AddCustomer();
+        }
+    }
+
+    private void AddCustomer()
+    {
+        var customerData = _view.DisplayRegisterCustomerMenu();
+
+        while (true)
+        {
+            var registrationResult = _service.RegisterCustomer(customerData);
+
+            if (registrationResult.IsSuccess)
+            {
+                _view.DisplayRegistrationSuccess(registrationResult.Value!.UserName);
+                break;
+            }
+
+            RegistrationError error = registrationResult.Error ?? throw new InvalidOperationException("Registration failed without an error.");
+
+            ConsoleHeader.DisplayLogo();
+            _view.DisplayRegistrationError(error);
+
+            string retryChoice = _view.RetryRegistrationPrompt();
+
+            if (retryChoice == "n")
+            {
+                break;
+            }
+
+            switch (error)
+            {
+                case RegistrationError.UsernameAlreadyExists:
+                case RegistrationError.InvalidUsername:
+                    customerData.UserName = _view.ReadUsername();
+                    break;
+
+                case RegistrationError.InvalidFirstName:
+                    customerData.FirstName = _view.ReadFirstName();
+                    break;
+
+                case RegistrationError.InvalidLastName:
+                    customerData.LastName = _view.ReadLastName();
+                    break;
+
+                case RegistrationError.InvalidEmailAddress:
+                    customerData.EmailAddress = _view.ReadEmailAddress();
+                    break;
+
+                case RegistrationError.InvalidPhoneNumber:
+                    customerData.PhoneNumber = _view.ReadPhoneNumber();
+                    break;
+
+                case RegistrationError.InvalidPassword:
+                    customerData.Password = _view.ReadPassword();
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unexpected registration failure.");
+            }
+        }
+    }
+
+    private void AddAdmin()
+    {
+        _view.DisplayRegisterHeader();
+
+        string username = _view.ReadUsername();
+        string password = _view.ReadPassword();
+
+        while (true)
+        {
+            Result<User, RegistrationError> result = _service.RegisterAdmin(username, password);
+
+            if (result.IsSuccess)
+            {
+                _view.DisplayRegistrationSuccess(result.Value!.UserName);
+                break;
+            }
+
+            RegistrationError error = result.Error ?? throw new InvalidOperationException("Registration failed without an error.");
+
+            ConsoleHeader.DisplayLogo();
+            _view.DisplayRegistrationError(error);
+
+            string retryChoice = _view.RetryRegistrationPrompt();
+
+            if (retryChoice == "n")
+            {
+                break;
+            }
+
+            switch (error)
+            {
+                case RegistrationError.UsernameAlreadyExists:
+                case RegistrationError.InvalidUsername:
+                    username = _view.ReadUsername();
+                    break;
+
+                case RegistrationError.InvalidPassword:
+                    password = _view.ReadPassword();
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unexpected registration failure.");
             }
         }
     }

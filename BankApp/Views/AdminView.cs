@@ -59,11 +59,16 @@ internal class AdminView
             }));
     }
 
-    public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) DisplayRegisterMenu()
+    public void DisplayRegisterHeader()
     {
         AnsiConsole.MarkupLine("[bold gold1]Registration form:[/]");
         AnsiConsole.MarkupLine("[italic grey]Please fill in all the following fields.[/]");
         AnsiConsole.WriteLine();
+    }
+
+    public (string FirstName, string LastName, string EmailAddress, string PhoneNumber, string UserName, string Password) DisplayRegisterCustomerMenu()
+    {
+        DisplayRegisterHeader();
 
         string firstName = ReadFirstName();
         string lastName = ReadLastName();
@@ -120,7 +125,7 @@ internal class AdminView
 
     public void DisplayRegistrationSuccess(string username)
     {
-        AnsiConsole.MarkupLine($"[green]Customer[/] '{Markup.Escape(username)}' [green]created successfully.[/]");
+        AnsiConsole.MarkupLine($"[green]User[/] '{Markup.Escape(username)}' [green]created successfully.[/]");
     }
 
     public void DisplayRegistrationError(RegistrationError error)
