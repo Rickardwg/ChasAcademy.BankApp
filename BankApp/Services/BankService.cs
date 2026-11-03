@@ -1,6 +1,7 @@
-using BankApp.Models;
 using BankApp.Enums;
+using BankApp.Models;
 using BankApp.Repositories;
+using System.Security.Principal;
 
 namespace BankApp.Services;
 
@@ -79,7 +80,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         destination.Balance += destinationAmount;
 
         sourceAccount.TransactionHistory.Add(new Transaction
-        { 
+        {
             Type = TransactionType.Transfer,
             Amount = -amount,
             Currency = sourceAccount.Currency,
@@ -89,7 +90,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
             RelatedAccountId = destinationAccount.AccountNumber,
             Desciption = $"Transfer to {destinationAccount.AccountNumber}"
         });
-        
+
         destinationAccount.TransactionHistory.Add(new Transaction
         {
             Type = TransactionType.Transfer,
@@ -105,7 +106,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         return true;
     }
 
-    public decimal CalculateExpectedInterest(SavingsAccount savingsAccount, decimal depositAmount, int years)                 
+    public decimal CalculateExpectedInterest(SavingsAccount savingsAccount, decimal depositAmount, int years)
     {
         if (depositAmount <= 0 || years <= 0)
         {
@@ -135,7 +136,7 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         return loanAmount * interestRate * years;
     }
 
-    public bool BorrowMoney(LoanAccount loanAccount, decimal loanAmount , int years)
+    public bool BorrowMoney(LoanAccount loanAccount, decimal loanAmount, int years)
     {
         if (loanAmount <= 0 || years <= 0 || loanAccount.InterestRate < 0)
         {
@@ -144,9 +145,47 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
 
         decimal totalInterest = CalculateLoanInterest(loanAccount, loanAmount, years);
 
+        decimal maxLoanAmount = CalculateMaxLoanAmount(loanAccount);
+
+        decimal newTotalDebt = loanAccount.Owed + loanAmount + totalInterest;
+
+        if (newTotalDebt > maxLoanAmount)
+        {
+            return false;
+        }
+
         loanAccount.Owed += loanAmount + totalInterest;
 
         return true;
+    }
+
+    public decimal CalculateMaxLoanAmount(LoanAccount loanAccount)
+    {
+        List<BankAccount>? customerAccounts =
+             _repository.GetBankAccountsOwnedByCustomer(ActiveUser);
+
+        if (customerAccounts is null)
+        {
+            return 0m;
+        }
+
+        List<PersonalAccount> balanceAccounts = customerAccounts.OfType<PersonalAccount>().ToList();
+
+        decimal totalBalance = 0m;
+
+        foreach (PersonalAccount account in balanceAccounts)
+        {
+            if (!_exchangeRateService.TryGetRate(account.Currency, loanAccount.Currency, out decimal exchangeRate))
+            {
+                throw new InvalidOperationException("Currency conversion failed.");
+            }
+
+            decimal convertedBalance = account.Balance * exchangeRate;
+
+            totalBalance += convertedBalance;
+        }
+
+        return totalBalance * 5;
     }
 }
 
