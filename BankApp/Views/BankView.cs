@@ -1,4 +1,4 @@
-﻿using BankApp.Models;
+using BankApp.Models;
 using Spectre.Console;
 
 namespace BankApp.Views;
@@ -115,13 +115,24 @@ internal class BankView
         return userChoice;
     }
 
-    public int SelectAccount(List<PersonalAccount> accounts, string prompt)
+    public int SelectOwnAccount(List<BankAccount> accounts, string prompt)
     {
         var choices = accounts.Select((account, index) => new
         {
             Index = index,
-            Display = $"[[{account.accountType}]] Account: {account.AccountNumber} | " +
-                 $"Balance: {account.Balance:N2} {account.Currency}"
+            Display = account switch
+            {
+                SavingsAccount s =>
+                    $"[[Savings]] Account: {s.AccountNumber} | Balance: {s.Balance:N2} {s.Currency}",
+
+                PersonalAccount p =>
+                    $"[[Personal]] Account: {p.AccountNumber} | Balance: {p.Balance:N2} {p.Currency}",
+
+                LoanAccount l =>
+                    $"[[Loan]] Account: N/A | Owed: {l.Owed:N2} {l.Currency}",
+
+                _ => $"Unknown account: {account.AccountNumber}"
+            }
         }).ToList();
 
         var selected = AnsiConsole.Prompt(
@@ -134,6 +145,31 @@ internal class BankView
 
         return choices.First(x => x.Display == selected).Index;
     }
+
+    public int SelectOtherCustomerAccount(List<PersonalAccount> accounts, string prompt)
+    {
+        Console.WriteLine($"\n{prompt}");
+
+        for (int i = 0; i < accounts.Count; i++)
+        {
+            Console.WriteLine($"[{i + 1}] Account number: {accounts[i].AccountNumber}");
+        }
+
+        while (true)
+        {
+            Console.Write("\nSelect account number: ");
+
+            if (int.TryParse(Console.ReadLine(), out int selection) && selection >= 1 && selection <= accounts.Count)
+            {
+                return selection - 1;
+            }
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\nPlease enter a number between 1 and {accounts.Count}.");
+            Console.ResetColor();
+        }
+    }
+
     public decimal GetTransferAmount()
     {
         return AnsiConsole.Ask<decimal>(
@@ -197,8 +233,7 @@ internal class BankView
             Console.WriteLine();
         }
     }
-    public void DisplayInterestPreview
-       (decimal depositAmount, decimal interestRate, int years, decimal expectedInterest)
+    public void DisplayInterestPreview(decimal depositAmount, decimal interestRate, int years, decimal expectedInterest)
     {
         Console.WriteLine("\n\tSavings Account Interest Preview");
 
@@ -218,7 +253,7 @@ internal class BankView
     }
     public int GetInterestYears()
     {
-        Console.Write("Enter number of years: ");
+        Console.Write("Enter Years: ");
         int.TryParse(Console.ReadLine(), out int years);
 
         return years;
@@ -226,6 +261,71 @@ internal class BankView
     public void DisplayInvalidInterestInput()
     {
         Console.WriteLine("Invalid amount or number of years.");
+    }
+
+    public void DisplayLoanPreview
+        (decimal loanAmount, decimal interestRate, int years, decimal totalInterest)
+    {
+        Console.WriteLine("\n\tLoan Preview");
+        Console.WriteLine("");
+
+        Console.WriteLine($"Loan Amount:{loanAmount:F2}");
+        Console.WriteLine($"Annual interest: {interestRate:P2}");
+        Console.WriteLine($"Loan Duration: {years} years");
+
+        Console.WriteLine($"Total Interest:{totalInterest:F2}");
+        Console.WriteLine($"Total Amount Owed: {loanAmount + totalInterest:F2}");
+    }
+
+    public decimal GetLoanAmount()
+    {
+        Console.Write("Enter Loan Amount:");
+        decimal.TryParse(Console.ReadLine(), out decimal amount);
+
+        return amount;
+    }
+
+    public bool ConfirmLoan()
+    {
+        while (true)
+        {
+            Console.Write("Would you like to confirm this loan? (Y/N): ");
+
+            string input = Console.ReadLine()?.Trim().ToUpper() ?? "";
+
+            if (input == "Y")
+            {
+                return true;
+            }
+            else if (input == "N")
+            {
+                return false;
+            }
+
+            Console.WriteLine("Invalid input! Please answere with Y or N.");
+        }
+    }
+    public void DisplayLoanResult(bool success)
+    {
+        if (success)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\nYour loan has been registered successfully.");
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("\nThe loan could not be completed.");
+        }
+
+        Console.ResetColor();
+    }
+
+    public void DisplayInvalidLoanInput()
+    {
+        Console.ForegroundColor = ConsoleColor.DarkRed;
+        Console.WriteLine("\nInvalid loan amount or number of years. ");
+        Console.ResetColor();
     }
 }
 
