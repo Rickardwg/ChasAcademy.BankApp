@@ -66,6 +66,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
                         if (registrationResult.IsSuccess)
                         {
+                            _view.DisplayRegistrationSuccess(registrationResult.Value!.UserName);
                             break;
                         }
 

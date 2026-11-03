@@ -118,6 +118,11 @@ internal class AdminView
             }));
     }
 
+    public void DisplayRegistrationSuccess(string username)
+    {
+        AnsiConsole.MarkupLine($"[green]Customer[/] '{Markup.Escape(username)}' [green]created successfully.[/]");
+    }
+
     public void DisplayRegistrationError(RegistrationError error)
     {
         var message = error switch
