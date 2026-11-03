@@ -7,10 +7,11 @@ using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class AdminController(AdminView adminView, AdminService service, ErrorMessageView errorMessageView)
+internal class AdminController(AdminView adminView, AdminService adminService, ExchangeRateService exchangeRateService, ErrorMessageView errorMessageView)
 {
     private readonly AdminView _view = adminView;
-    private readonly AdminService _service = service;
+    private readonly AdminService _adminService = adminService;
+    private readonly ExchangeRateService _exchangeRateService = exchangeRateService;
     private readonly ErrorMessageView _errorMessageView = errorMessageView;
 
     internal void Run(User user)
@@ -101,7 +102,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
         while (true)
         {
-            var registrationResult = _service.RegisterCustomer(customerData);
+            var registrationResult = _adminService.RegisterCustomer(customerData);
 
             if (registrationResult.IsSuccess)
             {
@@ -165,7 +166,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
         while (true)
         {
-            Result<User, RegistrationError> result = _service.RegisterAdmin(username, password);
+            Result<User, RegistrationError> result = _adminService.RegisterAdmin(username, password);
 
             if (result.IsSuccess)
             {
