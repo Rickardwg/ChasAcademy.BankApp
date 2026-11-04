@@ -144,3 +144,14 @@ Views are responsible for presenting information and collecting input from the u
 - **`AdminView`** – Displays the administrator menus and collects information when registering customers or administrators. It also displays registration success and validation messages.
 - **`ErrorMessageView`** – Displays application errors in formatted terminal panels based on the `ErrorMessages` enum.
 - **`ConsoleHeader`** – Clears the terminal and displays the application's title/logo.
+
+## Application Flow
+
+1. `Program.cs` configures dependency injection and starts `ApplicationController`.
+2. `ApplicationController` calls `AuthenticationController` to display the login menu.
+3. `AuthenticationController` uses `AuthenticationService` to authenticate the user.
+4. After a successful login, `ApplicationController` directs customers to `BankController` and administrators to `AdminController`.
+5. The relevant controller collects input through its view and calls services or repositories to perform the requested operation.
+6. The views display the result or any applicable error message to the user.
+
+This separation keeps the console interface, application flow, business rules, and data access in distinct parts of the source code.
