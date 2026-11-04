@@ -58,3 +58,9 @@ ChasAcademy.BankApp/
 ├── BankApp.slnx
 └── README.md
 ```
+
+### Program Entry Point
+
+- **`Program.cs`** – The application's entry point. It creates a dependency injection service collection, registers the application services by calling `AddBankAppServices()`, builds the service provider, and starts the application through `ApplicationController.Run()`.
+- **`BankApp.csproj`** – Defines the project configuration, target framework, nullable reference type settings, and NuGet package dependencies.
+- **`BankApp.slnx`** – The solution file that references the `BankApp` project.
