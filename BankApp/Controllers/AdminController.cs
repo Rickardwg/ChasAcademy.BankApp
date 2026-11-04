@@ -30,23 +30,7 @@ internal class AdminController(AdminView adminView, AdminService adminService, E
                     break;
 
                 case "2": // Manage currency
-                    IReadOnlyDictionary<Currency, decimal> ratesInSek = _exchangeRateService.GetRatesInSek();
-
-                    ConsoleHeader.DisplayLogo();
-                    Currency? choice = _view.SelectCurrency(ratesInSek);
-
-                    if (choice is Currency currency)
-                    {
-                        decimal rate = ratesInSek[currency];
-
-                        ConsoleHeader.DisplayLogo();
-                        decimal newRate = _view.ReadNewCurrencyRate(currency, rate);
-
-                        bool isSuccess = _exchangeRateService.TryUpdateRate(currency, newRate);
-
-                        _view.DisplayCurrencyUpdateResult(isSuccess, currency, newRate);
-                    }
-
+                    UpdateCurrencyRate();
                     break;
 
                 case "0": // Logout
@@ -217,6 +201,26 @@ internal class AdminController(AdminView adminView, AdminService adminService, E
                 default:
                     throw new InvalidOperationException("Unexpected registration failure.");
             }
+        }
+    }
+
+    private void UpdateCurrencyRate()
+    {
+        IReadOnlyDictionary<Currency, decimal> ratesInSek = _exchangeRateService.GetRatesInSek();
+
+        ConsoleHeader.DisplayLogo();
+        Currency? choice = _view.SelectCurrency(ratesInSek);
+
+        if (choice is Currency currency)
+        {
+            decimal rate = ratesInSek[currency];
+
+            ConsoleHeader.DisplayLogo();
+            decimal newRate = _view.ReadNewCurrencyRate(currency, rate);
+
+            bool isSuccess = _exchangeRateService.TryUpdateRate(currency, newRate);
+
+            _view.DisplayCurrencyUpdateResult(isSuccess, currency, newRate);
         }
     }
 }
