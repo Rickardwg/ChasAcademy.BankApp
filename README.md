@@ -77,3 +77,7 @@ Controllers coordinate the application flow. They receive input from views, call
 - **`AuthenticationController`** – Controls the login flow. It asks the authentication view for credentials, calls `AuthenticationService` to verify them, and handles invalid credentials and the failed-login limit.
 - **`BankController`** – Controls the customer banking menu. It handles account listing, transfers between the customer's own accounts, transfers to other customers, account creation, and the loan flow. It uses `BankService` for banking operations and `AccountRepository` to retrieve accounts.
 - **`AdminController`** – Controls the administrator area and user-management menu. It handles registration of new customer and administrator accounts, including displaying validation errors and allowing the administrator to correct invalid input.
+
+### DependencyInjection
+
+- **`ServiceCollectionExtensions` (`DependencyInjection/ServiceCollectionExtensions.cs`)** – Contains the `AddBankAppServices()` extension method. It registers repositories, services, controllers, views, and the password hasher with Microsoft's dependency injection container. Repositories and the exchange-rate service are registered as singletons, while the other application components are registered as transients.
