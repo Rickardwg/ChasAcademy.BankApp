@@ -125,3 +125,12 @@ Repositories are responsible for storing and retrieving application data. The cu
 - **`AccountRepository`** – Stores bank accounts, generates the next account number, and retrieves accounts belonging to a specific customer or to other customers.
 
 Because the repositories currently store data in memory, users and account changes are not persisted when the application is closed. The initial example users are created again when the application starts.
+
+### Services
+
+Services contain the application's business logic. Controllers call services to perform operations rather than implementing the banking rules themselves.
+
+- **`AuthenticationService`** – Finds users through `UserRepository`, verifies password hashes using `IPasswordHasher<User>`, handles password rehashing when required, and limits consecutive failed login attempts.
+- **`AdminService`** – Registers customer and administrator users. It checks usernames and validates customer information, including email addresses, Swedish phone numbers, and password and username lengths. Passwords are stored as hashes.
+- **`BankService`** – Contains the main banking operations. It creates accounts, transfers money, records transfer transactions, calculates savings interest and loan interest, processes loan requests, and calculates a customer's maximum loan amount.
+- **`ExchangeRateService`** – Stores exchange rates relative to SEK and provides methods to calculate conversion rates and update supported currency rates. The initial rates are held in memory.
