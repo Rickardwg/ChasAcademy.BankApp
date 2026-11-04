@@ -1,3 +1,4 @@
+using BankApp.Enums;
 using BankApp.Enums.Errors;
 using BankApp.Models;
 using Spectre.Console;
@@ -147,5 +148,27 @@ internal class AdminView
         };
 
         AnsiConsole.MarkupLine($"[red1]{message}[/]");
+    }
+
+    public Currency? SelectCurrency(IReadOnlyDictionary<Currency, decimal> ratesInSek)
+    {
+        var choices = new List<(Currency? Currency, string Label)>();
+
+        foreach (KeyValuePair<Currency, decimal> rate in ratesInSek)
+        {
+            choices.Add((rate.Key, $"1 {rate.Key} = {rate.Value} SEK"));
+        }
+
+        choices.Add((null, "Go Back"));
+
+        var prompt = new SelectionPrompt<(Currency? Currency, string Label)>()
+            .Title("[bold gold1]Select a currency to edit[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices(choices)
+            .UseConverter(choice => choice.Label);
+
+        (Currency? currency, string label) = AnsiConsole.Prompt(prompt);
+
+        return currency;
     }
 }
