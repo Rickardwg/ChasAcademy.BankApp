@@ -81,3 +81,14 @@ Controllers coordinate the application flow. They receive input from views, call
 ### DependencyInjection
 
 - **`ServiceCollectionExtensions` (`DependencyInjection/ServiceCollectionExtensions.cs`)** – Contains the `AddBankAppServices()` extension method. It registers repositories, services, controllers, views, and the password hasher with Microsoft's dependency injection container. Repositories and the exchange-rate service are registered as singletons, while the other application components are registered as transients.
+
+### Enums
+
+Enums provide named values for options and error states used throughout the application.
+
+- **`AccountType`** – Defines the supported account types: `Personal`, `Savings`, and `Loan`.
+- **`Currency`** – Defines the supported currencies: `SEK`, `EUR`, and `USD`.
+- **`TransactionType`** – Defines transaction categories: `Deposit`, `Withdrawal`, and `Transfer`.
+- **`ErrorMessages`** – Defines general application and banking errors that can be displayed by `ErrorMessageView`, such as invalid menu choices, missing accounts, and invalid transfers.
+- **`LoginError`** – Defines authentication failures, including invalid credentials and the failed-login limit being reached.
+- **`RegistrationError`** – Defines user-registration validation errors, such as an existing username or invalid personal details.
