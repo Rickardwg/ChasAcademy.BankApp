@@ -12,6 +12,13 @@ internal class ExchangeRateService
 
     };
 
+    public IReadOnlyDictionary<Currency, decimal> GetRatesInSek()
+    {
+        return _ratesInSek
+            .Where(rate => rate.Key != Currency.SEK)
+            .ToDictionary();
+    }
+
     public bool TryGetRate(Currency source, Currency target, out decimal rate)
     {
         rate = default;
