@@ -162,3 +162,15 @@ This separation keeps the console interface, application flow, business rules, a
 - **Spectre.Console** – Interactive console menus, prompts, tables, and panels.
 - **Microsoft.Extensions.DependencyInjection** – Dependency injection and component registration.
 - **Microsoft.AspNetCore.Identity** – Password hashing and password verification through `IPasswordHasher<User>`.
+
+## Run the Application
+
+The .NET 10 SDK is required.
+
+```bash
+git clone https://github.com/Rickardwg/ChasAcademy.BankApp.git
+cd ChasAcademy.BankApp
+dotnet run --project BankApp/BankApp.csproj
+```
+
+NuGet dependencies are restored automatically when the project is built or run.
