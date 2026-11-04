@@ -32,7 +32,20 @@ internal class AdminController(AdminView adminView, AdminService adminService, E
                 case "2": // Manage currency
                     IReadOnlyDictionary<Currency, decimal> ratesInSek = _exchangeRateService.GetRatesInSek();
 
+                    ConsoleHeader.DisplayLogo();
                     Currency? choice = _view.SelectCurrency(ratesInSek);
+
+                    if (choice is Currency currency)
+                    {
+                        decimal rate = ratesInSek[currency];
+
+                        ConsoleHeader.DisplayLogo();
+                        decimal newRate = _view.ReadNewCurrencyRate(currency, rate);
+
+                        bool isSuccess = _exchangeRateService.TryUpdateRate(currency, newRate);
+
+                        _view.DisplayCurrencyUpdateResult(isSuccess, currency, newRate);
+                    }
 
                     break;
 

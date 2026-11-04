@@ -2,6 +2,7 @@ using BankApp.Enums;
 using BankApp.Enums.Errors;
 using BankApp.Models;
 using Spectre.Console;
+using System.Globalization;
 
 namespace BankApp.Views;
 
@@ -170,5 +171,29 @@ internal class AdminView
         (Currency? currency, string label) = AnsiConsole.Prompt(prompt);
 
         return currency;
+    }
+
+    public decimal ReadNewCurrencyRate(Currency currency, decimal rate)
+    {
+        AnsiConsole.MarkupLine($"[italic grey]Current rate: 1 {currency} = {rate} SEK[/]");
+        return AnsiConsole.Prompt(new TextPrompt<decimal>("[bold gold1]New rate in SEK:[/]")
+            .Validate(input => input > 0, "[red]Rate cannot be less than or equal to 0.[/]")
+            .Culture(CultureInfo.CurrentCulture));
+    }
+
+    public void DisplayCurrencyUpdateResult(bool isSuccess, Currency currency, decimal rate)
+    {
+        if (isSuccess)
+        {
+            AnsiConsole.MarkupLine($"[green]1 {currency} = {rate} SEK updated successfully.[/]");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[red]1 {currency} = {rate} SEK failed updating.[/]");
+        }
+        
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
+        Console.ReadKey(intercept: true);
     }
 }
