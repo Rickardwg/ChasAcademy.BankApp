@@ -139,8 +139,8 @@ internal class BankController(BankService service, BankView view, AccountReposit
     {
         if (accounts.Count < 2)
         {
-            // TODO: add error message:
-            Console.WriteLine("Self transfers require two accounts."); // TEMP
+            // TODO: Display error message via ErrorMessageView
+            Console.WriteLine("Self transfers require two accounts.");
             return;
         }
 
@@ -177,15 +177,15 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         if (nonLoanAccounts.Count < 1)
         {
-            // TODO: Create error in ErrorMessageView:
-            Console.WriteLine("You need at least one non-loan account to transfer to another customer"); // TEMP
+            // TODO: Display error message via ErrorMessageView
+            Console.WriteLine("You need at least one non-loan account to transfer to another customer");
             return;
         }
 
         if (otherAccounts.Count < 1)
         {
-            // TODO: Create error in ErrorMessageView:
-            Console.WriteLine("No other customer has an account you can send money to."); // TEMP
+            // TODO: Display error message via ErrorMessageView
+            Console.WriteLine("No other customer has an account you can send money to.");
             return;
         }
 
