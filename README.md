@@ -92,3 +92,27 @@ Enums provide named values for options and error states used throughout the appl
 - **`ErrorMessages`** – Defines general application and banking errors that can be displayed by `ErrorMessageView`, such as invalid menu choices, missing accounts, and invalid transfers.
 - **`LoginError`** – Defines authentication failures, including invalid credentials and the failed-login limit being reached.
 - **`RegistrationError`** – Defines user-registration validation errors, such as an existing username or invalid personal details.
+
+### Models
+
+Models represent the main data objects used by the banking application. They describe users, bank accounts, and transactions.
+
+- **`User`** – The base user model. It contains the user's ID, username, password hash, and administrator flag (`IsAdmin`).
+- **`Customer`** – Inherits from `User` and adds customer details such as first name, last name, email address, and phone number.
+- **`BankAccount`** – The base class for bank accounts. It contains the owner's ID, account number, currency, account type, and transaction history.
+- **`PersonalAccount`** – Inherits from `BankAccount` and adds a balance. It represents a regular personal bank account.
+- **`SavingsAccount`** – Inherits from `PersonalAccount` and adds an interest rate. It therefore has the balance functionality of a personal account as well as savings-specific interest information.
+- **`LoanAccount`** – Inherits from `BankAccount` and contains the amount owed and the loan interest rate.
+- **`Transaction`** – Represents a transaction recorded in an account's transaction history. It stores the date, transaction type, amount, currency, and optional information about converted amounts, exchange rates, related accounts, and a description.
+
+The main inheritance relationships are:
+
+```text
+User
+└── Customer
+
+BankAccount
+├── PersonalAccount
+│   └── SavingsAccount
+└── LoanAccount
+```
