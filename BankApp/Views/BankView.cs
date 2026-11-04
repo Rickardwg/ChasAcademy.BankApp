@@ -61,7 +61,7 @@ internal class BankView
                         "[red]Loan[/]",
                         loanAccount.Currency.ToString(),
                         $"[red]{loanAccount.Owed:N2} (Withdrawn: {loanAccount.AmountWithdrawn:N2})[/]",
-                        "[dim]N/A[/]"
+                        loanAccount.AccountNumber.ToString()
                     );
                     break;
             }
@@ -125,7 +125,7 @@ internal class BankView
                     $"[[Personal]] Account: {p.AccountNumber} | Balance: {p.Balance:N2} {p.Currency}",
 
                 LoanAccount l =>
-                    $"[[Loan]] Account: N/A | Owed: {l.Owed:N2} {l.Currency}",
+                    $"[[Loan]] Account: {l.AccountNumber} | Owed: {l.Owed:N2} {l.Currency}",
 
                 _ => $"Unknown account: {account.AccountNumber}"
             }
