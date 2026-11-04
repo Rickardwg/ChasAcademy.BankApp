@@ -39,24 +39,9 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         {
             return false;
         }
-
-        if (sourceAccount is not PersonalAccount source) // also covers SavingsAccount
-        {
-            // TODO: display error:
-            Console.WriteLine("You can't transfer money from a loan account"); // TEMP
-            return false;
-        }
-
-        if (source.Balance < amount)
-        {
-            // TODO: display error:
-            Console.WriteLine("Insufficient funds"); // TEMP
-            return false;
-        }
-
+        
         if (ReferenceEquals(sourceAccount, destinationAccount))
         {
-            // TODO: specific error: same source and destination account
             return false;
         }
 
@@ -64,20 +49,78 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         {
             return false;
         }
-
-        if (destinationAccount is not PersonalAccount destination) // only personal and savings accounts can receive money for now
+        
+        if (sourceAccount is LoanAccount loanSource)
         {
-            // TODO: once the rules for Owed are decided,
-            // accept destinationAccount being a loan account
-            Console.WriteLine("You can't transfer money to a loan account"); // TEMP
-            return false;
+            // The amount originally borrowed
+            decimal principal = loanSource.Owed / (loanSource.InterestRate + 1);
+
+            if (loanSource.Owed <= 0)
+            {
+                // TODO: Display error message via Result Pattern + ErrorMessageView
+                return false;
+            }
+
+            if (amount > principal || loanSource.AmountWithdrawn >= principal || amount > (principal - loanSource.AmountWithdrawn))
+            {
+                // TODO: Display error message via Result Pattern + ErrorMessageView
+                Console.WriteLine($"\nWithdrawal is greater than available funds: {principal - loanSource.AmountWithdrawn} {loanSource.Currency}\n");
+                return false;
+            }
+
+            loanSource.AmountWithdrawn += amount;
+        }
+        
+        if (sourceAccount is PersonalAccount personalSource) // also covers savings account
+        {
+            if (personalSource.Balance < amount)
+            {
+                return false;
+            }
+            
+            personalSource.Balance -= amount;
         }
 
+        if (sourceAccount is LoanAccount && destinationAccount is LoanAccount)
+        {
+            // TODO: Display error message via Result Pattern + ErrorMessageView
+            Console.WriteLine("\nBoth accounts can't be loan accounts.\n");
+            return false;
+        }
+        
         decimal destinationAmount = amount * exchangeRate;
         bool hasConverted = sourceAccount.Currency != destinationAccount.Currency;
+        
+        if (destinationAccount is LoanAccount loanDestination)
+        {
+            if (destinationAmount > loanDestination.Owed)
+            {
+                // TODO: Display error message via Result Pattern + ErrorMessageView
+                Console.WriteLine($"\nTransfer amount mustn't be greater than the amount owed: {loanDestination.Owed} {loanDestination.Currency}.\n");
 
-        source.Balance -= amount;
-        destination.Balance += destinationAmount;
+                if (sourceAccount is PersonalAccount pS) // Reset the transfer
+                {
+                    pS.Balance += amount;
+                }
+
+                return false;
+            }
+            
+            loanDestination.Owed -= destinationAmount;
+            loanDestination.AmountWithdrawn -= destinationAmount;
+
+            if (loanDestination.Owed == 0)
+            {
+                loanDestination.AmountWithdrawn = 0;
+                // TODO: Display success message using Result Pattern
+                Console.WriteLine("\nYour loan was successfully paid off!\n");
+            }
+        }
+
+        if (destinationAccount is PersonalAccount personalDestination)
+        {
+            personalDestination.Balance += destinationAmount;
+        }
 
         sourceAccount.TransactionHistory.Add(new Transaction
         {
