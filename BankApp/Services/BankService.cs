@@ -33,14 +33,6 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         _repository.Add(account);
     }
 
-    /* LEFT TO DO:
-     * 1. Make sure currency conversion is taken into consideration.
-     * 2. Make sure converted amounts are rounded.
-     * 3. Make sure transaction history works for loan accounts!
-     * 4. Look through the comments...
-     * 5. Test!
-     */
-    
     public bool TransferMoney(BankAccount sourceAccount, BankAccount destinationAccount, decimal amount)
     {
         if (amount <= 0)
@@ -50,7 +42,6 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         
         if (ReferenceEquals(sourceAccount, destinationAccount))
         {
-            // TODO: specific error: same source and destination account
             return false;
         }
 
@@ -59,43 +50,31 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
             return false;
         }
         
-        // I think this will work...?
         if (sourceAccount is LoanAccount loanSource)
         {
+            // The amount originally borrowed
+            decimal principal = loanSource.Owed / (loanSource.InterestRate + 1);
+
             if (loanSource.Owed <= 0)
             {
-                // TODO: Display error message:
-                Console.WriteLine("You don't have a loan!"); // TEMP
+                // TODO: Display error message via Result Pattern + ErrorMessageView
                 return false;
             }
 
-            if (amount > loanSource.Owed)
+            if (amount > principal || loanSource.AmountWithdrawn >= principal || amount > (principal - loanSource.AmountWithdrawn))
             {
-                // TODO: Display error message:
-                Console.WriteLine("Your loan isn't big enough for that transfer!"); // TEMP
+                // TODO: Display error message via Result Pattern + ErrorMessageView
+                Console.WriteLine($"\nWithdrawal is greater than available funds: {principal - loanSource.AmountWithdrawn} {loanSource.Currency}\n");
                 return false;
             }
 
-            // Nothing is done with LoanAccount.Owed since the loan remains.
             loanSource.AmountWithdrawn += amount;
-
-            if (amount > (loanSource.Owed - loanSource.AmountWithdrawn))
-            {
-                // TODO: Display error message:
-                Console.WriteLine("Your loan isn't big enough for that transfer!"); // TEMP
-
-                loanSource.AmountWithdrawn -= amount; // reset tracker
-
-                return false;
-            }
         }
         
         if (sourceAccount is PersonalAccount personalSource) // also covers savings account
         {
             if (personalSource.Balance < amount)
             {
-                // TODO: display error:
-                Console.WriteLine("Insufficient funds"); // TEMP
                 return false;
             }
             
@@ -104,8 +83,9 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
 
         if (sourceAccount is LoanAccount && destinationAccount is LoanAccount)
         {
-            // TODO: add error message: (is this necessary?)
-            Console.WriteLine("Both accounts can't be loan accounts!"); // TEMP
+            // TODO: Display error message via Result Pattern + ErrorMessageView
+            Console.WriteLine("\nBoth accounts can't be loan accounts.\n");
+            return false;
         }
         
         decimal destinationAmount = amount * exchangeRate;
@@ -115,25 +95,25 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         {
             if (destinationAmount > loanDestination.Owed)
             {
-                // TODO: display error message
-                Console.WriteLine($"Maximum amount available to transfer into loan account equals the amount owed: {loanDestination.Owed} {loanDestination.Currency}."); // TEMP
+                // TODO: Display error message via Result Pattern + ErrorMessageView
+                Console.WriteLine($"\nTransfer amount mustn't be greater than the amount owed: {loanDestination.Owed} {loanDestination.Currency}.\n");
+
+                if (sourceAccount is PersonalAccount pS) // Reset the transfer
+                {
+                    pS.Balance += amount;
+                }
+
                 return false;
             }
             
-            loanDestination.Owed -= destinationAmount; // This is already converted into correct currency
+            loanDestination.Owed -= destinationAmount;
+            loanDestination.AmountWithdrawn -= destinationAmount;
 
             if (loanDestination.Owed == 0)
             {
                 loanDestination.AmountWithdrawn = 0;
-                // TODO: display information:
-                Console.WriteLine("Your loan was successfully payed off!"); // TEMP
-            }
-
-            if (destinationAmount < loanDestination.AmountWithdrawn)
-            {
-                loanDestination.AmountWithdrawn -= destinationAmount;
-                // TODO: display information:
-                Console.WriteLine($"Your withdrawn amount was decreased with {destinationAmount} {loanDestination.Currency}");
+                // TODO: Display success message using Result Pattern
+                Console.WriteLine("\nYour loan was successfully paid off!\n");
             }
         }
 
@@ -141,8 +121,6 @@ internal class BankService(AccountRepository repository, ExchangeRateService exc
         {
             personalDestination.Balance += destinationAmount;
         }
-
-        // Add correct transaction history for loan accounts!
 
         sourceAccount.TransactionHistory.Add(new Transaction
         {
