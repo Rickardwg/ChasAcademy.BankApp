@@ -134,3 +134,13 @@ Services contain the application's business logic. Controllers call services to 
 - **`AdminService`** – Registers customer and administrator users. It checks usernames and validates customer information, including email addresses, Swedish phone numbers, and password and username lengths. Passwords are stored as hashes.
 - **`BankService`** – Contains the main banking operations. It creates accounts, transfers money, records transfer transactions, calculates savings interest and loan interest, processes loan requests, and calculates a customer's maximum loan amount.
 - **`ExchangeRateService`** – Stores exchange rates relative to SEK and provides methods to calculate conversion rates and update supported currency rates. The initial rates are held in memory.
+
+### Views
+
+Views are responsible for presenting information and collecting input from the user. The application uses Spectre.Console for interactive prompts and terminal output.
+
+- **`AuthenticationView`** – Displays the login menu and reads the username and password. The password prompt hides the entered text.
+- **`BankView`** – Displays the customer banking menu, account tables, account-selection prompts, transfer prompts and results, transaction history, and loan-related information and previews.
+- **`AdminView`** – Displays the administrator menus and collects information when registering customers or administrators. It also displays registration success and validation messages.
+- **`ErrorMessageView`** – Displays application errors in formatted terminal panels based on the `ErrorMessages` enum.
+- **`ConsoleHeader`** – Clears the terminal and displays the application's title/logo.
