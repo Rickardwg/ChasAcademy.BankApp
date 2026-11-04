@@ -116,3 +116,12 @@ BankAccount
 │   └── SavingsAccount
 └── LoanAccount
 ```
+
+### Repositories
+
+Repositories are responsible for storing and retrieving application data. The current implementation uses in-memory lists rather than a database.
+
+- **`UserRepository`** – Stores users, provides lookup by username, and adds newly registered users. It also initializes the application with example customer and administrator accounts.
+- **`AccountRepository`** – Stores bank accounts, generates the next account number, and retrieves accounts belonging to a specific customer or to other customers.
+
+Because the repositories currently store data in memory, users and account changes are not persisted when the application is closed. The initial example users are created again when the application starts.
