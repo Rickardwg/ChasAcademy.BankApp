@@ -29,5 +29,20 @@ namespace BankApp.Services
                 return _pendingTransactions.Dequeue();
             }
         }
+        private TimeSpan CalculateDelayUntilNextQuarter()
+        {
+            var now = DateTimeOffset.Now;
+
+            int remainder = now.Minute % 15;
+
+            int minutesUntilNextQuarter = 15 - remainder;
+
+            int secondsUntilNextQuarter = minutesUntilNextQuarter * 60 - now.Second;
+
+            TimeSpan delay = TimeSpan.FromSeconds(secondsUntilNextQuarter)
+                           - TimeSpan.FromMilliseconds(now.Millisecond);
+
+            return delay;
+        }
     }
 }
