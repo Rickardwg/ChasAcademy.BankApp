@@ -68,3 +68,12 @@ ChasAcademy.BankApp/
 ### Common
 
 - **`Result<TValue, TError>` (`Common/Results/Result.cs`)** – A generic result object used by services to report whether an operation succeeded or failed. It contains an `IsSuccess` flag and either a returned `Value` or an `Error`. This lets controllers handle expected failures without relying on exceptions for normal validation errors.
+
+### Controllers
+
+Controllers coordinate the application flow. They receive input from views, call the relevant services or repositories, and decide what should happen next.
+
+- **`ApplicationController`** – Coordinates the overall application flow. It starts authentication and directs the signed-in user to the customer banking area or the administrator area depending on the user's type and role.
+- **`AuthenticationController`** – Controls the login flow. It asks the authentication view for credentials, calls `AuthenticationService` to verify them, and handles invalid credentials and the failed-login limit.
+- **`BankController`** – Controls the customer banking menu. It handles account listing, transfers between the customer's own accounts, transfers to other customers, account creation, and the loan flow. It uses `BankService` for banking operations and `AccountRepository` to retrieve accounts.
+- **`AdminController`** – Controls the administrator area and user-management menu. It handles registration of new customer and administrator accounts, including displaying validation errors and allowing the administrator to correct invalid input.
