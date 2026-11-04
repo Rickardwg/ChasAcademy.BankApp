@@ -155,3 +155,10 @@ Views are responsible for presenting information and collecting input from the u
 6. The views display the result or any applicable error message to the user.
 
 This separation keeps the console interface, application flow, business rules, and data access in distinct parts of the source code.
+
+## Technologies
+
+- **C# / .NET 10** – Main programming language and application framework.
+- **Spectre.Console** – Interactive console menus, prompts, tables, and panels.
+- **Microsoft.Extensions.DependencyInjection** – Dependency injection and component registration.
+- **Microsoft.AspNetCore.Identity** – Password hashing and password verification through `IPasswordHasher<User>`.
