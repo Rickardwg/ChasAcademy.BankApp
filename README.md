@@ -174,3 +174,7 @@ dotnet run --project BankApp/BankApp.csproj
 ```
 
 NuGet dependencies are restored automatically when the project is built or run.
+
+## Current Scope
+
+The project includes customer authentication, account creation and listing, transfers, currency conversion, and loan calculations. The administrator flow currently supports adding users. Some menu options, such as editing or removing users and managing currency settings, are present in the menus but do not yet have implemented actions. The repositories also use in-memory storage, so the application does not currently provide persistent database storage.
