@@ -5,8 +5,9 @@ using System.Text;
 
 namespace BankApp.Services
 {
-    internal class TransactionSchedulingService
+    internal class TransactionSchedulingService(BankService bankService)
     {
+        private readonly BankService _bankService = bankService;
         private readonly Queue<PendingTransaction> _pendingTransactions = new();
         private readonly object _queueLock = new();
 
@@ -43,6 +44,34 @@ namespace BankApp.Services
                            - TimeSpan.FromMilliseconds(now.Millisecond);
 
             return delay;
+        }
+        public async Task RunAsync(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                TimeSpan delay = CalculateDelayUntilNextQuarter();
+
+                try
+                {
+                    await Task.Delay(delay, cancellationToken);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                PendingTransaction? transaction = DequeueTransaction();
+
+                while (transaction != null)
+                {
+                    _bankService.TransferMoney(
+                         transaction.SourceAccount, 
+                         transaction.DestinationAccount, 
+                         transaction.Amount);
+
+                    transaction = DequeueTransaction();
+                }
+            }
         }
     }
 }
