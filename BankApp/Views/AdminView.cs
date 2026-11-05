@@ -36,12 +36,10 @@ internal class AdminView
         return AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("[bold gold1]Manage Users[/]")
             .HighlightStyle("bold black on gold1")
-            .AddChoices("1", "2", "3", "0")
+            .AddChoices("1", "0")
             .UseConverter(choice => choice switch
             {
                 "1" => "Add User",
-                "2" => "Edit User",
-                "3" => "Remove User",
                 "0" => "Go Back",
                 _ => throw new InvalidOperationException("Unexpected menu choice.")
             }));
