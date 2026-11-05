@@ -332,6 +332,11 @@ internal class BankView
 
         AnsiConsole.Write(panel);
     }
+    public void WaitForContinue()
+    {
+        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
+        Console.ReadKey(intercept: true);
+    }
 }
 
 

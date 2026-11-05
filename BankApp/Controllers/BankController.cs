@@ -17,9 +17,9 @@ internal class BankController(BankService service, BankView view, AccountReposit
     {
         _service.SetActiveUser(user);
 
-
         while (true)
         {
+            ConsoleHeader.DisplayLogo();
             var menuChoice = _view.DisplayMenu();
 
             switch (menuChoice)
@@ -35,6 +35,8 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     {
                         _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
                     }
+
+                    _view.WaitForContinue();
                     break;
 
                 case ("2"): // Transfer
@@ -43,6 +45,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                     if (ownAccountsForTransfer is null)
                     {
                         _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                        _view.WaitForContinue();
                         break;
                     }
 
@@ -62,6 +65,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
                             if (otherAccountsForTransfer is null)
                             {
                                 _errorMessageView.DisplayErrorMessage(ErrorMessages.NoOtherCustomerAccounts);
+                                _view.WaitForContinue();
                                 break;
                             }
 
@@ -75,6 +79,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
                         default:
                             _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                            _view.WaitForContinue();
                             break;
                     }
 
@@ -94,11 +99,13 @@ internal class BankController(BankService service, BankView view, AccountReposit
                         else
                         {
                             _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                            _view.WaitForContinue();
                         }
                     }
                     else
                     {
                         _errorMessageView.DisplayErrorMessage(ErrorMessages.NoBankAccountFound);
+                        _view.WaitForContinue();
                     }
                     break;
 
@@ -130,6 +137,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
                 default: // Inaccessible
                     _errorMessageView.DisplayErrorMessage(ErrorMessages.InvalidOption);
+                    _view.WaitForContinue();
                     break;
             }
         }
@@ -141,6 +149,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         {
             // TODO: Display error message via ErrorMessageView
             Console.WriteLine("Self transfers require two accounts.");
+            _view.WaitForContinue();
             return;
         }
 
@@ -150,6 +159,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         if (sourceIndex == destinationIndex)
         {
             _errorMessageView.DisplayErrorMessage(ErrorMessages.SameSourceAndDestinationAccount);
+            _view.WaitForContinue();
             return;
         }    
 
@@ -161,6 +171,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
 
         _view.DisplayTransferResult(transferSuccess);
+        _view.WaitForContinue();
     }
 
     private void HandleOtherCustomerTransfer(List<BankAccount> ownAccounts, List<PersonalAccount> otherAccounts)
@@ -179,6 +190,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         {
             // TODO: Display error message via ErrorMessageView
             Console.WriteLine("You need at least one non-loan account to transfer to another customer");
+            _view.WaitForContinue();
             return;
         }
 
@@ -186,6 +198,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         {
             // TODO: Display error message via ErrorMessageView
             Console.WriteLine("No other customer has an account you can send money to.");
+            _view.WaitForContinue();
             return;
         }
 
@@ -202,6 +215,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
 
         _view.DisplayTransferResult(transferSuccess);
+        _view.WaitForContinue();
     }
 
     private void HandleInterestPreview(SavingsAccount savingsAccount)
@@ -212,6 +226,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         if (depositAmount <= 0 || years <= 0)
         {
             _view.DisplayInvalidInterestInput();
+            _view.WaitForContinue();
             return;
         }
 
@@ -219,6 +234,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         _view.DisplayInterestPreview
             (depositAmount, savingsAccount.InterestRate, years, expectedInterest);
+        _view.WaitForContinue();
     }
 
     public void HandleBorrowMoney(LoanAccount loanAccount)
@@ -229,6 +245,7 @@ internal class BankController(BankService service, BankView view, AccountReposit
         if (loanAmount <= 0 || years <= 0 || loanAccount.InterestRate <= 0)
         {
             _view.DisplayInvalidLoanInput();
+            _view.WaitForContinue();
             return;
         }
 
@@ -246,5 +263,6 @@ internal class BankController(BankService service, BankView view, AccountReposit
         bool loanSuccess = _service.BorrowMoney(loanAccount, loanAmount, years);
 
         _view.DisplayLoanResult(loanSuccess);
+        _view.WaitForContinue();
     }
 }
