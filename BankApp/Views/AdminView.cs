@@ -1,6 +1,8 @@
+using BankApp.Enums;
 using BankApp.Enums.Errors;
 using BankApp.Models;
 using Spectre.Console;
+using System.Globalization;
 
 namespace BankApp.Views;
 
@@ -34,12 +36,10 @@ internal class AdminView
         return AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("[bold gold1]Manage Users[/]")
             .HighlightStyle("bold black on gold1")
-            .AddChoices("1", "2", "3", "0")
+            .AddChoices("1", "0")
             .UseConverter(choice => choice switch
             {
                 "1" => "Add User",
-                "2" => "Edit User",
-                "3" => "Remove User",
                 "0" => "Go Back",
                 _ => throw new InvalidOperationException("Unexpected menu choice.")
             }));
@@ -147,5 +147,51 @@ internal class AdminView
         };
 
         AnsiConsole.MarkupLine($"[red1]{message}[/]");
+    }
+
+    public Currency? SelectCurrency(IReadOnlyDictionary<Currency, decimal> ratesInSek)
+    {
+        var choices = new List<(Currency? Currency, string Label)>();
+
+        foreach (KeyValuePair<Currency, decimal> rate in ratesInSek)
+        {
+            choices.Add((rate.Key, $"1 {rate.Key} = {rate.Value} SEK"));
+        }
+
+        choices.Add((null, "Go Back"));
+
+        var prompt = new SelectionPrompt<(Currency? Currency, string Label)>()
+            .Title("[bold gold1]Select a currency to edit[/]")
+            .HighlightStyle("bold black on gold1")
+            .AddChoices(choices)
+            .UseConverter(choice => choice.Label);
+
+        (Currency? currency, string label) = AnsiConsole.Prompt(prompt);
+
+        return currency;
+    }
+
+    public decimal ReadNewCurrencyRate(Currency currency, decimal rate)
+    {
+        AnsiConsole.MarkupLine($"[italic grey]Current rate: 1 {currency} = {rate} SEK[/]");
+        return AnsiConsole.Prompt(new TextPrompt<decimal>("[bold gold1]New rate in SEK:[/]")
+            .Validate(input => input > 0, "[red]Rate cannot be less than or equal to 0.[/]")
+            .Culture(CultureInfo.CurrentCulture));
+    }
+
+    public void DisplayCurrencyUpdateResult(bool isSuccess, Currency currency, decimal rate)
+    {
+        if (isSuccess)
+        {
+            AnsiConsole.MarkupLine($"[green]1 {currency} = {rate} SEK updated successfully.[/]");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[red]1 {currency} = {rate} SEK failed updating.[/]");
+        }
+        
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
+        Console.ReadKey(intercept: true);
     }
 }

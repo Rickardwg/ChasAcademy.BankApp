@@ -7,10 +7,11 @@ using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class AdminController(AdminView adminView, AdminService service, ErrorMessageView errorMessageView)
+internal class AdminController(AdminView adminView, AdminService adminService, ExchangeRateService exchangeRateService, ErrorMessageView errorMessageView)
 {
     private readonly AdminView _view = adminView;
-    private readonly AdminService _service = service;
+    private readonly AdminService _adminService = adminService;
+    private readonly ExchangeRateService _exchangeRateService = exchangeRateService;
     private readonly ErrorMessageView _errorMessageView = errorMessageView;
 
     internal void Run(User user)
@@ -26,16 +27,14 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
             {
                 case "1": // Manage users
                     ShowUserManagementMenu();
+                    break;
 
+                case "2": // Manage currency
+                    UpdateCurrencyRate();
                     break;
-                case "2": // Manage interest
-                    break;
-                case "3": // Manage currency
-                    break;
+
                 case "0": // Logout
                     return;
-                default:
-                    break;
             }
         }
     }
@@ -55,12 +54,6 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
                     AddUser();
                     break;
 
-                case "2":
-                    // Change
-                    break;
-                case "3":
-                    // Remove
-                    break;
                 case "0":
                     // Return to Main Menu
                     showMenu = false;
@@ -100,7 +93,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
         while (true)
         {
-            var registrationResult = _service.RegisterCustomer(customerData);
+            var registrationResult = _adminService.RegisterCustomer(customerData);
 
             if (registrationResult.IsSuccess)
             {
@@ -164,7 +157,7 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
 
         while (true)
         {
-            Result<User, RegistrationError> result = _service.RegisterAdmin(username, password);
+            Result<User, RegistrationError> result = _adminService.RegisterAdmin(username, password);
 
             if (result.IsSuccess)
             {
@@ -199,6 +192,26 @@ internal class AdminController(AdminView adminView, AdminService service, ErrorM
                 default:
                     throw new InvalidOperationException("Unexpected registration failure.");
             }
+        }
+    }
+
+    private void UpdateCurrencyRate()
+    {
+        IReadOnlyDictionary<Currency, decimal> ratesInSek = _exchangeRateService.GetRatesInSek();
+
+        ConsoleHeader.DisplayLogo();
+        Currency? choice = _view.SelectCurrency(ratesInSek);
+
+        if (choice is Currency currency)
+        {
+            decimal rate = ratesInSek[currency];
+
+            ConsoleHeader.DisplayLogo();
+            decimal newRate = _view.ReadNewCurrencyRate(currency, rate);
+
+            bool isSuccess = _exchangeRateService.TryUpdateRate(currency, newRate);
+
+            _view.DisplayCurrencyUpdateResult(isSuccess, currency, newRate);
         }
     }
 }
