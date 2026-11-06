@@ -75,8 +75,8 @@ Controllers coordinate the application flow. They receive input from views, call
 
 - **`ApplicationController`** – Coordinates the overall application flow. It starts authentication and directs the signed-in user to the customer banking area or the administrator area depending on the user's type and role.
 - **`AuthenticationController`** – Controls the login flow. It asks the authentication view for credentials, calls `AuthenticationService` to verify them, and handles invalid credentials and the failed-login limit.
-- **`BankController`** – Controls the customer banking menu. It handles account listing, transfers between the customer's own accounts, transfers to other customers, account creation, and the loan flow. It uses `BankService` for banking operations and `AccountRepository` to retrieve accounts.
-- **`AdminController`** – Controls the administrator area and user-management menu. It handles registration of new customer and administrator accounts, including displaying validation errors and allowing the administrator to correct invalid input.
+- **`BankController`** – Controls the customer banking menu. It handles account listing, transfers between the customer's own accounts, transfers to other customers, account creation, and the loan flow. It uses `BankService` for banking operations and `AccountRepository` to retrieve accounts. For transfers between a customer's own accounts, it also handles loan-account withdrawals and repayments. The controller pauses after displaying results so that users have time to read them.
+- **`AdminController`** – Controls the administrator area and user-management menu. It handles registration of new customer and administrator accounts, including displaying validation errors and allowing the administrator to correct invalid input. It also coordinates currency-rate updates by retrieving the current rates from `ExchangeRateService`, asking the administrator to select a currency, and submitting the new rate for validation.
 
 ### DependencyInjection
 
@@ -102,7 +102,7 @@ Models represent the main data objects used by the banking application. They des
 - **`BankAccount`** – The base class for bank accounts. It contains the owner's ID, account number, currency, account type, and transaction history.
 - **`PersonalAccount`** – Inherits from `BankAccount` and adds a balance. It represents a regular personal bank account.
 - **`SavingsAccount`** – Inherits from `PersonalAccount` and adds an interest rate. It therefore has the balance functionality of a personal account as well as savings-specific interest information.
-- **`LoanAccount`** – Inherits from `BankAccount` and contains the amount owed and the loan interest rate.
+- **`LoanAccount`** – Inherits from `BankAccount` and contains the amount owed, the loan interest rate, and `AmountWithdrawn`, which tracks how much of the borrowed principal has been withdrawn from the loan account.
 - **`Transaction`** – Represents a transaction recorded in an account's transaction history. It stores the date, transaction type, amount, currency, and optional information about converted amounts, exchange rates, related accounts, and a description.
 
 The main inheritance relationships are:
@@ -132,18 +132,26 @@ Services contain the application's business logic. Controllers call services to 
 
 - **`AuthenticationService`** – Finds users through `UserRepository`, verifies password hashes using `IPasswordHasher<User>`, handles password rehashing when required, and limits consecutive failed login attempts.
 - **`AdminService`** – Registers customer and administrator users. It checks usernames and validates customer information, including email addresses, Swedish phone numbers, and password and username lengths. Passwords are stored as hashes.
-- **`BankService`** – Contains the main banking operations. It creates accounts, transfers money, records transfer transactions, calculates savings interest and loan interest, processes loan requests, and calculates a customer's maximum loan amount.
-- **`ExchangeRateService`** – Stores exchange rates relative to SEK and provides methods to calculate conversion rates and update supported currency rates. The initial rates are held in memory.
+- **`BankService`** – Contains the main banking operations. It creates accounts, transfers money, records transfer transactions, calculates savings interest and loan interest, processes loan requests, and calculates a customer's maximum loan amount. Transfers involving the customer's own loan account support withdrawing available borrowed funds and making repayments to reduce the outstanding debt. Loan withdrawals are checked against the available borrowed principal, and loan repayments cannot exceed the outstanding debt. Currency conversion is applied when the source and destination accounts use different currencies.
+- **`ExchangeRateService`** – Stores exchange rates relative to SEK and provides methods to calculate conversion rates and update supported currency rates. `GetRatesInSek()` provides the current non-SEK rates for the administrator interface, while `TryUpdateRate()` validates and updates a rate. SEK remains the fixed base currency, and rates are held in memory.
 
 ### Views
 
 Views are responsible for presenting information and collecting input from the user. The application uses Spectre.Console for interactive prompts and terminal output.
 
 - **`AuthenticationView`** – Displays the login menu and reads the username and password. The password prompt hides the entered text.
-- **`BankView`** – Displays the customer banking menu, account tables, account-selection prompts, transfer prompts and results, transaction history, and loan-related information and previews.
-- **`AdminView`** – Displays the administrator menus and collects information when registering customers or administrators. It also displays registration success and validation messages.
+- **`BankView`** – Displays the customer banking menu, account tables, account-selection prompts, transfer prompts and results, transaction history, and loan-related information and previews. Loan-account rows also show the account number, amount owed, and amount withdrawn. `WaitForContinue()` pauses the interface between operations so that messages and results remain visible.
+- **`AdminView`** – Displays the administrator menus and collects information when registering customers or administrators. It also displays registration success and validation messages. For currency management, it displays the available currencies with their current SEK rates, collects a replacement rate, and shows whether the update succeeded.
 - **`ErrorMessageView`** – Displays application errors in formatted terminal panels based on the `ErrorMessages` enum.
 - **`ConsoleHeader`** – Clears the terminal and displays the application's title/logo.
+
+## Recent Updates
+
+The latest changes extend the administrator currency tools and the handling of loan accounts:
+
+- **Administrator currency management** – Administrators can view the current EUR and USD rates against SEK, select a currency, enter a replacement rate, and receive an update result. Rates must be greater than zero, and the SEK base rate cannot be changed.
+- **Loan-account withdrawals and repayments** – `LoanAccount` now includes `AmountWithdrawn`. When transferring between their own accounts, customers can transfer available borrowed funds out of a loan account and transfer funds into a loan account to reduce the amount owed. The service checks the available borrowed principal and prevents repayments larger than the outstanding debt.
+- **Updated account information and console flow** – Loan accounts display their account number, outstanding debt, and withdrawn amount. The banking controller uses continue prompts after many operations so users can read displayed information before returning to the menu.
 
 ## Application Flow
 
@@ -151,7 +159,7 @@ Views are responsible for presenting information and collecting input from the u
 2. `ApplicationController` calls `AuthenticationController` to display the login menu.
 3. `AuthenticationController` uses `AuthenticationService` to authenticate the user.
 4. After a successful login, `ApplicationController` directs customers to `BankController` and administrators to `AdminController`.
-5. The relevant controller collects input through its view and calls services or repositories to perform the requested operation.
+5. The relevant controller collects input through its view and calls services or repositories to perform the requested operation. For example, administrators can update supported currency rates through `AdminController`, `AdminView`, and `ExchangeRateService`.
 6. The views display the result or any applicable error message to the user.
 
 This separation keeps the console interface, application flow, business rules, and data access in distinct parts of the source code.
@@ -177,4 +185,4 @@ NuGet dependencies are restored automatically when the project is built or run.
 
 ## Current Scope
 
-The project includes customer authentication, account creation and listing, transfers, currency conversion, and loan calculations. The administrator flow currently supports adding users. Some menu options, such as editing or removing users and managing currency settings, are present in the menus but do not yet have implemented actions. The repositories also use in-memory storage, so the application does not currently provide persistent database storage.
+The project includes customer authentication, account creation and listing, transfers between a customer's own accounts and to other customers, currency conversion, and loan calculations. Customers can use transfers between their own accounts to withdraw available funds from a loan account or repay an outstanding loan. Administrators can add users and update supported currency rates (EUR and USD); SEK remains the fixed base currency. Editing and removing users are not currently implemented. The repositories and exchange rates use in-memory storage, so user, account, transaction, and rate changes are not persisted when the application is closed.
