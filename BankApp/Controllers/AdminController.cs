@@ -35,9 +35,6 @@ internal class AdminController(AdminView adminView, AdminService adminService, E
 
                 case "0": // Logout
                     return;
-
-                default:
-                    break;
             }
         }
     }
@@ -57,12 +54,6 @@ internal class AdminController(AdminView adminView, AdminService adminService, E
                     AddUser();
                     break;
 
-                case "2":
-                    // Change
-                    break;
-                case "3":
-                    // Remove
-                    break;
                 case "0":
                     // Return to Main Menu
                     showMenu = false;
