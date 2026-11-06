@@ -332,6 +332,18 @@ internal class BankView
 
         AnsiConsole.Write(panel);
     }
+    public void DisplayTransferScheduled()
+    {
+        var panel = new Panel(
+            new Markup("[green]The transfer has been queued and will be processed at the next quarter-hour.[/]")
+            )
+            .Header("[green bold]Transfer Scheduled[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.DarkGreen)
+            .Padding(2, 1);
+
+            AnsiConsole.Write(panel);
+    }
 }
 
 
