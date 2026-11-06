@@ -59,6 +59,14 @@ ChasAcademy.BankApp/
 └── README.md
 ```
 
+## UML Diagram
+
+The UML class diagram provides an overview of the application's
+classes, properties, inheritance relationships, and dependencies
+between the different layers.
+
+![BankApp UML Class Diagram](./BankApp/docs/diagrams/UML-dark.png)
+
 ### Program Entry Point
 
 - **`Program.cs`** – The application's entry point. It creates a dependency injection service collection, registers the application services by calling `AddBankAppServices()`, builds the service provider, and starts the application through `ApplicationController.Run()`.
