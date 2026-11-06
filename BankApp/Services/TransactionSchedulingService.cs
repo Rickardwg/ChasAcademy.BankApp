@@ -65,8 +65,8 @@ namespace BankApp.Services
                 while (transaction != null)
                 {
                     _bankService.TransferMoney(
-                         transaction.SourceAccount, 
-                         transaction.DestinationAccount, 
+                         transaction.SourceAccount,
+                         transaction.DestinationAccount,
                          transaction.Amount);
 
                     transaction = DequeueTransaction();
