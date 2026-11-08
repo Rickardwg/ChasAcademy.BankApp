@@ -15,6 +15,7 @@ internal static class ServiceCollectionExtensions
         services.AddSingleton<UserRepository>();
         services.AddSingleton<AccountRepository>();
         services.AddSingleton<ExchangeRateService>();
+        services.AddSingleton<TransactionSchedulingService>();
 
         services.AddTransient<AuthenticationService>();
         services.AddTransient<BankService>();

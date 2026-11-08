@@ -6,13 +6,13 @@ using BankApp.Views;
 
 namespace BankApp.Controllers;
 
-internal class BankController(BankService service, BankView view, AccountRepository repository, ErrorMessageView errorMessageView)
+internal class BankController(BankService service, BankView view, AccountRepository repository, ErrorMessageView errorMessageView, TransactionSchedulingService scheduler)
 {
     private readonly AccountRepository _repository = repository;
     private readonly BankService _service = service;
     private readonly BankView _view = view;
     private readonly ErrorMessageView _errorMessageView = errorMessageView;
-
+    private readonly TransactionSchedulingService _scheduler = scheduler;
     internal void Run(Customer user)
     {
         _service.SetActiveUser(user);
@@ -168,9 +168,11 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         decimal amount = _view.GetTransferAmount();
 
-        bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
 
-        _view.DisplayTransferResult(transferSuccess);
+        PendingTransaction transaction = new(sourceAccount, destinationAccount, amount);
+        _scheduler.EnqueueTransaction(transaction);
+        _view.DisplayTransferScheduled();
+
         _view.WaitForContinue();
     }
 
@@ -212,9 +214,10 @@ internal class BankController(BankService service, BankView view, AccountReposit
 
         decimal amount = _view.GetTransferAmount();
 
-        bool transferSuccess = _service.TransferMoney(sourceAccount, destinationAccount, amount);
+        PendingTransaction transaction = new(sourceAccount, destinationAccount, amount);
+        _scheduler.EnqueueTransaction(transaction);
+        _view.DisplayTransferScheduled();
 
-        _view.DisplayTransferResult(transferSuccess);
         _view.WaitForContinue();
     }
 
